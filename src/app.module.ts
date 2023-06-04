@@ -74,6 +74,7 @@ import { BanUserForSpecificBlogUseCase } from './blogs/application/use-cases/blo
 import { BloggerUsersController } from './users/blogger.users.controller';
 import { CreateCommentForSpecificPostUseCase } from './posts/use-cases/create-comment-for-specific-post-use-case';
 import { SaBanBlogUseCase } from './blogs/application/use-cases/sa-ban-blog-use-case';
+import { TypeOrmModule } from '@nestjs/typeorm';
 const mongoUri = process.env.MONGO_URL;
 const emailUser = process.env.MAIL_USER;
 const emailPassword = process.env.MAIL_PASSWORD;
@@ -95,6 +96,17 @@ SaBanBlogUseCase,]
 
 @Module({
   imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 3030,
+      username: 'nodejs',
+      password: 'nodejs',
+      database: 'BlogsAndPosts',
+      entities: [],
+      autoLoadEntities: false,
+      synchronize: false,
+    }),
     CqrsModule,
     ThrottlerModule.forRoot({
       ttl: 600,

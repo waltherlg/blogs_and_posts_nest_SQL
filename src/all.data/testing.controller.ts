@@ -25,7 +25,7 @@ export class TestingController {
   @Get('sql')
   getSomethingFromSql(){
     return this.dataSource.query(`SELECT *
-    FROM public."test_users";`)
+    FROM public."Users";`)
   }
 
 

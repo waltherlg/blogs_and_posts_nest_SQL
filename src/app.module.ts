@@ -75,6 +75,7 @@ import { BloggerUsersController } from './users/blogger.users.controller';
 import { CreateCommentForSpecificPostUseCase } from './posts/use-cases/create-comment-for-specific-post-use-case';
 import { SaBanBlogUseCase } from './blogs/application/use-cases/sa-ban-blog-use-case';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import typeOrmConfig from './typeorm.config';
 const mongoUri = process.env.MONGO_URL;
 const emailUser = process.env.MAIL_USER;
 const emailPassword = process.env.MAIL_PASSWORD;
@@ -97,15 +98,8 @@ SaBanBlogUseCase,]
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'nest',
-      password: 'nest',
-      database: 'blogs_and_posts',
-      entities: [],
-      autoLoadEntities: false,
-      synchronize: false,
+      ...typeOrmConfig,
+      autoLoadEntities: true,
     }),
     CqrsModule,
     ThrottlerModule.forRoot({

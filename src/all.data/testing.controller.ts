@@ -11,13 +11,24 @@ import {
 import { TestingService } from './test.service';
 import { AppService } from '../app.service';
 import { CustomisableException } from '../exceptions/custom.exceptions';
+import { DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 @Controller('testing')
 export class TestingController {
   constructor(
     private readonly appService: AppService,
     private readonly testingService: TestingService,
+    @InjectDataSource() private readonly dataSource: DataSource,
   ) {}
+
+  @Get('sql')
+  getSomethingFromSql(){
+    return this.dataSource.query(`SELECT *
+    FROM public."test_users";`)
+  }
+
+
 
   @Delete('all-data')
   @HttpCode(204)

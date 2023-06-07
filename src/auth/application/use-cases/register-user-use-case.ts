@@ -25,6 +25,5 @@ export class RegisterUserUseCase implements ICommandHandler<RegisterUserCommand>
         const userDTO = await this.dtoFactory.createUserDTO(registerUserData);
         const newUserId = await this.usersRepository.createUser(userDTO)
         return newUserId
-        
     }
 }

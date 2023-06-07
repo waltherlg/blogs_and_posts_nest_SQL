@@ -91,8 +91,6 @@ export class AuthController {
   async registrationEmailResending(
     @Body() email: RegistrationEmailResendingInput,
   ) {
-    // вариант где существование эмейла и его подтверждение проверяется с помощью
-    // checkService и эксепшены выкидываются в контроллере
     if (!(await this.checkService.isEmailExist(email.email))) {
       throw new CustomisableException('email', 'email not exist', 400);
     }

@@ -34,17 +34,17 @@ export class CheckService {
   }
 
   async isEmailConfirmed(email: string): Promise<boolean> {
-    const user = await this.usersRepository.findUserByLoginOrEmail(email);
-    return user!.isConfirmed;
+    const isConfirmed = await this.usersRepository.isEmailAlreadyCofirmed(email);
+    return isConfirmed;
   }
 
   async isEmailExist(email: string): Promise<boolean> {
-    const emailExist = await this.usersRepository.findUserByLoginOrEmail(email);
+    const emailExist = await this.usersRepository.isEmailExists(email);
     return !!emailExist;
   }
 
   async isLoginExist(login: string): Promise<boolean> {
-    const emailExist = await this.usersRepository.findUserByLoginOrEmail(login);
+    const emailExist = await this.usersRepository.isLoginExists(login);
     return !!emailExist;
   }
 
@@ -54,7 +54,7 @@ export class CheckService {
   }
 
   async isRecoveryCodeExist(code: string): Promise<boolean> {
-    const isExist = await this.usersRepository.getUserByPasswordRecoveryCode(
+    const isExist = await this.usersRepository.isPasswordRecoveryCodeExist(
       code,
     );
     return !!isExist;

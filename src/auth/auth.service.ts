@@ -66,25 +66,6 @@ export class AuthService {
     return user._id.toString();
   }
 
-  async registerUser(registerUserInputData: CreateUserInputModelType) {
-    const registerUserData = {
-      ...registerUserInputData,
-      confirmationCode: uuidv4(),
-      expirationDateOfConfirmationCode: add(new Date(), {
-        hours: 1,
-        //minutes: 3
-      }),
-    };
-    const userDTO = await this.dtoFactory.createUserDTO(registerUserData);
-    const newUsersId = await this.usersRepository.createUser(userDTO);
-    try {
-      await this.emailManager.sendEmailConfirmationMessage(userDTO);
-    } catch (error) {
-      await this.usersRepository.deleteUserById(newUsersId);
-      throw new InternalServerErrorException(); //в контроллер
-    }
-    return newUsersId;
-  }
   async registrationEmailResending(email): Promise<boolean> {
     const refreshConfirmationData = {
       email: email,

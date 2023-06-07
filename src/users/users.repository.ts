@@ -25,14 +25,16 @@ export class UsersRepository {
       "passwordHash", 
       email, 
       "createdAt", 
-      "isBanned", "banDate", 
-      "banReason", "confirmationCode", 
+      "isBanned", 
+      "banDate", 
+      "banReason", 
+      "confirmationCode", 
       "expirationDateOfConfirmationCode", 
       "isConfirmed", 
       "passwordRecoveryCode", 
       "expirationDateOfRecoveryCode")
       VALUES (
-        $1, 
+      $1, 
       $2, 
       $3, 
       $4, 
@@ -97,15 +99,6 @@ export class UsersRepository {
     }
     return user;
   }
-  async getUserByPasswordRecoveryCode(code: string) {
-    const user: UserDocument = await this.userModel.findOne({
-      passwordRecoveryCode: code,
-    });
-    if (!user) {
-      return null;
-    }
-    return user;
-  };
 
   async findUserByLoginOrEmail(
     loginOrEmail: string,
@@ -131,6 +124,7 @@ export class UsersRepository {
   }
 
   async refreshConfirmationCode(refreshConfirmationData: any) {
+    
     const result = await this.userModel.updateOne(
       { email: refreshConfirmationData.email },
       {
@@ -256,5 +250,44 @@ export class UsersRepository {
     const count = result[0].count;
     return count > 0;
   }
+
+  async isPasswordRecoveryCodeExist(passwordRecoveryCode: string): Promise<boolean> {
+    const query = `
+      SELECT COUNT(*) AS count
+      FROM public."Users"
+      WHERE "passwordRecoveryCode" = $1
+    `;
+    const result = await this.dataSource.query(query, [passwordRecoveryCode]);
+    const count = result[0].count;
+    return count > 0;
+  }
+
+  
+  async isEmailAlreadyCofirmed(email: string): Promise<boolean>{
+    const query = `
+    SELECT "isConfirmed"
+    FROM public."Users"
+    WHERE email=$1
+    LIMIT 1
+    `
+  const result = await this.dataSource.query(query, [email]);
+  console.log(result[0])
+  if (result.length > 0) {
+    const isConfirmed = result[0].isConfirmed;
+    return isConfirmed;
+  }
+  return false;
+    
+  }
+
+  async getUserByPasswordRecoveryCode(code: string) {
+    const user: UserDocument = await this.userModel.findOne({
+      passwordRecoveryCode: code,
+    });
+    if (!user) {
+      return null;
+    }
+    return user;
+  };
   
 }

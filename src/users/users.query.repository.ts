@@ -5,22 +5,25 @@ import { HydratedDocument, Model, Types } from 'mongoose';
 import { PaginationOutputModel, RequestBannedUsersQueryModel } from '../models/types';
 import { BlogDocument, Blog } from 'src/blogs/blogs.types';
 import { PipelineStage } from 'mongoose';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class UsersQueryRepository {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>,
-  @InjectModel(Blog.name) private blogModel: Model<BlogDocument>) {}
+  @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
+  private dataSource: DataSource) {}
 
   async getUserById(userId): Promise<UserTypeOutput | null> {
-    if (!Types.ObjectId.isValid(userId)) {
-      return null;
-    }
-    const user: UserDocument = await this.userModel.findById(userId);
-    if (!user) {
-      return null;
-    }
-    return user.prepareUserForOutput();
+
+    const query = `
+    SELECT id, login, email, "createdAt"
+    FROM public."Users"
+    WHERE id=$1
+    `
+  const user = await this.dataSource.query(query, [userId])
+  return user  
   }
+  
 
   async getAllUsers(
     mergedQueryParams,

@@ -1,12 +1,16 @@
+import { DataSource } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from './users.types';
 import { PasswordRecoveryModel } from '../auth/auth.types';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { log } from 'console';
 
 @Injectable()
 export class UsersRepository {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>, 
+  @InjectDataSource() protected dataSource: DataSource) {}
 
   async saveUser(user: UserDocument): Promise<boolean> {
     const result = await user.save();
@@ -14,9 +18,53 @@ export class UsersRepository {
   }
 
   async createUser(userDTO): Promise<string> {
-    const newUser = new this.userModel(userDTO);
-    await newUser.save();
-    return newUser._id.toString();
+    console.log(userDTO)
+    const query = `INSERT INTO public."Users"(
+      id, 
+      login, 
+      "passwordHash", 
+      email, 
+      "createdAt", 
+      "isBanned", "banDate", 
+      "banReason", "confirmationCode", 
+      "expirationDateOfConfirmationCode", 
+      "isConfirmed", 
+      "passwordRecoveryCode", 
+      "expirationDateOfRecoveryCode")
+      VALUES (
+        $1, 
+      $2, 
+      $3, 
+      $4, 
+      $5, 
+      $6,
+      $7,
+      $8,
+      $9,
+      $10,
+      $11,
+      $12,
+      $13)
+      RETURNING id`;
+
+    const result = await this.dataSource.query(query, [
+      userDTO.id,
+      userDTO.login,
+      userDTO.passwordHash,
+      userDTO.email,
+      userDTO.createdAt,
+      userDTO.isBanned,
+      userDTO.banDate,
+      userDTO.banReason,
+      userDTO.confirmationCode,
+      userDTO.expirationDateOfConfirmationCode,
+      userDTO.isConfirmed,
+      userDTO.passwordRecoveryCode,
+      userDTO.expirationDateOfRecoveryCode
+    ])
+
+    const userId = result[0].id.toString();
+    return userId;
   }
 
   async deleteUserById(userId: string): Promise<boolean> {
@@ -185,6 +233,28 @@ export class UsersRepository {
     const user = await this.userModel.findOne({ _id: _id });
     if (!user) return null;
     return user.likedComments;
+  }
+
+  async isEmailExists(email: string): Promise<boolean> {
+    const query = `
+      SELECT COUNT(*) AS count
+      FROM public."Users"
+      WHERE email = $1
+    `;
+    const result = await this.dataSource.query(query, [email]);
+    const count = result[0].count;
+    return count > 0;
+  }
+
+  async isLoginExists(login: string): Promise<boolean> {
+    const query = `
+      SELECT COUNT(*) AS count
+      FROM public."Users"
+      WHERE email = $1
+    `;
+    const result = await this.dataSource.query(query, [login]);
+    const count = result[0].count;
+    return count > 0;
   }
   
 }

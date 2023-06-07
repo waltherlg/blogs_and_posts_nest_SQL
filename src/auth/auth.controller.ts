@@ -1,3 +1,4 @@
+import { CommandBus } from '@nestjs/cqrs';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import {
@@ -26,6 +27,7 @@ import { RefreshTokenGuard } from './guards/refreshToken.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { StringTrimNotEmpty } from '../middlewares/validators';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
+import { RegisterUserCommand } from './application/use-cases/register-user-use-case';
 export class RegistrationEmailResendingInput {
   @StringTrimNotEmpty()
   @MaxLength(100)
@@ -64,9 +66,10 @@ export class AuthController {
     private readonly usersService: UsersService,
     private readonly checkService: CheckService,
     private readonly usersQueryRepository: UsersQueryRepository,
+    private readonly commandBus: CommandBus,
   ) {}
   @Post('registration')
-  @HttpCode(204)
+  @HttpCode(201)
   async registration(@Body() userCreateInputModel: CreateUserInputModelType) {
     if (await this.checkService.isEmailExist(userCreateInputModel.email)) {
       throw new EmailAlreadyExistException();
@@ -74,8 +77,8 @@ export class AuthController {
     if (await this.checkService.isLoginExist(userCreateInputModel.login)) {
       throw new LoginAlreadyExistException();
     }
-    const newUsersId = await this.authService.registerUser(
-      userCreateInputModel,
+    const newUsersId = await this.commandBus.execute(new RegisterUserCommand(
+      userCreateInputModel,)
     );
     const user = await this.usersQueryRepository.getUserById(newUsersId);
     if (!user) {

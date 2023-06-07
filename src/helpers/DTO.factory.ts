@@ -3,6 +3,8 @@ import { Types } from 'mongoose';
 import { BcryptService } from '../other.services/bcrypt.service';
 import { Injectable } from '@nestjs/common';
 import { UserDeviceDBType } from '../usersDevices/users-devices.types';
+import { v4 as uuidv4 } from 'uuid';
+
 @Injectable()
 export class DTOFactory {
   constructor(private readonly bcryptService: BcryptService) {}
@@ -11,7 +13,7 @@ export class DTOFactory {
       createUserData.password,
     );
     const userDTO = new UserDBType(
-      new Types.ObjectId(),
+      uuidv4(),
       createUserData.login,
       passwordHash,
       createUserData.email,

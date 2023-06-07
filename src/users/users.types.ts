@@ -15,7 +15,7 @@ export type PostsLikeType = {
 
 export class UserDBType {
   constructor(
-    public _id: Types.ObjectId,
+    public id: string,
     public login: string,
     public passwordHash: string,
     public email: string,

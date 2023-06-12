@@ -232,9 +232,9 @@ export class UsersRepository {
   async confirmUser(confirmationCode: string){
     const query = `
     UPDATE public."Users"
-    SET "confirmationCode"=null, "expirationDateOfConfirmationCode"=null, "isConfirmed=true"
-    WHERE confirmationCode = $1;
-    `
+    SET "confirmationCode"=null, "expirationDateOfConfirmationCode"=null, "isConfirmed"=true
+    WHERE "confirmationCode" = $1;
+    `;
     try {
       await this.dataSource.query(query, [
         confirmationCode
@@ -308,11 +308,12 @@ export class UsersRepository {
     return count > 0;
   }
 
-  async isConfirmationCodeExist(confirmationCode:string){
+  async isConfirmationCodeIsValid(confirmationCode:string){
     const query = `
     SELECT COUNT(*) AS count
     FROM public."Users"
     WHERE "confirmationCode" = $1
+    AND "expirationDateOfConfirmationCode" > NOW()
   `;
   const result = await this.dataSource.query(query, [confirmationCode]);
   const count = result[0].count;

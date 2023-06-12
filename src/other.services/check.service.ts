@@ -28,9 +28,9 @@ export class CheckService {
     return !!user;
   }
 
-  async isConfirmationCodeExist(code: string): Promise<boolean> {
-    const user = await this.usersRepository.isConfirmationCodeExist(code);
-    return !!user;
+  async isConfirmationCodeIsValid(code: string): Promise<boolean> {
+    const isValid = await this.usersRepository.isConfirmationCodeIsValid(code);
+    return !!isValid;
   }
 
   async isEmailConfirmed(email: string): Promise<boolean> {

@@ -113,7 +113,7 @@ export class AuthController {
   async registrationConfirmation(
     @Body() registrationConfirmationDto: RegistrationConfirmationCodeInput,
   ) {
-    if(!await this.checkService.isConfirmationCodeExist(registrationConfirmationDto.code)){
+    if(!await this.checkService.isConfirmationCodeIsValid(registrationConfirmationDto.code)){
       throw new CustomisableException(
         'code',
         ' confirmation code is incorrect, expired or already been applied',

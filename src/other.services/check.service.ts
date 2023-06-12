@@ -29,7 +29,7 @@ export class CheckService {
   }
 
   async isConfirmationCodeExist(code: string): Promise<boolean> {
-    const user = await this.usersRepository.getUserByConfirmationCode(code);
+    const user = await this.usersRepository.isConfirmationCodeExist(code);
     return !!user;
   }
 

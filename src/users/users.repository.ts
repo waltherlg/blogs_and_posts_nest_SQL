@@ -308,6 +308,17 @@ export class UsersRepository {
     return count > 0;
   }
 
+  async isConfirmationCodeExist(confirmationCode:string){
+    const query = `
+    SELECT COUNT(*) AS count
+    FROM public."Users"
+    WHERE "confirmationCode" = $1
+  `;
+  const result = await this.dataSource.query(query, [confirmationCode]);
+  const count = result[0].count;
+  return count > 0;
+  }
+
   
   async isEmailAlreadyCofirmed(email: string): Promise<boolean>{
     const query = `

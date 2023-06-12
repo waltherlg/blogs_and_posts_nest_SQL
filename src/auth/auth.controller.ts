@@ -113,7 +113,14 @@ export class AuthController {
   async registrationConfirmation(
     @Body() registrationConfirmationDto: RegistrationConfirmationCodeInput,
   ) {
-    // вариант где код будет проверятся в auth сервисе
+    if(!await this.checkService.isConfirmationCodeExist(registrationConfirmationDto.code)){
+      throw new CustomisableException(
+        'code',
+        ' confirmation code is incorrect, expired or already been applied',
+        400,
+      );
+    }
+    
     await this.commandBus.execute(new RegisterationConfirmaitonCommand(registrationConfirmationDto.code))
   }
   //@Throttle(5, 60)

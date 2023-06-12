@@ -16,10 +16,7 @@ export class EmailManager {
   }
 
   async resendEmailConfirmationMessage(refreshConfirmationData: any) {
-    const confirmationCode =
-      '<a href="https://some-front.com/confirm-registration?code=' +
-      refreshConfirmationData.confirmationCode +
-      '">complete registration</a>';
+    const confirmationCode = `<a href="https://some-front.com/confirm-registration?code=${refreshConfirmationData.confirmationCode}">complete registration</a>`;
     await this.emailAdapter.sendEmail(
       refreshConfirmationData.email,
       'resending confirmation code',

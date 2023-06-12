@@ -28,6 +28,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { StringTrimNotEmpty } from '../middlewares/validators';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import { RegisterUserCommand } from './application/use-cases/register-user-use-case';
+import { RegisterationEmailResendingCommand } from './application/use-cases/registration-email-resendig-use-case';
 export class RegistrationEmailResendingInput {
   @StringTrimNotEmpty()
   @MaxLength(100)
@@ -89,17 +90,15 @@ export class AuthController {
   @Post('registration-email-resending')
   @HttpCode(204)
   async registrationEmailResending(
-    @Body() email: RegistrationEmailResendingInput,
+    @Body() refreshConfirmationDto: RegistrationEmailResendingInput,
   ) {
-    if (!(await this.checkService.isEmailExist(email.email))) {
+    if (!(await this.checkService.isEmailExist(refreshConfirmationDto.email))) {
       throw new CustomisableException('email', 'email not exist', 400);
     }
-    if (await this.checkService.isEmailConfirmed(email.email)) {
+    if (await this.checkService.isEmailConfirmed(refreshConfirmationDto.email)) {
       throw new CustomisableException('email', 'email already confirmed', 400);
     }
-    const result = await this.authService.registrationEmailResending(
-      email.email,
-    );
+    const result = await this.commandBus.execute(new RegisterationEmailResendingCommand(refreshConfirmationDto.email))
     if (!result) {
       throw new CustomisableException(
         'email',

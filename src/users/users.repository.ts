@@ -229,6 +229,25 @@ export class UsersRepository {
     return user.likedComments;
   }
 
+  async refreshConfirmationData(refreshConfirmationData){
+    const query = `
+    UPDATE public."Users"
+    SET "confirmationCode"=$1, "expirationDateOfConfirmationCode"=$2
+    WHERE email = $3;
+    `
+    try {
+      await this.dataSource.query(query, [
+        refreshConfirmationData.confirmationCode,
+        refreshConfirmationData.expirationDateOfConfirmationCode,
+        refreshConfirmationData.email
+      ]);
+  
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   async isEmailExists(email: string): Promise<boolean> {
     const query = `
       SELECT COUNT(*) AS count
@@ -238,6 +257,16 @@ export class UsersRepository {
     const result = await this.dataSource.query(query, [email]);
     const count = result[0].count;
     return count > 0;
+  }
+
+  async isEmailConfirmed(email: string): Promise<boolean> {
+    const query = `
+      SELECT "isConfirmed"
+      FROM public."Users"
+      WHERE email = $1
+    `;
+    const result = await this.dataSource.query(query, [email]);
+    return result;
   }
 
   async isLoginExists(login: string): Promise<boolean> {
@@ -289,5 +318,12 @@ export class UsersRepository {
     }
     return user;
   };
+
+  async getConfirmationCodeOfLastCreatedUser(){
+    return await this.dataSource.query(`SELECT "confirmationCode"
+FROM "Users"
+ORDER BY "createdAt" DESC
+LIMIT 1;`)
+    }
   
 }

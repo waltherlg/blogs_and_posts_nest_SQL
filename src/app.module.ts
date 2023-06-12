@@ -77,6 +77,7 @@ import { SaBanBlogUseCase } from './blogs/application/use-cases/sa-ban-blog-use-
 import { TypeOrmModule } from '@nestjs/typeorm';
 import typeOrmConfig from './typeorm.config';
 import { RegisterUserUseCase } from './auth/application/use-cases/register-user-use-case';
+import { RegisterationEmailResendingUseCase } from './auth/application/use-cases/registration-email-resendig-use-case';
 const mongoUri = process.env.MONGO_URL;
 const emailUser = process.env.MAIL_USER;
 const emailPassword = process.env.MAIL_PASSWORD;
@@ -95,13 +96,14 @@ CreateCommentForSpecificPostUseCase,
 BanStatusChangeUseCase,
 BanUserForSpecificBlogUseCase,
 SaBanBlogUseCase,
-RegisterUserUseCase,]
+RegisterUserUseCase,
+RegisterationEmailResendingUseCase,]
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       ...typeOrmConfig,
-      autoLoadEntities: true,
+      //autoLoadEntities: true,
     }),
     CqrsModule,
     ThrottlerModule.forRoot({

@@ -28,8 +28,6 @@ export class UserDBType {
     public isConfirmed: boolean,
     public passwordRecoveryCode: string | null,
     public expirationDateOfRecoveryCode: Date | null,
-    public likedComments: Array<CommentsLikeType>,
-    public likedPosts: Array<PostsLikeType>,
   ) {}
 }
 

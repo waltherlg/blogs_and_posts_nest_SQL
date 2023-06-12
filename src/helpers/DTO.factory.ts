@@ -26,8 +26,6 @@ export class DTOFactory {
       createUserData.isConfirmed || false,
       null,
       null,
-      [],
-      [],
     );
     return userDTO;
   }

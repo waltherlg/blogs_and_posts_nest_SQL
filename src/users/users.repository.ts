@@ -229,6 +229,23 @@ export class UsersRepository {
     return user.likedComments;
   }
 
+  async confirmUser(confirmationCode: string){
+    const query = `
+    UPDATE public."Users"
+    SET "confirmationCode"=null, "expirationDateOfConfirmationCode"=null, "isConfirmed=true"
+    WHERE confirmationCode = $1;
+    `
+    try {
+      await this.dataSource.query(query, [
+        confirmationCode
+      ]);
+  
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   async refreshConfirmationData(refreshConfirmationData){
     const query = `
     UPDATE public."Users"

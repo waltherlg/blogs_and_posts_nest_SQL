@@ -29,6 +29,7 @@ import { StringTrimNotEmpty } from '../middlewares/validators';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import { RegisterUserCommand } from './application/use-cases/register-user-use-case';
 import { RegisterationEmailResendingCommand } from './application/use-cases/registration-email-resendig-use-case';
+import { RegisterationConfirmaitonCommand } from './application/use-cases/registration-confirmation-use-case';
 export class RegistrationEmailResendingInput {
   @StringTrimNotEmpty()
   @MaxLength(100)
@@ -110,10 +111,10 @@ export class AuthController {
   @Post('registration-confirmation')
   @HttpCode(204)
   async registrationConfirmation(
-    @Body() Code: RegistrationConfirmationCodeInput,
+    @Body() registrationConfirmationDto: RegistrationConfirmationCodeInput,
   ) {
     // вариант где код будет проверятся в auth сервисе
-    await this.authService.confirmEmail(Code.code);
+    await this.commandBus.execute(new RegisterationConfirmaitonCommand(registrationConfirmationDto.code))
   }
   //@Throttle(5, 60)
   @UseGuards(LocalAuthGuard)

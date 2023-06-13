@@ -6,6 +6,7 @@ import { Types } from 'mongoose';
 import { endpoints } from './helpers/routing';
 import { userTest } from './helpers/inputAndOutputObjects/usersObjects';
 import { UsersRepository } from 'src/users/users.repository';
+import { UserDBType } from 'src/users/users.types';
 export function testAuthOperations() {
   describe('andpoints of auth.controller (e2e)', () => {
     let usersRepository: UsersRepository;
@@ -53,24 +54,39 @@ export function testAuthOperations() {
     let confirmationCode1User1: string
 
     it('should call getConfirmationCodeOfLastCreatedUser', async () => {
-      confirmationCode1User1 = await usersRepository.getConfirmationCodeOfLastCreatedUser();
+      const user:UserDBType = await usersRepository.getLastCreatedUserDbType();
+      confirmationCode1User1 = user.confirmationCode
       expect(confirmationCode1User1).not.toBeUndefined();
       console.log(confirmationCode1User1);
     });
 
-    it('00-00 registration email resending = 204 resend email', async () => {
+    it('00-00 registration email resending = 204 resend email and change ConfirmationCode', async () => {     
       await request(app.getHttpServer())
         .post(`${endpoints.auth}/registration-email-resending`)
-        .send(userTest.inputUser1.email)
-        .expect(201);
+        .send({email: userTest.inputUser1.email})
+        .expect(204);
     });
 
     let confirmationCode2User1: string
 
-    it('should call getConfirmationCodeOfLastCreatedUser', async () => {
-      confirmationCode2User1 = await usersRepository.getConfirmationCodeOfLastCreatedUser();
+    it('check that ConfirmationCode in user document is changed', async () => {
+      const user:UserDBType = await usersRepository.getLastCreatedUserDbType();
+      confirmationCode2User1 = user.confirmationCode
       expect(confirmationCode2User1).not.toBe(confirmationCode1User1);
-      console.log(confirmationCode2User1);
+    });
+
+    it('registration confirmation = 204 and confirmUser', async () => {
+      await request(app.getHttpServer())
+        .post(`${endpoints.auth}/registration-confirmation`)
+        .send({code: confirmationCode2User1})
+        .expect(204);
+    });
+
+    it('check that user is confirmed', async () => {
+      const user:UserDBType = await usersRepository.getLastCreatedUserDbType();      
+      expect(user.confirmationCode).toBe(null);
+      expect(user.expirationDateOfConfirmationCode).toBe(null);
+      expect(user.isConfirmed).toBe(true);
     });
 
     

@@ -349,10 +349,19 @@ export class UsersRepository {
   };
 
   async getConfirmationCodeOfLastCreatedUser(){
-    return await this.dataSource.query(`SELECT "confirmationCode"
+    const result = await this.dataSource.query(`SELECT "confirmationCode"
 FROM "Users"
 ORDER BY "createdAt" DESC
 LIMIT 1;`)
+return result[0];
     }
+
+  async getLastCreatedUserDbType(){
+    const result = await this.dataSource.query(`SELECT *
+  FROM "Users"
+  ORDER BY "createdAt" DESC
+  LIMIT 1;`)
+  return result[0];
+      }
   
 }

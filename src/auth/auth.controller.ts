@@ -120,8 +120,14 @@ export class AuthController {
         400,
       );
     }
-    
-    await this.commandBus.execute(new RegisterationConfirmaitonCommand(registrationConfirmationDto.code))
+    const result = await this.commandBus.execute(new RegisterationConfirmaitonCommand(registrationConfirmationDto.code))
+    if(!result){
+      throw new CustomisableException(
+        'code',
+        'the application failed to confirm user',
+        400,
+      ); 
+    }
   }
   //@Throttle(5, 60)
   @UseGuards(LocalAuthGuard)

@@ -48,11 +48,6 @@ export class CheckService {
     return !!emailExist;
   }
 
-  async isCodeConfirmed(code: string): Promise<boolean> {
-    const user = await this.usersRepository.getUserByConfirmationCode(code);
-    return user!.isConfirmed;
-  }
-
   async isRecoveryCodeExist(code: string): Promise<boolean> {
     const isExist = await this.usersRepository.isPasswordRecoveryCodeExist(
       code,

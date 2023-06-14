@@ -8,7 +8,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super({ usernameField: 'loginOrEmail' });
   }
   async validate(loginOrEmail: string, password: string) {
-    console.log(loginOrEmail);
     const userId = await this.authService.checkUserCredential(
       loginOrEmail,
       password,

@@ -90,51 +90,14 @@ export class UsersRepository {
   async deleteAllUsers() {
     await this.userModel.deleteMany({});
   }
-  async getUserByConfirmationCode(code: string): Promise<UserDocument | null> {
-    const user: UserDocument | null = await this.userModel.findOne({
-      confirmationCode: code,
-    });
-    if (!user) {
-      return null;
-    }
-    return user;
-  }
 
   async findUserByLoginOrEmail(
     loginOrEmail: string,
-  ): Promise<UserDocument | null> {
-    const user: UserDocument | null = await this.userModel.findOne({
+  ) {
+    const user = await this.userModel.findOne({
       $or: [{ email: loginOrEmail }, { login: loginOrEmail }],
     });
     return user;
-  }
-
-  async updateConfirmation(code: string) {
-    const result = await this.userModel.updateOne(
-      { code },
-      {
-        $set: {
-          isConfirmed: true,
-          confirmationCode: null,
-          expirationDateOfConfirmationCode: null,
-        },
-      },
-    );
-    return result.modifiedCount === 1;
-  }
-
-  async refreshConfirmationCode(refreshConfirmationData: any) {
-    
-    const result = await this.userModel.updateOne(
-      { email: refreshConfirmationData.email },
-      {
-        $set: {
-          confirmationCode: refreshConfirmationData.confirmationCode,
-          expirationDate: refreshConfirmationData.expirationDate,
-        },
-      },
-    );
-    return result.modifiedCount === 1;
   }
 
   async addPasswordRecoveryData(
@@ -229,7 +192,7 @@ export class UsersRepository {
     return user.likedComments;
   }
 
-  async confirmUser(confirmationCode: string){
+  async confirmUser(confirmationCode: string): Promise<boolean>{
     const query = `
     UPDATE public."Users"
     SET "confirmationCode"=null, "expirationDateOfConfirmationCode"=null, "isConfirmed"=true
@@ -283,6 +246,8 @@ export class UsersRepository {
       WHERE email = $1
     `;
     const result = await this.dataSource.query(query, [email]);
+    console.log('result isEmailConfirmed ', result);
+    
     return result;
   }
 

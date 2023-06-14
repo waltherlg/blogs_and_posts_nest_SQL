@@ -66,66 +66,8 @@ export class AuthService {
     return user._id.toString();
   }
 
-  async registrationEmailResending(email): Promise<boolean> {
-    const refreshConfirmationData = {
-      email: email,
-      confirmationCode: uuidv4(),
-    };
-    try {
-      await this.emailManager.resendEmailConfirmationMessage(
-        refreshConfirmationData,
-      );
-    } catch (error) {
-      throw new CustomisableException(
-        'email',
-        'the application failed to send an email',
-        400,
-      );
-    }
-    const user = await this.usersRepository.findUserByLoginOrEmail(email);
-    user.confirmationCode = refreshConfirmationData.confirmationCode;
-    user.expirationDateOfConfirmationCode = add(new Date(), {
-      hours: 1,
-      //minutes: 3
-    });
-    return await this.usersRepository.saveUser(user);
-  }
-  async confirmEmail(code): Promise<boolean> {
-    const user = await this.usersRepository.getUserByConfirmationCode(code);
-    // если пользователь не найден, или уже подтвержден, то выкидываем эксепшен
-    if (!user || user.isConfirmed === true) {
-      throw new CustomisableException(
-        'code',
-        ' confirmation code is incorrect, expired or already been applied',
-        400,
-      );
-    }
-    user.isConfirmed = true;
-    user.expirationDateOfConfirmationCode = null;
-    return await this.usersRepository.saveUser(user);
-  }
 
-  async login(userId: string, ip: string, userAgent: string) {
-    const deviceId = new Types.ObjectId();
-    const { accessToken, refreshToken } = await this.createTokens(
-      userId,
-      deviceId.toString(),
-    );
-    const lastActiveDate = await this.getLastActiveDateFromToken(refreshToken);
-    const expirationDate = await this.getExpirationDateFromRefreshToken(
-      refreshToken,
-    );
-    const deviceInfoDTO = new UserDeviceDBType(
-      deviceId,
-      userId,
-      ip,
-      userAgent,
-      lastActiveDate,
-      expirationDate,
-    );
-    await this.usersDeviceRepository.addDeviceInfo(deviceInfoDTO);
-    return { accessToken, refreshToken };
-  }
+
   async refreshingToken(userId, deviceId) {
     const { accessToken, refreshToken } = await this.createTokens(
       userId,
@@ -185,46 +127,5 @@ export class AuthService {
         user.deviceId,
       );
     return isDeviceDeleted;
-  }
-  async createTokens(userId: string, incomeDeviceId: string) {
-    const deviceId = incomeDeviceId;
-    const accessToken = await this.jwtService.signAsync(
-      { userId: userId },
-      { expiresIn: process.env.ACCESS_TOKEN_EXPIRES },
-    );
-    const refreshTokenPayload = { userId, deviceId };
-    const refreshToken = await this.jwtService.signAsync(refreshTokenPayload, {
-      expiresIn: process.env.REFRESH_TOKEN_EXPIRES,
-    });
-    return { accessToken, refreshToken };
-  }
-
-  getUserIdFromToken(token) {
-    try {
-      const result: any = this.jwtService.verify(token);
-      console.log('getUserIdFromToken result', result);
-      return result.userId;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  getDeviceIdFromToken(token) {
-    try {
-      const result: any = this.jwtService.verify(token);
-      return result.deviceId;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  async getLastActiveDateFromToken(refreshToken): Promise<string> {
-    const payload: any = this.jwtService.decode(refreshToken);
-    return new Date(payload.iat * 1000).toISOString();
-  }
-
-  async getExpirationDateFromRefreshToken(refreshToken): Promise<string> {
-    const payload: any = this.jwtService.decode(refreshToken);
-    return new Date(payload.exp * 1000).toISOString();
   }
 }

@@ -10,7 +10,6 @@ export class RegisterationConfirmaitonUseCase implements ICommandHandler<Registe
     constructor(private readonly usersRepository: UsersRepository){}
     async execute(command: RegisterationConfirmaitonCommand): Promise<any> {
           const result = await this.usersRepository.confirmUser(command.confirmationCode)
-          return result
-        
+          return result       
     }
 }

@@ -2,7 +2,7 @@ import mongoose, { HydratedDocument, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 export class UserDeviceDBType {
   constructor(
-    public _id: Types.ObjectId,
+    public id: string,
     public userId: string,
     public ip: string,
     public title: string,

@@ -1,21 +1,26 @@
+import { Injectable } from '@nestjs/common';
 import { JwtService } from "@nestjs/jwt";
 import * as process from 'process';
 
-
+@Injectable()
 export class TokensService {
     constructor(private readonly jwtService: JwtService){}
     
   async createTokens(userId: string, incomeDeviceId: string) {
-    // console.log(' process.env.REFRESH_TOKEN_EXPIRES ', 
-    // process.env.ACCESS_TOKEN_EXPIRES, incomeDeviceId,
-    // process.env.REFRESH_TOKEN_EXPIRES
-    // );
+    console.log(' createTokens income ', 
+    userId,
+    incomeDeviceId,
+    process.env.ACCESS_TOKEN_EXPIRES, 
+    process.env.REFRESH_TOKEN_EXPIRES
+    );
     
     const deviceId = incomeDeviceId;
     const accessToken = await this.jwtService.signAsync(
       { userId: userId },
       { expiresIn: process.env.ACCESS_TOKEN_EXPIRES },
     );
+    console.log('accessToken ', accessToken);
+    
     const refreshTokenPayload = { userId, deviceId };
     const refreshToken = await this.jwtService.signAsync(refreshTokenPayload, {
       expiresIn: process.env.REFRESH_TOKEN_EXPIRES,

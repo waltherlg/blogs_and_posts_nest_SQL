@@ -285,7 +285,7 @@ export class UsersRepository {
     return count > 0;
   }
 
-  async isConfirmationCodeIsValid(confirmationCode:string){
+  async isConfirmationCodeExistAndNotExpired(confirmationCode:string){
     const query = `
     SELECT COUNT(*) AS count
     FROM public."Users"

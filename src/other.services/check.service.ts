@@ -28,8 +28,8 @@ export class CheckService {
     return !!user;
   }
 
-  async isConfirmationCodeIsValid(code: string): Promise<boolean> {
-    const isValid = await this.usersRepository.isConfirmationCodeIsValid(code);
+  async isConfirmationCodeExistAndNotExpired(code: string): Promise<boolean> {
+    const isValid = await this.usersRepository.isConfirmationCodeExistAndNotExpired(code);
     return !!isValid;
   }
 

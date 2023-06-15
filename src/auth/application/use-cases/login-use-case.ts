@@ -22,9 +22,6 @@ export class LoginUseCase implements ICommandHandler<LoginCommand>{
               command.userId,
               deviceId,
             );
-            if(!{accessToken, refreshToken}){
-              return null
-            }
             const lastActiveDate = await this.tokensService.getLastActiveDateFromToken(refreshToken);
             const expirationDate = await this.tokensService.getExpirationDateFromRefreshToken(
               refreshToken,
@@ -37,11 +34,8 @@ export class LoginUseCase implements ICommandHandler<LoginCommand>{
               lastActiveDate,
               expirationDate,
             );
-            if(await this.usersDeviceRepository.addDeviceInfo(deviceInfoDto)){
-              return { accessToken, refreshToken };
-            } else {
-              return null
-            }
+            await this.usersDeviceRepository.addDeviceInfo(deviceInfoDto)
+            return { accessToken, refreshToken };
             
           }
 }

@@ -26,7 +26,7 @@ export class UsersDevicesRepository {
       $3, 
       $4, 
       $5, 
-      $6,)`;
+      $6)`;
 
     const result = await this.dataSource.query(query, [
       deviceInfoDTO.id,

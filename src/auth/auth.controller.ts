@@ -114,7 +114,7 @@ export class AuthController {
   async registrationConfirmation(
     @Body() registrationConfirmationDto: RegistrationConfirmationCodeInput,
   ) {
-    if(!await this.checkService.isConfirmationCodeIsValid(registrationConfirmationDto.code)){
+    if(!await this.checkService.isConfirmationCodeExistAndNotExpired(registrationConfirmationDto.code)){
       throw new CustomisableException(
         'code',
         ' confirmation code is incorrect, expired or already been applied',
@@ -139,7 +139,7 @@ export class AuthController {
     const { accessToken, refreshToken } = await this.commandBus.execute(new LoginCommand(
       request.user.userId,
       request.ip,
-      request.headers['user-agent']!,
+      request.headers['user-agent'] || 'nestApi',
     ));
     if(!{accessToken, refreshToken}){
       throw new UnableException("login", 'Unable login')

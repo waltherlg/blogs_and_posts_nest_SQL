@@ -18,7 +18,6 @@ export class UsersRepository {
   }
 
   async createUser(userDTO): Promise<string> {
-    console.log(userDTO)
     const query = `INSERT INTO public."Users"(
       id, 
       login, 
@@ -65,8 +64,21 @@ export class UsersRepository {
       userDTO.expirationDateOfRecoveryCode
     ])
 
-    const userId = result[0].id.toString();
+    const userId = result[0].id;
     return userId;
+  }
+
+  async getUserForLoginByLoginOrEmail(loginOrEmail: string){
+    const query = `
+    SELECT "id", "isConfirmed", "isBanned", "passwordHash"
+    FROM public."Users"
+    WHERE email = $1 OR login = $1
+    LIMIT 1
+  `;
+  const result = await this.dataSource.query(query, [loginOrEmail]);
+  console.log('getUserForLoginByLoginOrEmail result[0]', result[0]);
+  
+  return result[0];
   }
 
   async deleteUserById(userId: string): Promise<boolean> {

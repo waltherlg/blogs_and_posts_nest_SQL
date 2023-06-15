@@ -79,6 +79,8 @@ import typeOrmConfig from './typeorm.config';
 import { RegisterUserUseCase } from './auth/application/use-cases/register-user-use-case';
 import { RegisterationEmailResendingUseCase } from './auth/application/use-cases/registration-email-resendig-use-case';
 import { RegisterationConfirmaitonUseCase } from './auth/application/use-cases/registration-confirmation-use-case';
+import { TokensService } from './other.services/tokens.service';
+import { LoginUseCase } from './auth/application/use-cases/login-use-case';
 const mongoUri = process.env.MONGO_URL;
 const emailUser = process.env.MAIL_USER;
 const emailPassword = process.env.MAIL_PASSWORD;
@@ -99,7 +101,8 @@ BanUserForSpecificBlogUseCase,
 SaBanBlogUseCase,
 RegisterUserUseCase,
 RegisterationEmailResendingUseCase,
-RegisterationConfirmaitonUseCase,]
+RegisterationConfirmaitonUseCase,
+LoginUseCase,]
 
 @Module({
   imports: [
@@ -176,6 +179,7 @@ RegisterationConfirmaitonUseCase,]
     CheckService,
     TestingService,
     AuthService,
+    TokensService,
     CommentsService,
     LikeService,
     DTOFactory,

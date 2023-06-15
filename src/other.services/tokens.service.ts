@@ -1,10 +1,16 @@
 import { JwtService } from "@nestjs/jwt";
 import * as process from 'process';
 
+
 export class TokensService {
     constructor(private readonly jwtService: JwtService){}
     
   async createTokens(userId: string, incomeDeviceId: string) {
+    // console.log(' process.env.REFRESH_TOKEN_EXPIRES ', 
+    // process.env.ACCESS_TOKEN_EXPIRES, incomeDeviceId,
+    // process.env.REFRESH_TOKEN_EXPIRES
+    // );
+    
     const deviceId = incomeDeviceId;
     const accessToken = await this.jwtService.signAsync(
       { userId: userId },

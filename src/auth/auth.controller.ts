@@ -30,6 +30,7 @@ import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import { RegisterUserCommand } from './application/use-cases/register-user-use-case';
 import { RegisterationEmailResendingCommand } from './application/use-cases/registration-email-resendig-use-case';
 import { RegisterationConfirmaitonCommand } from './application/use-cases/registration-confirmation-use-case';
+import { LoginCommand } from './application/use-cases/login-use-case';
 export class RegistrationEmailResendingInput {
   @StringTrimNotEmpty()
   @MaxLength(100)
@@ -133,11 +134,16 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Req() request, @Res({ passthrough: true }) response) {
-    const { accessToken, refreshToken } = await this.authService.login(
+    console.log('local str is ok');
+    
+    const { accessToken, refreshToken } = await this.commandBus.execute(new LoginCommand(
       request.user.userId,
       request.ip,
       request.headers['user-agent']!,
-    );
+    ));
+    if(!{accessToken, refreshToken}){
+      throw new UnableException("login", 'Unable login')
+    }
     response
       .status(200)
       .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })

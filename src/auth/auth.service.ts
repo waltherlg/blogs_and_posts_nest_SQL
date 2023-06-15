@@ -18,6 +18,7 @@ import { settings } from '../settings';
 import { UserDeviceDBType } from '../usersDevices/users-devices.types';
 import { UsersDevicesRepository } from '../usersDevices/usersDevicesRepository';
 import * as process from 'process';
+import { TokensService } from 'src/other.services/tokens.service';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +29,7 @@ export class AuthService {
     private readonly bcryptService: BcryptService,
     private readonly jwtService: JwtService,
     private readonly usersDeviceRepository: UsersDevicesRepository,
+    private readonly tokensService: TokensService,
   ) {}
   async BasicAuthorization(authHeader): Promise<boolean> {
     const authType = authHeader.split(' ')[0];
@@ -49,9 +51,10 @@ export class AuthService {
     loginOrEmail: string,
     password: string,
   ): Promise<string | null> {
-    const user = await this.usersRepository.findUserByLoginOrEmail(
+    const user = await this.usersRepository.getUserForLoginByLoginOrEmail(
       loginOrEmail,
     );
+    
     if (!user || user.isBanned === true) {
       return null;
     }
@@ -63,18 +66,18 @@ export class AuthService {
     if (!isPasswordValid) {
       return null;
     }
-    return user._id.toString();
+    return user.id;
   }
 
 
 
   async refreshingToken(userId, deviceId) {
-    const { accessToken, refreshToken } = await this.createTokens(
+    const { accessToken, refreshToken } = await this.tokensService.createTokens(
       userId,
       deviceId.toString(),
     );
-    const lastActiveDate = await this.getLastActiveDateFromToken(refreshToken);
-    const expirationDate = await this.getExpirationDateFromRefreshToken(
+    const lastActiveDate = await this.tokensService.getLastActiveDateFromToken(refreshToken);
+    const expirationDate = await this.tokensService.getExpirationDateFromRefreshToken(
       refreshToken,
     );
     await this.usersDeviceRepository.refreshDeviceInfo(

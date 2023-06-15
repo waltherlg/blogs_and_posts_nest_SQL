@@ -2,17 +2,41 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { UsersDevice, UsersDeviceDocument } from './users-devices.types';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class UsersDevicesRepository {
   constructor(
     @InjectModel(UsersDevice.name)
     private usersDeviseModel: Model<UsersDeviceDocument>,
+    @InjectDataSource() protected dataSource: DataSource,
   ) {}
   async addDeviceInfo(deviceInfoDTO): Promise<boolean> {
-    const newDeviceInfo = new this.usersDeviseModel(deviceInfoDTO);
-    const result = await newDeviceInfo.save();
-    return !!result;
+    const query = `INSERT INTO public."UserDevices"(
+      id,
+      "userId", 
+      ip, 
+      title, 
+      "lastActiveDate", 
+      "expirationDate")
+      VALUES (
+      $1, 
+      $2, 
+      $3, 
+      $4, 
+      $5, 
+      $6,)`;
+
+    const result = await this.dataSource.query(query, [
+      deviceInfoDTO.id,
+      deviceInfoDTO.userId, 
+      deviceInfoDTO.ip, 
+      deviceInfoDTO.title, 
+      deviceInfoDTO.lastActiveDate, 
+      deviceInfoDTO.expirationDate,
+    ])
+    return result.rowCount > 0
   }
   async getDeviceByUsersAndDeviceId(userId: string, deviceId: string) {
     if (!(Types.ObjectId.isValid(userId) && Types.ObjectId.isValid(deviceId))) {

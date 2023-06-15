@@ -89,6 +89,25 @@ export function testAuthOperations() {
       expect(user.isConfirmed).toBe(true);
     });
 
+    it('00-00 login = 204 login user', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .post(`${endpoints.auth}/login`)
+        .send(userTest.loginUser1)
+        .expect(200);
+      const createdResponse = createResponse.body;
+      //accessToken = createdResponse.accessToken;
+      expect(createdResponse).toEqual({
+        accessToken: expect.any(String),
+      });
+      expect(createResponse.headers['set-cookie']).toBeDefined();
+      const refreshTokenCookie = createResponse.headers['set-cookie']
+        .find((cookie) => cookie.startsWith('refreshToken='));
+    
+      expect(refreshTokenCookie).toBeDefined();
+      expect(refreshTokenCookie).toContain('HttpOnly');
+      expect(refreshTokenCookie).toContain('Secure');
+    });
+
     
     
 

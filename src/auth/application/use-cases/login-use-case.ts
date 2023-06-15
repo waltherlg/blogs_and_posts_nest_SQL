@@ -11,16 +11,20 @@ export class LoginCommand {
 
 @CommandHandler(LoginCommand)
 export class LoginUseCase implements ICommandHandler<LoginCommand>{
-    constructor(private readonly usersRepository: UsersRepository,
-        private readonly tokensService: TokensService,
+    constructor(private readonly tokensService: TokensService,
         private readonly usersDeviceRepository: UsersDevicesRepository,
         ){}
         async execute(command: LoginCommand): Promise<any> {
+          //console.log('command.userId ', command.userId);
+          
             const deviceId = uuidv4();
             const { accessToken, refreshToken } = await this.tokensService.createTokens(
               command.userId,
-              deviceId.toString(),
+              deviceId,
             );
+            if(!{accessToken, refreshToken}){
+              return null
+            }
             const lastActiveDate = await this.tokensService.getLastActiveDateFromToken(refreshToken);
             const expirationDate = await this.tokensService.getExpirationDateFromRefreshToken(
               refreshToken,
@@ -33,7 +37,11 @@ export class LoginUseCase implements ICommandHandler<LoginCommand>{
               lastActiveDate,
               expirationDate,
             );
-            await this.usersDeviceRepository.addDeviceInfo(deviceInfoDto);
-            return { accessToken, refreshToken };
+            if(await this.usersDeviceRepository.addDeviceInfo(deviceInfoDto)){
+              return { accessToken, refreshToken };
+            } else {
+              return null
+            }
+            
           }
 }

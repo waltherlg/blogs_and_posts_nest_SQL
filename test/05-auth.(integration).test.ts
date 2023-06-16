@@ -89,44 +89,53 @@ export function testAuthOperations() {
       expect(user.isConfirmed).toBe(true);
     });
 
+    let accessToken: any;
+
     it('00-00 login = 204 login user', async () => {
       const createResponse = await request(app.getHttpServer())
         .post(`${endpoints.auth}/login`)
         .send(userTest.loginUser1)
         .expect(200);
-      // const createdResponse = createResponse.body;
-      // accessToken = createdResponse.accessToken;
-      // expect(createdResponse).toEqual({
-      //   accessToken: expect.any(String),
-      // });
-      // expect(createResponse.headers['set-cookie']).toBeDefined();
-      // const refreshTokenCookie = createResponse.headers['set-cookie']
-      //   .find((cookie) => cookie.startsWith('refreshToken='));
+      const createdResponse = createResponse.body;
+      accessToken = createdResponse.accessToken;
+      expect(createdResponse).toEqual({
+        accessToken: expect.any(String),
+      });
+      expect(createResponse.headers['set-cookie']).toBeDefined();
+      const refreshTokenCookie = createResponse.headers['set-cookie']
+        .find((cookie) => cookie.startsWith('refreshToken='));
     
-      // expect(refreshTokenCookie).toBeDefined();
-      // expect(refreshTokenCookie).toContain('HttpOnly');
-      // expect(refreshTokenCookie).toContain('Secure');
+      expect(refreshTokenCookie).toBeDefined();
+      expect(refreshTokenCookie).toContain('HttpOnly');
+      expect(refreshTokenCookie).toContain('Secure');
+    });
+
+    let userId1
+
+    it('get information of current user = 200 and login, email, id of userr', async () => {
+      const testsResponse = await request(app.getHttpServer())
+        .get(`${endpoints.auth}/me`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200);
+
+      const responseBody = testsResponse.body;
+      userId1 = responseBody.userId;
+
+      expect(responseBody).toEqual({
+        login: userTest.inputUser1.login,
+        email: userTest.inputUser1.email,
+        userId: expect.any(String),
+      });
     });
 
     
+
+    
     
 
-    let accessToken: any;
+    
 
-    // it('00-00 login = 204 login user', async () => {
-    //   const createResponse = await request(app.getHttpServer())
-    //     .post(`${endpoints.auth}/login`)
-    //     .send({
-    //       loginOrEmail: 'ruslan',
-    //       password: 'qwerty',
-    //     })
-    //     .expect(200);
-    //   const createdResponse = createResponse.body;
-    //   accessToken = createdResponse.accessToken;
-    //   expect(createdResponse).toEqual({
-    //     accessToken: expect.any(String),
-    //   });
-    // });
+
 
     
   });

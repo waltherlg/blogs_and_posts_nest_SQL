@@ -13,15 +13,27 @@ export class UsersQueryRepository {
   @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
   private dataSource: DataSource) {}
 
+  async getCurrentUserInfo(userId: string) {
+    const query = `
+    SELECT email, login, id AS "userId" 
+    FROM public."Users"
+    WHERE id=$1
+    LIMIT 1
+    `
+  const user = await this.dataSource.query(query, [userId])
+  return user[0]  
+  }
+
   async getUserById(userId): Promise<UserTypeOutput | null> {
 
     const query = `
     SELECT id, login, email, "createdAt"
     FROM public."Users"
     WHERE id=$1
+    LIMIT 1
     `
   const user = await this.dataSource.query(query, [userId])
-  return user  
+  return user[0]  
   }
   
 

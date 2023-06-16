@@ -154,7 +154,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async currentUserInfo(@Req() request) {
-    const currentUserInfo = await this.usersService.currentUserInfo(
+    const currentUserInfo = await this.usersQueryRepository.getCurrentUserInfo(
       request.user.userId,
     );
     if (!currentUserInfo) {

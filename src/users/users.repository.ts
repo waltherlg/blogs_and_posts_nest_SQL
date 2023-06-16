@@ -294,6 +294,17 @@ export class UsersRepository {
     return count > 0;
   }
 
+  async isUserIdExists(userId: string): Promise<boolean> {
+    const query = `
+      SELECT COUNT(*) AS count
+      FROM public."Users"
+      WHERE id = $1
+    `;
+    const result = await this.dataSource.query(query, [userId]);
+    const count = result[0].count;
+    return count > 0;
+  }
+
   async isPasswordRecoveryCodeExist(passwordRecoveryCode: string): Promise<boolean> {
     const query = `
       SELECT COUNT(*) AS count

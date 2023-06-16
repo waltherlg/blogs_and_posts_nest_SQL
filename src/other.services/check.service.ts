@@ -23,8 +23,8 @@ export class CheckService {
     return !!post;
   }
 
-  async isUserExist(userId): Promise<boolean> {
-    const user = await this.usersRepository.getUserDBTypeById(userId);
+  async isUserIdExists(userId): Promise<boolean> {
+    const user = await this.usersRepository.isUserIdExists(userId);
     return !!user;
   }
 

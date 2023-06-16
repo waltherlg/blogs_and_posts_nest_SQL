@@ -8,6 +8,7 @@ import { AuthService } from '../auth.service';
 import { CustomisableException } from '../../exceptions/custom.exceptions';
 import { CheckService } from '../../other.services/check.service';
 import { UsersDeviceService } from '../../usersDevices/users-devices.service';
+import { TokensService } from 'src/other.services/tokens.service';
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
@@ -16,6 +17,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
 ) {
   constructor(
     private readonly authService: AuthService,
+    private readonly tokensService: TokensService,
     private readonly checkService: CheckService,
     private readonly usersDeviceService: UsersDeviceService,
   ) {
@@ -45,10 +47,11 @@ export class RefreshTokenStrategy extends PassportStrategy(
     if (!deviceId) {
       throw new CustomisableException('no access', 'no device in cookies', 401);
     }
-    const isUserExist = await this.checkService.isUserExist(userId);
+    const isUserExist = await this.checkService.isUserIdExists(userId);
     if (!isUserExist) {
       throw new CustomisableException('no access', 'user not found', 401);
     }
+
     const currentDevise = await this.usersDeviceService.getCurrentDevise(
       userId,
       deviceId,
@@ -56,7 +59,9 @@ export class RefreshTokenStrategy extends PassportStrategy(
     if (!currentDevise) {
       throw new CustomisableException('no access', 'device not found', 401);
     }
-    const lastActiveRefreshToken = new Date(payload.iat * 1000).toISOString();
+    //await jwtService.getLastActiveDateFromRefreshToken(refreshToken)
+    const lastActiveRefreshToken = await this.tokensService.getLastActiveDateFromToken(refres)
+    //new Date(payload.iat * 1000).toISOString();
     if (lastActiveRefreshToken !== currentDevise.lastActiveDate) {
       throw new CustomisableException(
         'no access',

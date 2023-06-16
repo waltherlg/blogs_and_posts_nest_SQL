@@ -47,7 +47,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
     if (!deviceId) {
       throw new CustomisableException('no access', 'no device in cookies', 401);
     }
-    const isUserExist = await this.checkService.isUserIdExists(userId);
+    const isUserExist = await this.checkService.isUserIdExist(userId);
     if (!isUserExist) {
       throw new CustomisableException('no access', 'user not found', 401);
     }
@@ -59,10 +59,12 @@ export class RefreshTokenStrategy extends PassportStrategy(
     if (!currentDevise) {
       throw new CustomisableException('no access', 'device not found', 401);
     }
-    //await jwtService.getLastActiveDateFromRefreshToken(refreshToken)
-    const lastActiveRefreshToken = await this.tokensService.getLastActiveDateFromToken(refres)
-    //new Date(payload.iat * 1000).toISOString();
-    if (lastActiveRefreshToken !== currentDevise.lastActiveDate) {
+
+    const lastActiveRefreshToken = new Date(payload.iat * 1000);
+    console.log('lastActiveRefreshToken ', lastActiveRefreshToken);
+    console.log('currentDevise.lastActiveDate ', currentDevise.lastActiveDate);
+    
+    if (lastActiveRefreshToken.toISOString() !== currentDevise.lastActiveDate.toISOString()) {
       throw new CustomisableException(
         'no access',
         'the last active dates do not match',

@@ -294,7 +294,7 @@ export class UsersRepository {
     return count > 0;
   }
 
-  async isUserIdExists(userId: string): Promise<boolean> {
+  async isUserIdExist(userId: string): Promise<boolean> {
     const query = `
       SELECT COUNT(*) AS count
       FROM public."Users"

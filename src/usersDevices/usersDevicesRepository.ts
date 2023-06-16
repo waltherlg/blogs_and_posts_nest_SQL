@@ -38,17 +38,16 @@ export class UsersDevicesRepository {
     ])
     return result.rowCount > 0
   }
+
   async getDeviceByUsersAndDeviceId(userId: string, deviceId: string) {
-    if (!(Types.ObjectId.isValid(userId) && Types.ObjectId.isValid(deviceId))) {
-      return null;
-    }
-    const device = await this.usersDeviseModel.findOne({
-      $and: [{ _id: deviceId }, { userId: userId }],
-    });
-    if (!device) {
-      return null;
-    }
-    return device;
+    const query = `SELECT * FROM public."UserDevices"
+    WHERE id = $1 AND "userId" = $2
+    LIMIT 1`;
+    const result = await this.dataSource.query(query, [
+      deviceId,
+      userId,
+    ])
+    return result[0]
   }
   async refreshDeviceInfo(
     deviceId,

@@ -67,7 +67,7 @@ export class UsersController {
   @Put(':userId/ban')
   @HttpCode(204)
   async changeBanStatus(@Param('userId') userId: string, @Body()banDTO: BanUserInputModel){
-    if(!await this.checkService.isUserExist(userId)){
+    if(!await this.checkService.isUserIdExist(userId)){
       throw new CustomNotFoundException('user')
     }
     await this.commandBus.execute(new BanStatusChangeCommand(userId, banDTO))
@@ -90,7 +90,7 @@ export class UsersController {
   @Delete(':id')
   @HttpCode(204)
   async deleteUserById(@Param('id') userId: string) {
-    if (!(await this.checkService.isUserExist(userId))) {
+    if (!(await this.checkService.isUserIdExist(userId))) {
       throw new UserNotFoundException();
     }
     return await this.usersService.deleteUserById(userId);

@@ -81,6 +81,7 @@ import { RegisterationEmailResendingUseCase } from './auth/application/use-cases
 import { RegisterationConfirmaitonUseCase } from './auth/application/use-cases/registration-confirmation-use-case';
 import { TokensService } from './other.services/tokens.service';
 import { LoginUseCase } from './auth/application/use-cases/login-use-case';
+import { PasswordRecoveryEmailUseCase } from './auth/application/use-cases/password-recovery-via-email-use-case';
 const mongoUri = process.env.MONGO_URL;
 const emailUser = process.env.MAIL_USER;
 const emailPassword = process.env.MAIL_PASSWORD;
@@ -102,7 +103,9 @@ SaBanBlogUseCase,
 RegisterUserUseCase,
 RegisterationEmailResendingUseCase,
 RegisterationConfirmaitonUseCase,
-LoginUseCase,]
+LoginUseCase,
+PasswordRecoveryEmailUseCase,
+NewPasswordSetUseCa,]
 
 @Module({
   imports: [

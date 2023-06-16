@@ -112,7 +112,7 @@ export function testAuthOperations() {
 
     let userId1
 
-    it('get information of current user = 200 and login, email, id of userr', async () => {
+    it('get information of current user = 200 and login, email, id of user', async () => {
       const testsResponse = await request(app.getHttpServer())
         .get(`${endpoints.auth}/me`)
         .set('Authorization', `Bearer ${accessToken}`)
@@ -126,6 +126,19 @@ export function testAuthOperations() {
         email: userTest.inputUser1.email,
         userId: expect.any(String),
       });
+    });
+
+    it('password recovery via email = 204 and confirmUser', async () => {
+      await request(app.getHttpServer())
+        .post(`${endpoints.auth}/password-recovery`)
+        .send({email: userTest.inputUser1.email})
+        .expect(204);
+    });
+
+    it('check that password recovery data in user is prepared', async () => {
+      const user:UserDBType = await usersRepository.getLastCreatedUserDbType();      
+      expect(user.passwordRecoveryCode).not.toBe(null);
+      expect(user.expirationDateOfRecoveryCode).not.toBe(null);
     });
 
     

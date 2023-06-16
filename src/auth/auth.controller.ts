@@ -31,6 +31,7 @@ import { RegisterUserCommand } from './application/use-cases/register-user-use-c
 import { RegisterationEmailResendingCommand } from './application/use-cases/registration-email-resendig-use-case';
 import { RegisterationConfirmaitonCommand } from './application/use-cases/registration-confirmation-use-case';
 import { LoginCommand } from './application/use-cases/login-use-case';
+import { PasswordRecoveryViaEmailCommand } from './application/use-cases/password-recovery-via-email-use-case';
 export class RegistrationEmailResendingInput {
   @StringTrimNotEmpty()
   @MaxLength(100)
@@ -53,7 +54,7 @@ export class RegistrationConfirmationCodeInput {
   code: string;
 }
 
-export class NewPasswordSetInput {
+export class newPasswordSetInput {
   @StringTrimNotEmpty()
   @Length(6, 20)
   newPassword: string;
@@ -179,11 +180,11 @@ export class AuthController {
 
   @Post('password-recovery')
   @HttpCode(204)
-  async passwordRecovery(@Body() email: PasswordRecoveryEmailInput) {
-    if (!(await this.checkService.isEmailExist(email.email))) {
+  async passwordRecovery(@Body() passwordRecoveryDto: PasswordRecoveryEmailInput) {
+    if (!(await this.checkService.isEmailExist(passwordRecoveryDto.email))) {
       throw new CustomNotFoundException('email');
     }
-    const result = await this.authService.passwordRecovery(email.email);
+    const result = await this.commandBus.execute(new PasswordRecoveryViaEmailCommand(passwordRecoveryDto));
     if (!result) {
       throw new UnableException('password recovery');
     }
@@ -191,7 +192,7 @@ export class AuthController {
 
   @Post('new-password')
   @HttpCode(204)
-  async newPasswordSet(@Body() newPasswordDTO: NewPasswordSetInput) {
+  async newPasswordSet(@Body() newPasswordDTO: newPasswordSetInput) {
     if (
       !(await this.checkService.isRecoveryCodeExist(
         newPasswordDTO.recoveryCode,

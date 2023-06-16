@@ -87,25 +87,7 @@ export class AuthService {
     );
     return { accessToken, refreshToken };
   }
-  async passwordRecovery(email: string): Promise<boolean> {
-    const passwordRecoveryData = {
-      email: email,
-      passwordRecoveryCode: uuidv4(),
-      expirationDateOfRecoveryCode: add(new Date(), {
-        hours: 1,
-        //minutes: 3
-      }),
-    };
-    try {
-      await this.emailManager.sendPasswordRecoveryMessage(passwordRecoveryData);
-    } catch (e) {
-      return false;
-    }
-    const result = await this.usersRepository.addPasswordRecoveryData(
-      passwordRecoveryData,
-    );
-    return result;
-  }
+
   async newPasswordSet(newPasswordDTO): Promise<boolean> {
     const user = await this.usersRepository.getUserByPasswordRecoveryCode(
       newPasswordDTO.recoveryCode,

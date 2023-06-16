@@ -114,15 +114,23 @@ export class UsersRepository {
 
   async addPasswordRecoveryData(
     passwordRecoveryData: PasswordRecoveryModel,
-  ): Promise<boolean> {
-    const user = await this.userModel.findOne({
-      email: passwordRecoveryData.email,
-    });
-    user.passwordRecoveryCode = passwordRecoveryData.passwordRecoveryCode;
-    user.expirationDateOfRecoveryCode =
-      passwordRecoveryData.expirationDateOfRecoveryCode;
-    const result = user.save();
-    return !!result;
+  ): Promise<boolean> {    
+    
+    const query = `
+  UPDATE public."Users"
+  SET "passwordRecoveryCode" = $2, "expirationDateOfRecoveryCode" = $3
+  WHERE "email" = $1;
+  `;
+  try {
+    await this.dataSource.query(query, [
+      passwordRecoveryData.email,
+      passwordRecoveryData.passwordRecoveryCode,
+      passwordRecoveryData.expirationDateOfRecoveryCode
+    ]);
+    return true;
+  } catch (error) {
+    return false;
+  }
   }
 
   async newPasswordSet(_id: Types.ObjectId, passwordHash: string) {

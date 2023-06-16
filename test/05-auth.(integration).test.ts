@@ -135,10 +135,55 @@ export function testAuthOperations() {
         .expect(204);
     });
 
-    it('check that password recovery data in user is prepared', async () => {
-      const user:UserDBType = await usersRepository.getLastCreatedUserDbType();      
+    let passwordRecoveryCode: string
+    let passwordHash: string
+
+    it('check that password recovery data in user is prepared and get recovery code', async () => {
+      const user:UserDBType = await usersRepository.getLastCreatedUserDbType(); 
+      passwordRecoveryCode = user.passwordRecoveryCode 
+      passwordHash = user.passwordHash    
       expect(user.passwordRecoveryCode).not.toBe(null);
       expect(user.expirationDateOfRecoveryCode).not.toBe(null);
+    });
+
+    it('new password set = 204', async () => {
+      await request(app.getHttpServer())
+        .post(`${endpoints.auth}/new-password`)
+        .send({newPassword: 'qwerty1',
+               recoveryCode: passwordRecoveryCode})
+        .expect(204);
+    });
+
+    let newPasswordHash: string
+
+    it('check that password recovery in user is sucsess', async () => {
+      const user:UserDBType = await usersRepository.getLastCreatedUserDbType();  
+      newPasswordHash = user.passwordHash  
+      expect(user.passwordHash).not.toBe(passwordHash)
+      expect(user.passwordRecoveryCode).toBe(null);
+      expect(user.expirationDateOfRecoveryCode).toBe(null);
+    });
+
+    it('00-00 login = 204 login user with new password', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .post(`${endpoints.auth}/login`)
+        .send({
+          loginOrEmail: "user1",
+          password: "qwerty1"
+      })
+        .expect(200);
+      const createdResponse = createResponse.body;
+      accessToken = createdResponse.accessToken;
+      expect(createdResponse).toEqual({
+        accessToken: expect.any(String),
+      });
+      expect(createResponse.headers['set-cookie']).toBeDefined();
+      const refreshTokenCookie = createResponse.headers['set-cookie']
+        .find((cookie) => cookie.startsWith('refreshToken='));
+    
+      expect(refreshTokenCookie).toBeDefined();
+      expect(refreshTokenCookie).toContain('HttpOnly');
+      expect(refreshTokenCookie).toContain('Secure');
     });
 
     

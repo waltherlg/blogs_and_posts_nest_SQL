@@ -6,6 +6,7 @@ import { User, UserDocument } from './users.types';
 import { PasswordRecoveryModel } from '../auth/auth.types';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { log } from 'console';
+import { newPasswordSetInput } from 'src/auth/auth.controller';
 
 @Injectable()
 export class UsersRepository {
@@ -133,22 +134,33 @@ export class UsersRepository {
   }
   }
 
-  async newPasswordSet(_id: Types.ObjectId, passwordHash: string) {
-    if (!Types.ObjectId.isValid(_id)) {
-      return null;
-    }
-    const user = await this.userModel.findById(_id);
-    const result = await this.userModel.updateOne(
-      { _id: _id },
-      {
-        $set: {
-          passwordHash: passwordHash,
-          passwordRecoveryCode: null,
-          expirationDateOfRecoveryCode: null,
-        },
-      },
-    );
-    return result.modifiedCount === 1;
+  async isPasswordRecoveryCodeExistAndNotExpired(confirmationCode:string): Promise<boolean>{
+    const query = `
+    SELECT COUNT(*) AS count
+    FROM public."Users"
+    WHERE "passwordRecoveryCode" = $1
+    AND "expirationDateOfRecoveryCode" > NOW()
+  `;
+  const result = await this.dataSource.query(query, [confirmationCode]);
+  const count = result[0].count;
+  return count > 0;
+  }
+
+  async newPasswordSet(recoveryCode: string, newPasswordHash: string): Promise<boolean> {    
+    const query = `
+  UPDATE public."Users"
+  SET "passwordHash" = $2, "passwordRecoveryCode" = null, "expirationDateOfRecoveryCode" = null
+  WHERE "passwordRecoveryCode" = $1;
+  `;
+  try {
+    await this.dataSource.query(query, [
+      recoveryCode,
+      newPasswordHash
+    ]);
+    return true;
+  } catch (error) {
+    return false;
+  }
   }
 
   async createCommentsLikeObject(

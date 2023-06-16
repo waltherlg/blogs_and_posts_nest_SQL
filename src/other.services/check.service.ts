@@ -48,8 +48,8 @@ export class CheckService {
     return !!emailExist;
   }
 
-  async isRecoveryCodeExist(code: string): Promise<boolean> {
-    const isExist = await this.usersRepository.isPasswordRecoveryCodeExist(
+  async isPasswordRecoveryCodeExistAndNotExpired(code: string): Promise<boolean> {
+    const isExist = await this.usersRepository.isPasswordRecoveryCodeExistAndNotExpired(
       code,
     );
     return !!isExist;

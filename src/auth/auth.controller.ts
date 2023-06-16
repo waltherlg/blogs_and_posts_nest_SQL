@@ -32,6 +32,7 @@ import { RegisterationEmailResendingCommand } from './application/use-cases/regi
 import { RegisterationConfirmaitonCommand } from './application/use-cases/registration-confirmation-use-case';
 import { LoginCommand } from './application/use-cases/login-use-case';
 import { PasswordRecoveryViaEmailCommand } from './application/use-cases/password-recovery-via-email-use-case';
+import { NewPasswordSetCommand } from './application/use-cases/new-password-set-use-case';
 export class RegistrationEmailResendingInput {
   @StringTrimNotEmpty()
   @MaxLength(100)
@@ -194,18 +195,18 @@ export class AuthController {
   @HttpCode(204)
   async newPasswordSet(@Body() newPasswordDTO: newPasswordSetInput) {
     if (
-      !(await this.checkService.isRecoveryCodeExist(
+      !(await this.checkService.isPasswordRecoveryCodeExistAndNotExpired(
         newPasswordDTO.recoveryCode,
       ))
     ) {
       throw new CustomisableException(
         'recoveryCode',
-        'recovery code incorrect',
+        'recovery code incorrect, or expired',
         400,
       );
     }
-    const result = await this.authService.newPasswordSet(newPasswordDTO);
-    if (!result) {
+    const result: boolean = await this.commandBus.execute(new NewPasswordSetCommand(newPasswordDTO));
+       if (!result) {
       throw new UnableException('password change');
     }
   }

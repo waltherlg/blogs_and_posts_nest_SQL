@@ -54,15 +54,22 @@ export class UsersDevicesRepository {
     lastActiveDate,
     expirationDate,
   ): Promise<boolean> {
-    if (!Types.ObjectId.isValid(deviceId)) {
+
+    const query = `UPDATE public."UserDevices"
+    SET "lastActiveDate" = $2, "expirationDate" = $3
+    WHERE id = $1 `
+    try {
+      await this.dataSource.query(query, [
+        deviceId,
+        lastActiveDate,
+        expirationDate
+      ]);
+      return true;
+    } catch (error) {
       return false;
     }
-    const userDevice = await this.usersDeviseModel.findById(deviceId);
-    userDevice.lastActiveDate = lastActiveDate;
-    userDevice.expirationDate = expirationDate;
-    const result = userDevice.save();
-    return !!result;
   }
+
   async getActiveUserDevices(userId: string) {
     console.log('userId ', userId);
     if (!Types.ObjectId.isValid(userId)) {

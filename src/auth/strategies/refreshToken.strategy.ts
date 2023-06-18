@@ -61,8 +61,6 @@ export class RefreshTokenStrategy extends PassportStrategy(
     }
 
     const lastActiveRefreshToken = new Date(payload.iat * 1000);
-    console.log('lastActiveRefreshToken ', lastActiveRefreshToken);
-    console.log('currentDevise.lastActiveDate ', currentDevise.lastActiveDate);
     
     if (lastActiveRefreshToken.toISOString() !== currentDevise.lastActiveDate.toISOString()) {
       throw new CustomisableException(

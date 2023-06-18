@@ -33,6 +33,7 @@ import { RegisterationConfirmaitonCommand } from './application/use-cases/regist
 import { LoginCommand } from './application/use-cases/login-use-case';
 import { PasswordRecoveryViaEmailCommand } from './application/use-cases/password-recovery-via-email-use-case';
 import { NewPasswordSetCommand } from './application/use-cases/new-password-set-use-case';
+import { RefreshTokenCommand } from './application/use-cases/refresh-token-use-case';
 export class RegistrationEmailResendingInput {
   @StringTrimNotEmpty()
   @MaxLength(100)
@@ -169,10 +170,11 @@ export class AuthController {
   @Post('refresh-token')
   async refreshToken(@Req() request, @Res({ passthrough: true }) response) {
     const { accessToken, refreshToken } =
-      await this.authService.refreshingToken(
+      await this.commandBus.execute(new RefreshTokenCommand(
         request.user.userId,
         request.user.deviceId,
-      );
+      ));
+     // 
     response
       .status(200)
       .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })

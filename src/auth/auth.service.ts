@@ -71,22 +71,22 @@ export class AuthService {
 
 
 
-  async refreshingToken(userId, deviceId) {
-    const { accessToken, refreshToken } = await this.tokensService.createTokens(
-      userId,
-      deviceId.toString(),
-    );
-    const lastActiveDate = await this.tokensService.getLastActiveDateFromToken(refreshToken);
-    const expirationDate = await this.tokensService.getExpirationDateFromRefreshToken(
-      refreshToken,
-    );
-    await this.usersDeviceRepository.refreshDeviceInfo(
-      deviceId,
-      lastActiveDate,
-      expirationDate,
-    );
-    return { accessToken, refreshToken };
-  }
+  // async refreshingToken(userId, deviceId) {
+  //   const { accessToken, refreshToken } = await this.tokensService.createTokens(
+  //     userId,
+  //     deviceId.toString(),
+  //   );
+  //   const lastActiveDate = await this.tokensService.getLastActiveDateFromToken(refreshToken);
+  //   const expirationDate = await this.tokensService.getExpirationDateFromRefreshToken(
+  //     refreshToken,
+  //   );
+  //   await this.usersDeviceRepository.refreshDeviceInfo(
+  //     deviceId,
+  //     lastActiveDate,
+  //     expirationDate,
+  //   );
+  //   return { accessToken, refreshToken };
+  // }
 
   async newPasswordSet(newPasswordDTO): Promise<boolean> {
     const user = await this.usersRepository.getUserByPasswordRecoveryCode(

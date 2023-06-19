@@ -81,8 +81,8 @@ export class UsersController {
   }
   
   @Post()
-  async createUser(@Body() userCreateInputModel: CreateUserInputModelType) {
-    const newUsersId = await this.usersService.createUser(userCreateInputModel);
+  async createUser(@Body() userCreateInputDto: CreateUserInputModelType) {
+    const newUsersId = await this.commandBus.execute(new CreateUserCommand(userCreateInputDto)) 
     const user = await this.usersQueryRepository.getUserById(newUsersId);
     return user;
   }

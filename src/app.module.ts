@@ -85,6 +85,7 @@ import { PasswordRecoveryEmailUseCase } from './auth/application/use-cases/passw
 import { NewPasswordSetUseCase } from './auth/application/use-cases/new-password-set-use-case';
 import { RefreshTokenUseCase } from './auth/application/use-cases/refresh-token-use-case';
 import { LogoutUseCase } from './auth/application/use-cases/logout-use-case';
+import { CreateUserUseCase } from './users/use-cases/create-user-use-case';
 const mongoUri = process.env.MONGO_URL;
 const emailUser = process.env.MAIL_USER;
 const emailPassword = process.env.MAIL_PASSWORD;
@@ -110,7 +111,8 @@ LoginUseCase,
 PasswordRecoveryEmailUseCase,
 NewPasswordSetUseCase,
 RefreshTokenUseCase,
-LogoutUseCase,]
+LogoutUseCase,
+CreateUserUseCase,]
 
 @Module({
   imports: [

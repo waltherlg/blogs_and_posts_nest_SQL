@@ -8,12 +8,12 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BanUserInputModel } from '../sa.users.controller';
 
 
-export class BanStatusChangeCommand {
+export class UserBanStatusChangeCommand {
     constructor(public userId, public banDto: BanUserInputModel){}
 }
 
-@CommandHandler(BanStatusChangeCommand)
-export class BanStatusChangeUseCase implements ICommandHandler<BanStatusChangeCommand>{
+@CommandHandler(UserBanStatusChangeCommand)
+export class UserBanStatusChangeUseCase implements ICommandHandler<UserBanStatusChangeCommand>{
     constructor(
         private readonly usersRepository: UsersRepository,
         private readonly usersDevicesRepository: UsersDevicesRepository,
@@ -21,45 +21,29 @@ export class BanStatusChangeUseCase implements ICommandHandler<BanStatusChangeCo
         private readonly postsRepository: PostsRepository,
         private readonly commentsRepository: CommentsRepository,){}
 
-        async execute(command: BanStatusChangeCommand): Promise<boolean>{
-            const userId = command.userId
-            const isBanned = command.banDto.isBanned
+        async execute(command: UserBanStatusChangeCommand): Promise<boolean>{
 
-            const user = await this.usersRepository.getUserDBTypeById(userId)
-            
-            if(user.isBanned === isBanned){
+            const userId = command.userId
+            const newBanStatus = command.banDto.isBanned
+            const banReason = command.banDto.banReason
+
+            const isUserAlreadyBanned = await this.usersRepository.isUserBanned(command.userId)
+            if(isUserAlreadyBanned === newBanStatus){
                 return
             }
-            if(isBanned === true){
-                user.isBanned = true
-                user.banReason = command.banDto.banReason
-                user.banDate = new Date().toISOString()
-                await this.usersDevicesRepository.deleteAllUserDevicesById(userId)
+            const userBanDto = {
+                userId: userId,
+                isBanned: false,
+                banReason: null,
+                banDate: null,
             }
-            if(isBanned === false){
-                user.isBanned = false
-                user.banReason = null
-                user.banDate = null
+            if(newBanStatus === true){
+                userBanDto.isBanned = true
+                userBanDto.banReason = banReason
+                userBanDto.banDate = new Date()
             }
-            
-            const userBanResult = await this.usersRepository.saveUser(user)
-
-            const postsBanResult = await this.postsRepository.setBanStatusForPosts(userId, isBanned)
-
-            const commentBanResult = await this.commentsRepository.setBanStatusForComments(userId, isBanned)
-
-            if (userBanResult && postsBanResult && commentBanResult){
-                return true
-            } else return false
-
-            
-
-
-
-
-
-            
-
-            
+        
+          const isBanStatusChanged = await this.usersRepository.changeUserBanStatus(userBanDto)
+          return isBanStatusChanged          
         }
 }

@@ -93,4 +93,9 @@ export class CheckService {
       return true
     }
   }
+
+  async isUserBanned(userId: string): Promise<boolean>{
+    const isBanned = await this.usersRepository.isUserBanned(userId)
+    return isBanned
+  }
 }

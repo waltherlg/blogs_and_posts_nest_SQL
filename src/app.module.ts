@@ -69,7 +69,7 @@ import { UpdatePostByIdFromBloggerControllerUseCase } from './blogs/application/
 import { DeleteBlogByIdFromUriUseCase } from './blogs/application/use-cases/blogger-delete-blog-by-id-use-case';
 import { CreatePostFromBloggerControllerUseCase } from './blogs/application/use-cases/blogger-create-post-from-blogs-controller-use-case';
 import { DeletePostByIdFromUriUseCase } from './blogs/application/use-cases/blogger-delete-post-by-id-use-case';
-import { BanStatusChangeUseCase } from './users/use-cases/ban-status-change-use-case';
+import { UserBanStatusChangeUseCase } from './users/use-cases/ban-status-change-use-case';
 import { BanUserForSpecificBlogUseCase } from './blogs/application/use-cases/blogger-ban-user-for-blog-use-case';
 import { BloggerUsersController } from './users/blogger.users.controller';
 import { CreateCommentForSpecificPostUseCase } from './posts/use-cases/create-comment-for-specific-post-use-case';
@@ -101,7 +101,7 @@ UpdatePostByIdFromBloggerControllerUseCase,
 DeleteBlogByIdFromUriUseCase,
 DeletePostByIdFromUriUseCase,
 CreateCommentForSpecificPostUseCase,
-BanStatusChangeUseCase,
+UserBanStatusChangeUseCase,
 BanUserForSpecificBlogUseCase,
 SaBanBlogUseCase,
 RegisterUserUseCase,

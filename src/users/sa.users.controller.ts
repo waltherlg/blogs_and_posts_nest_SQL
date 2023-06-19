@@ -32,7 +32,8 @@ import { CustomNotFoundException, UserNotFoundException } from '../exceptions/cu
 import { BasicAuthGuard } from '../auth/guards/auth.guards';
 import { StringTrimNotEmpty } from '../middlewares/validators';
 import { CommandBus } from '@nestjs/cqrs';
-import { BanStatusChangeCommand } from './use-cases/ban-status-change-use-case';
+import { UserBanStatusChangeCommand } from './use-cases/ban-status-change-use-case';
+import { CreateUserCommand } from './use-cases/create-user-use-case';
 export class CreateUserInputModelType {
   @StringTrimNotEmpty()
   @Length(3, 10)
@@ -70,7 +71,7 @@ export class UsersController {
     if(!await this.checkService.isUserIdExist(userId)){
       throw new CustomNotFoundException('user')
     }
-    await this.commandBus.execute(new BanStatusChangeCommand(userId, banDTO))
+    await this.commandBus.execute(new UserBanStatusChangeCommand(userId, banDTO))
   }
 
     //add all, banned, not banned in query params

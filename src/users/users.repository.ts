@@ -1,3 +1,4 @@
+import { Query } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -81,10 +82,12 @@ export class UsersRepository {
   }
 
   async deleteUserById(userId: string): Promise<boolean> {
-    if (!Types.ObjectId.isValid(userId)) {
-      return false;
-    }
-    return this.userModel.findByIdAndDelete(userId);
+    const query = `
+    DELETE FROM public."Users"
+    WHERE is = $1
+    `
+    const result = await this.dataSource.query(query, [userId]);
+    return result.rowCount > 0;   
   }
 
   async getUserDBTypeById(userId): Promise<UserDocument | null> {
@@ -258,6 +261,26 @@ export class UsersRepository {
     }
   }
 
+  async changeUserBanStatus(userBanDto): Promise<boolean> {
+    const query = `
+    UPDATE public."Users"
+    SET "isBanned" = $2, "banDate" = $3, "banReason" = $4, 
+    WHERE id = $1;
+    `
+    try {
+      await this.dataSource.query(query, [
+        userBanDto.userId,
+        userBanDto.isBanned,
+        userBanDto.banDate,
+        userBanDto.banReason
+      ]);
+      return true;
+    } catch (error) {
+      return false;
+    }
+
+  }
+
   async isEmailExists(email: string): Promise<boolean> {
     const query = `
       SELECT COUNT(*) AS count
@@ -339,8 +362,18 @@ export class UsersRepository {
     const isConfirmed = result[0].isConfirmed;
     return isConfirmed;
   }
-  return false;
-    
+  return false;   
+  }
+
+  async isUserBanned(userId): Promise<boolean>{
+    const query = `
+    SELECT "isBanned"
+    FROM public."Users"
+    WHERE id=$1
+    LIMIT 1
+    `
+    const isBanned = await this.dataSource.query(query, [userId]);
+    return isBanned[0]
   }
 
   async getConfirmationCodeOfLastCreatedUser(){

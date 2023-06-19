@@ -76,9 +76,7 @@ export class UsersRepository {
     WHERE email = $1 OR login = $1
     LIMIT 1
   `;
-  const result = await this.dataSource.query(query, [loginOrEmail]);
-  console.log('getUserForLoginByLoginOrEmail result[0]', result[0]);
-  
+  const result = await this.dataSource.query(query, [loginOrEmail]); 
   return result[0];
   }
 
@@ -337,7 +335,6 @@ export class UsersRepository {
     LIMIT 1
     `
   const result = await this.dataSource.query(query, [email]);
-  console.log(result[0])
   if (result.length > 0) {
     const isConfirmed = result[0].isConfirmed;
     return isConfirmed;
@@ -345,16 +342,6 @@ export class UsersRepository {
   return false;
     
   }
-
-  async getUserByPasswordRecoveryCode(code: string) {
-    const user: UserDocument = await this.userModel.findOne({
-      passwordRecoveryCode: code,
-    });
-    if (!user) {
-      return null;
-    }
-    return user;
-  };
 
   async getConfirmationCodeOfLastCreatedUser(){
     const result = await this.dataSource.query(`SELECT "confirmationCode"

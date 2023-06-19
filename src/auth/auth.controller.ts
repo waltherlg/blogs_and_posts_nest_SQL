@@ -34,6 +34,7 @@ import { LoginCommand } from './application/use-cases/login-use-case';
 import { PasswordRecoveryViaEmailCommand } from './application/use-cases/password-recovery-via-email-use-case';
 import { NewPasswordSetCommand } from './application/use-cases/new-password-set-use-case';
 import { RefreshTokenCommand } from './application/use-cases/refresh-token-use-case';
+import { LogoutCommand } from './application/use-cases/logout-use-case';
 export class RegistrationEmailResendingInput {
   @StringTrimNotEmpty()
   @MaxLength(100)
@@ -137,7 +138,6 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Req() request, @Res({ passthrough: true }) response) {
-    console.log('local str is ok');
     
     const { accessToken, refreshToken } = await this.commandBus.execute(new LoginCommand(
       request.user.userId,
@@ -217,10 +217,10 @@ export class AuthController {
   @Post('logout')
   @HttpCode(204)
   async logout(@Req() request, @Res({ passthrough: true }) response) {
-    const isLogout = await this.authService.logout(request.user);
+    const isLogout = await this.commandBus.execute(new LogoutCommand(request.user));
     if (isLogout) {
       response
-        .cookie('refreshToken', '', { httpOnly: true, secure: true })
+        .cookie('refreshToken', '')
         .sendStatus(204);
     } else {
       throw new CustomisableException('logout', 'logout error', 400);

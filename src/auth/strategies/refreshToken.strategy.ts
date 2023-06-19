@@ -26,7 +26,6 @@ export class RefreshTokenStrategy extends PassportStrategy(
       passReqToCallback: true,
       secretOrKey: settings.JWT_SECRET,
       jwtFromRequest: (req: Request) => {
-        console.log('req.cookies ', req.cookies);
         if (req && req.cookies) {
           return req.cookies['refreshToken'];
         }
@@ -35,7 +34,6 @@ export class RefreshTokenStrategy extends PassportStrategy(
     });
   }
   async validate(request: Request, payload: any) {
-    console.log(payload);
     if (!payload) {
       throw new UnauthorizedException();
     }

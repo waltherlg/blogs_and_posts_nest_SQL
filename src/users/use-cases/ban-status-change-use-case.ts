@@ -41,6 +41,7 @@ export class UserBanStatusChangeUseCase implements ICommandHandler<UserBanStatus
                 userBanDto.isBanned = true
                 userBanDto.banReason = banReason
                 userBanDto.banDate = new Date()
+                await this.usersDevicesRepository.deleteAllUserDevicesById(userId)
             }
         
           const isBanStatusChanged = await this.usersRepository.changeUserBanStatus(userBanDto)

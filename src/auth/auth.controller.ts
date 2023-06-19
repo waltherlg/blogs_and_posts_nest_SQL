@@ -35,6 +35,7 @@ import { PasswordRecoveryViaEmailCommand } from './application/use-cases/passwor
 import { NewPasswordSetCommand } from './application/use-cases/new-password-set-use-case';
 import { RefreshTokenCommand } from './application/use-cases/refresh-token-use-case';
 import { LogoutCommand } from './application/use-cases/logout-use-case';
+import { Request } from 'express';
 export class RegistrationEmailResendingInput {
   @StringTrimNotEmpty()
   @MaxLength(100)
@@ -169,12 +170,15 @@ export class AuthController {
   @UseGuards(RefreshTokenGuard)
   @Post('refresh-token')
   async refreshToken(@Req() request, @Res({ passthrough: true }) response) {
+    console.log('auth-controller cookie', request.cookies)
     const { accessToken, refreshToken } =
       await this.commandBus.execute(new RefreshTokenCommand(
         request.user.userId,
         request.user.deviceId,
       ));
-     // 
+     
+
+      console.log('auth - out', refreshToken)
     response
       .status(200)
       .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })

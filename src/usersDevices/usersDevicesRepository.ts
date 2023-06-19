@@ -110,11 +110,12 @@ export class UsersDevicesRepository {
     }
     return userDevice;
   }
-  async deleteAllUserDevicesById(userId: string) {
-    if (!Types.ObjectId.isValid(userId)) {
-      return false;
-    }
-    const result = await this.usersDeviseModel.deleteMany({userId: userId});
-    return !!result
+  async deleteAllUserDevicesById(userId: string): Promise<boolean> {
+    const query = `   
+    DELETE FROM public."UserDevices"
+    WHERE userId = $1
+    `
+    const result = await this.dataSource.query(query, [userId]);
+    return result.rowCount > 0; 
   }
 }

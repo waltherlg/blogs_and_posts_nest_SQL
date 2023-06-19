@@ -8,8 +8,16 @@ import { userTest } from './helpers/inputAndOutputObjects/usersObjects';
 import { UsersRepository } from 'src/users/users.repository';
 import { UserDBType } from 'src/users/users.types';
 import { addAppSettings } from 'src/helpers/helpers';
+
+const delay = async (ms: number) => {
+  return new Promise<void>((resolve, reject) => {
+    setTimeout(() => {
+      resolve()
+    }, ms)
+  })
+}
 export function testAuthOperations() {
-  describe('andpoints of auth.controller (e2e)', () => {
+    describe('andpoints of auth.controller (e2e)', () => {
     let usersRepository: UsersRepository;
     let app: INestApplication;
 
@@ -166,55 +174,65 @@ export function testAuthOperations() {
       expect(user.expirationDateOfRecoveryCode).toBe(null);
     });
 
-    let refreshTokenCookie
+    describe('refresh-token', () => {
 
-    it('00-00 login = 204 login user with new password', async () => {
-      const createResponse = await request(app.getHttpServer())
-        .post(`${endpoints.auth}/login`)
-        .send({
-          loginOrEmail: "user1",
-          password: "qwerty1"
-      })
-        .expect(200);
-      const createdResponse = createResponse.body;
-      accessToken = createdResponse.accessToken;
-      expect(createdResponse).toEqual({
-        accessToken: expect.any(String),
-      });
-      expect(createResponse.headers['set-cookie']).toBeDefined();
-      refreshTokenCookie = createResponse.headers['set-cookie']   
-        .find((cookie) => cookie.startsWith('refreshToken='));
-    
-      expect(refreshTokenCookie).toBeDefined();
-      expect(refreshTokenCookie).toContain('HttpOnly');
-      expect(refreshTokenCookie).toContain('Secure');
-      console.log('refreshTokenCookie ', refreshTokenCookie);
-    });
-    
-    let refreshTokenCookie2
+      let refreshTokenCookie
+      let refreshTokenCookie2
 
-    it('00-00 refresh-token = 200 should get new access and refresh token', async () => {
-      console.log('refreshTokenCookie ', refreshTokenCookie);
-      const createResponse = await request(app.getHttpServer())
-        .post(`${endpoints.auth}/refresh-token`)
-        .set('Cookie', refreshTokenCookie)
-        .expect(200);
-       
-      const createdResponse = createResponse.body;
-      accessToken = createdResponse.accessToken;
-      expect(createdResponse).toEqual({
-        accessToken: expect.any(String),
-      });
-      expect(createResponse.headers['set-cookie']).toBeDefined();
-      refreshTokenCookie2 = createResponse.headers['set-cookie']
+      it('00-00 login = 204 login user with new password', async () => {
+        const createResponse = await request(app.getHttpServer())
+          .post(`${endpoints.auth}/login`)
+          .send({
+            loginOrEmail: "user1",
+            password: "qwerty1"
+        })
+          .expect(200);
+        const createdResponse = createResponse.body;
+        //accessToken = createdResponse.accessToken;
+        expect(createdResponse).toEqual({
+          accessToken: expect.any(String),
+        });
+        expect(createResponse.headers['set-cookie']).toBeDefined();
+  
+        refreshTokenCookie = createResponse.headers['set-cookie']   
+          .find((cookie) => cookie.startsWith('refreshToken='));
       
-      .find((cookie) => cookie.startsWith('refreshToken='));
+        expect(refreshTokenCookie).toBeDefined();
+        expect(refreshTokenCookie).toContain('HttpOnly');
+        expect(refreshTokenCookie).toContain('Secure');
         console.log('refreshTokenCookie ', refreshTokenCookie);
-      expect(refreshTokenCookie2).toBeDefined();
-      expect(refreshTokenCookie2).toContain('HttpOnly');
-      expect(refreshTokenCookie2).toContain('Secure');
+      });
+      
+      
+  
+      it('00-00 refresh-token = 200 should get new access and refresh token', async () => {
+      //await delay(1000)
+        console.log('refreshTokenCookie ', refreshTokenCookie);
+        const createResponse = await request(app.getHttpServer())
+          .post(`${endpoints.auth}/refresh-token`)
+          .set('Cookie', refreshTokenCookie)
+          .expect(200);
+         
+        const createdResponse = createResponse.body;
+       // accessToken = createdResponse.accessToken;
+        expect(createdResponse).toEqual({
+          accessToken: expect.any(String),
+        });
+        expect(createResponse.headers['set-cookie']).toBeDefined();
+        
+        console.log('after upd', createResponse.headers['set-cookie'])
+  
+       refreshTokenCookie2 = createResponse.headers['set-cookie'] 
+        .find((cookie) => cookie.startsWith('refreshToken='));
+  
+        console.log('refreshTokenCookie2 ', refreshTokenCookie2);
+        expect(refreshTokenCookie2).toBeDefined();
+        expect(refreshTokenCookie2).toContain('HttpOnly');
+        expect(refreshTokenCookie2).toContain('Secure');
+        expect(refreshTokenCookie2).not.toBe(refreshTokenCookie);     
+      });   
+    })
 
-      expect(refreshTokenCookie2).not.toBe(refreshTokenCookie);
-    });   
   });
 }
+

@@ -84,7 +84,7 @@ export class UsersRepository {
   async deleteUserById(userId: string): Promise<boolean> {
     const query = `
     DELETE FROM public."Users"
-    WHERE is = $1
+    WHERE id = $1
     `
     const result = await this.dataSource.query(query, [userId]);
     return result.rowCount > 0;   

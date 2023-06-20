@@ -37,51 +37,62 @@ export class UsersQueryRepository {
   }
   
 
-  async getAllUsers(
-    mergedQueryParams,
-  ): Promise<PaginationOutputModel<UserTypeOutput>> {
-
-
-    //let usersCount = await usersCollection.countDocuments({})
-
-const query = {
-  $or: [
-    { login: new RegExp(mergedQueryParams.searchLoginTerm, 'gi') },
-    { email: new RegExp(mergedQueryParams.searchEmailTerm, 'gi') },
-  ],
-};
-
-if (mergedQueryParams.banStatus === 'banned') {
-  query['isBanned'] = true;
-} else if (mergedQueryParams.banStatus === 'notBanned') {
-  query['isBanned'] = false;
-}
-    const usersCount = await this.userModel.countDocuments(query);
-
-
-const users = await this.userModel.find(query)
-.sort({
-        [mergedQueryParams.sortBy]: this.sortByDesc(
-          mergedQueryParams.sortDirection,
-        ),
-      })
-      .skip(
-        this.skipPage(mergedQueryParams.pageNumber, mergedQueryParams.pageSize),
-      )
-      .limit(+mergedQueryParams.pageSize);
-
+  async getAllUsers(mergedQueryParams): Promise<PaginationOutputModel<UserTypeOutput>> {
+    const searchLoginTerm = `%${mergedQueryParams.searchLoginTerm}%`;
+    const searchEmailTerm = `%${mergedQueryParams.searchEmailTerm}%`;
+    const banStatus = mergedQueryParams.banStatus;
+    const sortBy = mergedQueryParams.sortBy;
+    const sortDirection = mergedQueryParams.sortDirection;
+    const pageNumber = +mergedQueryParams.pageNumber;
+    const pageSize = +mergedQueryParams.pageSize;
+  
+    const query = `
+      SELECT id, login, email, "isBanned", "banDate", "banReason"
+      FROM public."Users"
+      WHERE (login ILIKE $1 OR email ILIKE $2)
+      AND ($3 = 'all' OR "isBanned" = ($3 = 'banned'))
+      ORDER BY $4, $5
+      LIMIT $6 OFFSET $7
+    `;
+  
+    const queryParams = [
+      `%${searchLoginTerm}%`,
+      `%${searchEmailTerm}%`,
+      banStatus,
+      sortBy,
+      sortDirection,
+      pageSize,
+      (pageNumber - 1) * pageSize,
+      
+    ];
+  
+    const users = await this.dataSource.query(query, queryParams);
+    const usersCount = users.length; // Вместо countDocuments() в SQL мы просто получаем все записи
+    console.log(users)
+  
     const outUsers = users.map((user) => {
-      return user.prepareUserForOutput();
+      return {
+        id: user.id,
+        login: user.login,
+        email: user.email,
+        banInfo: {
+          isBanned: user.isBanned,
+          banDate: user.banDate,
+          banReason: user.banReason,
+        },
+      };
     });
-    const pageCount = Math.ceil(usersCount / +mergedQueryParams.pageSize);
-
+  
+    const pageCount = Math.ceil(usersCount / pageSize);
+  
     const outputUsers: PaginationOutputModel<UserTypeOutput> = {
       pagesCount: pageCount,
-      page: +mergedQueryParams.pageNumber,
-      pageSize: +mergedQueryParams.pageSize,
+      page: pageNumber,
+      pageSize: pageSize,
       totalCount: usersCount,
       items: outUsers,
     };
+  
     return outputUsers;
   }
 

@@ -81,35 +81,35 @@ export let testUser = {
 }
 
 export let testUserPag = {
-  inputUserAaa: {
-    login: 'aaauser',
+  inputUseraaabbbccc: {
+    login: 'aaabbbccc',
     password: 'qwerty',
-    email: 'ruslan@gmail-aaa.com',
+    email: 'dddddd@gemeil.com',
   },
-  inputUserBbb: {
-    login: 'bbbuser',
+  inputUsereeefffggg: {
+    login: 'eeefffggg',
     password: 'qwerty',
-    email: 'ruslan@gmail-bbb.com',
+    email: 'hhhhhh@gemeil.com',
   },
-  inputUserCcc: {
-    login: 'cccuser',
+  inputUseriiijjjkkk: {
+    login: 'iiijjjkkk',
     password: 'qwerty',
-    email: 'ruslan@gmail-ccc.com',
+    email: 'llllll@gemeil.com',
   },
-  inputUserDdd: {
-    login: 'ddduser',
+  inputUsermmmnnnooo: {
+    login: 'mmmnnnooo',
     password: 'qwerty',
-    email: 'ruslan@gmail-ddd.com',
+    email: 'pppppp@gemeil.com',
   },
-  inputUserEee: {
-    login: 'eeeuser',
+  inputUserqqqrrrsss: {
+    login: 'qqqrrrsss',
     password: 'qwerty',
-    email: 'ruslan@gmail-eee.com',
+    email: 'tttttt@gemeil.com',
   },
-  outputUserAaa:{
+  outputUseraaabbbccc:{
     id: expect.any(String),
-    login: 'useraaa',
-    email: 'ruslan@gmail-aaa.com',
+    login: 'aaabbbccc',
+    email: 'dddddd@gemeil.com',
     createdAt: expect.any(String),
     banInfo: {
       isBanned: false,
@@ -117,10 +117,10 @@ export let testUserPag = {
       banReason: null
     }
   },
-  outputUserBbb:{
+  outputUsereeefffggg:{
     id: expect.any(String),
-    login: 'userbbb',
-    email: 'ruslan@gmail-bbb.com',
+    login: 'eeefffggg',
+    email: 'hhhhhh@gemeil.com',
     createdAt: expect.any(String),
     banInfo: {
       isBanned: false,
@@ -128,10 +128,10 @@ export let testUserPag = {
       banReason: null
     }
   },
-  outputUserCcc:{
+  outputUseriiijjjkkk:{
     id: expect.any(String),
-    login: 'userccc',
-    email: 'ruslan@gmail-ccc.com',
+    login: 'iiijjjkkk',
+    email: 'llllll@gemeil.com',
     createdAt: expect.any(String),
     banInfo: {
       isBanned: false,
@@ -139,10 +139,10 @@ export let testUserPag = {
       banReason: null
     }
   },
-  outputUserDdd:{
+  outputUsermmmnnnooo:{
     id: expect.any(String),
-    login: 'userddd',
-    email: 'ruslan@gmail-ddd.com',
+    login: 'mmmnnnooo',
+    email: 'pppppp@gemeil.com',
     createdAt: expect.any(String),
     banInfo: {
       isBanned: false,
@@ -150,10 +150,10 @@ export let testUserPag = {
       banReason: null
     }
   },
-  outputUserEee:{
+  outputUserqqqrrrsss:{
     id: expect.any(String),
-    login: 'usereee',
-    email: 'ruslan@gmail-eee.com',
+    login: 'qqqrrrsss',
+    email: 'tttttt@gemeil.com',
     createdAt: expect.any(String),
     banInfo: {
       isBanned: false,

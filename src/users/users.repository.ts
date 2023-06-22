@@ -264,7 +264,7 @@ export class UsersRepository {
   async changeUserBanStatus(userBanDto): Promise<boolean> {
     const query = `
     UPDATE public."Users"
-    SET "isBanned" = $2, "banDate" = $3, "banReason" = $4, 
+    SET "isBanned" = $2, "banDate" = $3, "banReason" = $4 
     WHERE id = $1;
     `
     try {
@@ -373,7 +373,7 @@ export class UsersRepository {
     LIMIT 1
     `
     const isBanned = await this.dataSource.query(query, [userId]);
-    return isBanned[0]
+    return isBanned[0].isBanned
   }
 
   async getConfirmationCodeOfLastCreatedUser(){

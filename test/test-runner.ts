@@ -1,4 +1,5 @@
-import { testSaUsersCrud } from './00-sa.users.e2e-spec';
+import { testSaUsersCrud } from './00-0-sa.users.e2e-spec';
+import { testSaUsersGetWithPagination } from './00-1-sa.get-users-pagenations.e2e-spec';
 import { testBlogCrud } from './01-blogs.e2e-spec';
 import { testPostCrud } from './02-posts.e2e-spec';
 import { testCommentsCrud } from './04-comments.e2e-spec';
@@ -10,7 +11,8 @@ import { banCheckOperation } from './10-ban.check.operation.e2e-spec';
 import { bloggerUsersControllers } from './11-blogger.usrers.controller.e2e-spec';
 
 describe('End-to-End Tests', () => {
-  testSaUsersCrud()
+  //testSaUsersCrud()
+  testSaUsersGetWithPagination()
   //testBloggerCrud()
   //testPostLikesCrud()
   //testCommentLikesCrud()

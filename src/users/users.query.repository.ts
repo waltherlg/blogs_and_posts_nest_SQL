@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument, UserTypeOutput } from './users.types';
+import { User, UserDBType, UserDocument, UserTypeOutput } from './users.types';
 import { HydratedDocument, Model, Types } from 'mongoose';
 import { PaginationOutputModel, RequestBannedUsersQueryModel } from '../models/types';
 import { BlogDocument, Blog } from 'src/blogs/blogs.types';
@@ -27,13 +27,24 @@ export class UsersQueryRepository {
   async getUserById(userId): Promise<UserTypeOutput | null> {
 
     const query = `
-    SELECT id, login, email, "createdAt"
+    SELECT id, login, email, "createdAt", "isBanned", "banDate", "banReason"
     FROM public."Users"
     WHERE id=$1
     LIMIT 1
     `
-  const user = await this.dataSource.query(query, [userId])
-  return user[0]  
+  const userArr = await this.dataSource.query(query, [userId])
+  const user = userArr[0]  
+  return {
+    id: user.id,
+    login: user.login,
+    email: user.email,
+    createdAt: user.createdAt,
+    banInfo: {
+      isBanned: user.isBanned,
+      banDate: user.banDate,
+      banReason: user.banReason,
+    }
+  }
   }
   
 
@@ -47,7 +58,7 @@ export class UsersQueryRepository {
     const pageSize = +mergedQueryParams.pageSize;
   
     const query = `
-      SELECT id, login, email, "isBanned", "banDate", "banReason"
+      SELECT id, login, email, "createdAt", "isBanned", "banDate", "banReason"
       FROM public."Users"
       WHERE (login ILIKE $1 OR email ILIKE $2)
       AND ($3 = 'all' OR "isBanned" = ($3 = 'banned'))
@@ -68,13 +79,13 @@ export class UsersQueryRepository {
   
     const users = await this.dataSource.query(query, queryParams);
     const usersCount = users.length; // Вместо countDocuments() в SQL мы просто получаем все записи
-    console.log(users)
   
     const outUsers = users.map((user) => {
       return {
         id: user.id,
         login: user.login,
         email: user.email,
+        createdAt: user.createdAt,
         banInfo: {
           isBanned: user.isBanned,
           banDate: user.banDate,

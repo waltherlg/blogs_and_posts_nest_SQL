@@ -1,3 +1,4 @@
+import { testSaUsersCrud } from './00-sa.users.e2e-spec';
 import { testBlogCrud } from './01-blogs.e2e-spec';
 import { testPostCrud } from './02-posts.e2e-spec';
 import { testCommentsCrud } from './04-comments.e2e-spec';
@@ -9,10 +10,11 @@ import { banCheckOperation } from './10-ban.check.operation.e2e-spec';
 import { bloggerUsersControllers } from './11-blogger.usrers.controller.e2e-spec';
 
 describe('End-to-End Tests', () => {
+  testSaUsersCrud()
   //testBloggerCrud()
   //testPostLikesCrud()
   //testCommentLikesCrud()
   //banCheckOperation()
-  testAuthOperations()
+  //testAuthOperations()
   //bloggerUsersControllers()
 });

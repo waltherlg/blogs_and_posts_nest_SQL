@@ -16,10 +16,7 @@ export class UserBanStatusChangeCommand {
 export class UserBanStatusChangeUseCase implements ICommandHandler<UserBanStatusChangeCommand>{
     constructor(
         private readonly usersRepository: UsersRepository,
-        private readonly usersDevicesRepository: UsersDevicesRepository,
-        private readonly blogsRepository: BlogsRepository,
-        private readonly postsRepository: PostsRepository,
-        private readonly commentsRepository: CommentsRepository,){}
+        private readonly usersDevicesRepository: UsersDevicesRepository){}
 
         async execute(command: UserBanStatusChangeCommand): Promise<boolean>{
 
@@ -28,6 +25,8 @@ export class UserBanStatusChangeUseCase implements ICommandHandler<UserBanStatus
             const banReason = command.banDto.banReason
 
             const isUserAlreadyBanned = await this.usersRepository.isUserBanned(command.userId)
+            console.log(isUserAlreadyBanned);
+            
             if(isUserAlreadyBanned === newBanStatus){
                 return
             }

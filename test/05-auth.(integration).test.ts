@@ -4,7 +4,7 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { Types } from 'mongoose';
 import { endpoints } from './helpers/routing';
-import { userTest } from './helpers/inputAndOutputObjects/usersObjects';
+import { testUser } from './helpers/inputAndOutputObjects/usersObjects';
 import { UsersRepository } from 'src/users/users.repository';
 import { UserDBType } from 'src/users/users.types';
 import { addAppSettings } from 'src/helpers/helpers';
@@ -57,7 +57,7 @@ export function testAuthOperations() {
     it('00-00 registration = 204 register new user', async () => {
       await request(app.getHttpServer())
         .post(`${endpoints.auth}/registration`)
-        .send(userTest.inputUser1)
+        .send(testUser.inputUser1)
         .expect(201);
     });
 
@@ -73,7 +73,7 @@ export function testAuthOperations() {
     it('00-00 registration email resending = 204 resend email and change ConfirmationCode', async () => {     
       await request(app.getHttpServer())
         .post(`${endpoints.auth}/registration-email-resending`)
-        .send({email: userTest.inputUser1.email})
+        .send({email: testUser.inputUser1.email})
         .expect(204);
     });
 
@@ -104,7 +104,7 @@ export function testAuthOperations() {
     it('00-00 login = 204 login user', async () => {
       const createResponse = await request(app.getHttpServer())
         .post(`${endpoints.auth}/login`)
-        .send(userTest.loginUser1)
+        .send(testUser.loginUser1)
         .expect(200);
       const createdResponse = createResponse.body;
       accessToken = createdResponse.accessToken;
@@ -132,8 +132,8 @@ export function testAuthOperations() {
       userId1 = responseBody.userId;
 
       expect(responseBody).toEqual({
-        login: userTest.inputUser1.login,
-        email: userTest.inputUser1.email,
+        login: testUser.inputUser1.login,
+        email: testUser.inputUser1.email,
         userId: expect.any(String),
       });
     });
@@ -141,7 +141,7 @@ export function testAuthOperations() {
     it('password recovery via email = 204 and confirmUser', async () => {
       await request(app.getHttpServer())
         .post(`${endpoints.auth}/password-recovery`)
-        .send({email: userTest.inputUser1.email})
+        .send({email: testUser.inputUser1.email})
         .expect(204);
     });
 

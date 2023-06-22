@@ -113,7 +113,7 @@ export class UsersDevicesRepository {
   async deleteAllUserDevicesById(userId: string): Promise<boolean> {
     const query = `   
     DELETE FROM public."UserDevices"
-    WHERE userId = $1
+    WHERE "userId" = $1
     `
     const result = await this.dataSource.query(query, [userId]);
     return result.rowCount > 0; 

@@ -53,32 +53,33 @@ export class UsersQueryRepository {
     const searchEmailTerm = `%${mergedQueryParams.searchEmailTerm}%`;
     const banStatus = mergedQueryParams.banStatus;
     const sortBy = mergedQueryParams.sortBy;
+    
     const sortDirection = mergedQueryParams.sortDirection;
     const pageNumber = +mergedQueryParams.pageNumber;
     const pageSize = +mergedQueryParams.pageSize;
   
+    // const query = `
+    //   SELECT id, login, email, "createdAt", "isBanned", "banDate", "banReason"
+    //   FROM public."Users"
+    //   WHERE (login ILIKE $1 OR email ILIKE $2)
+    //   ORDER BY $4, $5
+    //   LIMIT $6 OFFSET $7
+    // `;
+
+const queryParams = [
+  sortBy,    
+];
+
+console.log(sortBy);
+
     const query = `
-      SELECT id, login, email, "createdAt", "isBanned", "banDate", "banReason"
-      FROM public."Users"
-      WHERE (login ILIKE $1 OR email ILIKE $2)
-      AND ($3 = 'all' OR "isBanned" = ($3 = 'banned'))
-      ORDER BY $4, $5
-      LIMIT $6 OFFSET $7
-    `;
+    SELECT id, login, email, "createdAt", "isBanned", "banDate", "banReason"
+    FROM public."Users"
+    ORDER BY "${queryParams[0]}" DESC
+  `;
+  const users = await this.dataSource.query(query);
   
-    const queryParams = [
-      `%${searchLoginTerm}%`,
-      `%${searchEmailTerm}%`,
-      banStatus,
-      sortBy,
-      sortDirection,
-      pageSize,
-      (pageNumber - 1) * pageSize,
-      
-    ];
-  
-    const users = await this.dataSource.query(query, queryParams);
-    const usersCount = users.length; // Вместо countDocuments() в SQL мы просто получаем все записи
+    const usersCount = users.length;
   
     const outUsers = users.map((user) => {
       return {

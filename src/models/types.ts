@@ -1,4 +1,6 @@
-export type RequestQueryParamsModel = {
+
+
+export class RequestQueryParamsModel {
   sortBy: string;
   sortDirection: string;
   pageNumber: string;

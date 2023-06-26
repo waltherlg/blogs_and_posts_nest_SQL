@@ -12,6 +12,8 @@ export const addAppSettings = (app: INestApplication): INestApplication => {
     app.useGlobalPipes(
         new ValidationPipe({
         transform: true,
+        whitelist: true,
+        transformOptions: {enableImplicitConversion: true},
         stopAtFirstError: true,
         exceptionFactory: (errors) => {
             const errorsForResponse = [];

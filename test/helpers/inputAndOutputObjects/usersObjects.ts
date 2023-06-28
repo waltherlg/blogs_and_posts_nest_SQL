@@ -106,6 +106,11 @@ export let testUserPag = {
     password: 'qwerty',
     email: 'tttttt@gemeil.com',
   },
+  inputUseraaafffkkk: {
+    login: 'aaafffkkk',
+    password: 'qwerty',
+    email: 'ddhhll@gemeil.com',
+  },
   outputUseraaabbbccc:{
     id: expect.any(String),
     login: 'aaabbbccc',
@@ -154,6 +159,17 @@ export let testUserPag = {
     id: expect.any(String),
     login: 'qqqrrrsss',
     email: 'tttttt@gemeil.com',
+    createdAt: expect.any(String),
+    banInfo: {
+      isBanned: false,
+      banDate: null,
+      banReason: null
+    }
+  },
+  outputUseraaafffkkk:{
+    id: expect.any(String),
+    login: 'aaafffkkk',
+    email: 'ddhhll@gemeil.com',
     createdAt: expect.any(String),
     banInfo: {
       isBanned: false,

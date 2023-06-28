@@ -49,8 +49,8 @@ export class UsersQueryRepository {
   
 
   async getAllUsers(mergedQueryParams): Promise<PaginationOutputModel<UserTypeOutput>> {
-    const searchLoginTerm = `%${mergedQueryParams.searchLoginTerm}%`;
-    const searchEmailTerm = `%${mergedQueryParams.searchEmailTerm}%`;
+    const searchLoginTerm = mergedQueryParams.searchLoginTerm;
+    const searchEmailTerm = mergedQueryParams.searchEmailTerm;
     const banStatus = mergedQueryParams.banStatus;
     const sortBy = mergedQueryParams.sortBy;
     
@@ -67,15 +67,19 @@ export class UsersQueryRepository {
     // `;
 
 const queryParams = [
+  `%${searchLoginTerm}%`,
+  `%${searchEmailTerm}%`,
   sortBy,    
+  sortDirection.toUpperCase(),
 ];
 
-console.log(sortBy);
+console.log(queryParams[0]);
 
     const query = `
     SELECT id, login, email, "createdAt", "isBanned", "banDate", "banReason"
     FROM public."Users"
-    ORDER BY "${queryParams[0]}" DESC
+    WHERE "login" ILIKE '${queryParams[0]}' OR "email" ILIKE '${queryParams[1]}'
+    ORDER BY "${queryParams[2]}" ${queryParams[3]};
   `;
   const users = await this.dataSource.query(query);
   

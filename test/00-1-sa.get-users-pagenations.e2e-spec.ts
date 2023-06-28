@@ -114,7 +114,19 @@ it('00-00 sa/users post = 201 create user aaabbbccc with return', async () => {
           expect(createdResponseBody).toEqual(testUserPag.outputUseriiijjjkkk);
     });
 
-it('01-01 sa/users GET = 200 return array with 5 users pagination', async () => {
+    it('00-00 sa/users post = 201 create user aaafffkkk with return', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .post(endpoints.saUsers)
+        .set('Authorization', `Basic ${basicAuthRight}`)
+        .send(testUserPag.inputUseraaafffkkk)
+        .expect(201);
+
+        const createdResponseBody = createResponse.body;
+
+        expect(createdResponseBody).toEqual(testUserPag.outputUseraaafffkkk);
+  });
+
+it('01-01 sa/users GET = 200 return array with 5 users by createdAt desc', async () => {
   const createResponse = await request(app.getHttpServer())
     .get(endpoints.saUsers)
     .set('Authorization', `Basic ${basicAuthRight}`)
@@ -125,21 +137,22 @@ it('01-01 sa/users GET = 200 return array with 5 users pagination', async () => 
     pagesCount: 1,
     page: 1,
     pageSize: 10,
-    totalCount: 5,
+    totalCount: 6,
     items: [
-      testUserPag.outputUsermmmnnnooo,
-      testUserPag.outputUsereeefffggg,
-      testUserPag.outputUseraaabbbccc,
-      testUserPag.outputUserqqqrrrsss,      
-      testUserPag.outputUseriiijjjkkk,     
+testUserPag.outputUseraaafffkkk,      
+testUserPag.outputUseriiijjjkkk,
+testUserPag.outputUserqqqrrrsss,
+testUserPag.outputUseraaabbbccc,
+testUserPag.outputUsereeefffggg,
+testUserPag.outputUsermmmnnnooo,
     ],
   });
 });
 
-it('01-01 sa/users GET = 200 return array with 5 users pagination', async () => {
+it('01-01 sa/users GET = 200 return array with 5 users by login ASC', async () => {
   const createResponse = await request(app.getHttpServer())
     .get(endpoints.saUsers)
-    .query({ sortBy: 'login' })
+    .query({ sortBy: 'login', sortDirection: 'asc'})
     .set('Authorization', `Basic ${basicAuthRight}`)
     .expect(200);
   const createdResponseBody = createResponse.body;
@@ -148,13 +161,34 @@ it('01-01 sa/users GET = 200 return array with 5 users pagination', async () => 
     pagesCount: 1,
     page: 1,
     pageSize: 10,
-    totalCount: 5,
+    totalCount: 6,
     items: [
       testUserPag.outputUseraaabbbccc,
+      testUserPag.outputUseraaafffkkk,
       testUserPag.outputUsereeefffggg,
       testUserPag.outputUseriiijjjkkk,
       testUserPag.outputUsermmmnnnooo,
       testUserPag.outputUserqqqrrrsss,                 
+    ],
+  });
+});
+
+it('01-01 sa/users GET = 200 return with 2 users by searchLoginTerm "aaa" ASC', async () => {
+  const createResponse = await request(app.getHttpServer())
+    .get(endpoints.saUsers)
+    .query({searchLoginTerm: 'aaa', sortBy: 'login', sortDirection: 'asc'})
+    .set('Authorization', `Basic ${basicAuthRight}`)
+    .expect(200);
+  const createdResponseBody = createResponse.body;
+
+  expect(createdResponseBody).toEqual({
+    pagesCount: 1,
+    page: 1,
+    pageSize: 10,
+    totalCount: 2,
+    items: [
+      testUserPag.outputUseraaabbbccc,
+      testUserPag.outputUseraaafffkkk,                 
     ],
   });
 });

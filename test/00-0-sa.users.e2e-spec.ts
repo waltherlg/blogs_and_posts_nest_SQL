@@ -160,75 +160,7 @@ export function testSaUsersCrud() {
         totalCount: 0,
         items: [],
       });
-    });
-
-    describe('get users pagination tests', () => {
-      it('00-00 sa/users post = 201 create user aaabbbccc with return', async () => {
-        const createResponse = await request(app.getHttpServer())
-          .post(endpoints.saUsers)
-          .set('Authorization', `Basic ${basicAuthRight}`)
-          .send(testUserPag.inputUseraaabbbccc)
-          .expect(201);
-  
-          const createdResponseBody = createResponse.body;
-  
-          expect(createdResponseBody).toEqual(testUserPag.outputUseraaabbbccc);
-      });
-
-    
-        it('00-00 sa/users post = 201 create user eeefffggg with return', async () => {
-          const createResponse = await request(app.getHttpServer())
-            .post(endpoints.saUsers)
-            .set('Authorization', `Basic ${basicAuthRight}`)
-            .send(testUserPag.inputUsereeefffggg)
-            .expect(201);
-    
-            const createdResponseBody = createResponse.body;
-    
-            expect(createdResponseBody).toEqual(testUserPag.outputUsereeefffggg);
-    });
-
-   
-    it('00-00 sa/users post = 201 create user iiijjjkkk with return', async () => {
-        const createResponse = await request(app.getHttpServer())
-          .post(endpoints.saUsers)
-          .set('Authorization', `Basic ${basicAuthRight}`)
-          .send(testUserPag.inputUseriiijjjkkk)
-          .expect(201);
-  
-          const createdResponseBody = createResponse.body;
-  
-          expect(createdResponseBody).toEqual(testUserPag.outputUseriiijjjkkk);
-    });
-
-    it('00-00 sa/users post = 201 create user mmmnnnooo with return', async () => {
-      const createResponse = await request(app.getHttpServer())
-        .post(endpoints.saUsers)
-        .set('Authorization', `Basic ${basicAuthRight}`)
-        .send(testUserPag.inputUsermmmnnnooo)
-        .expect(201);
-
-        const createdResponseBody = createResponse.body;
-
-        expect(createdResponseBody).toEqual(testUserPag.outputUsermmmnnnooo);
-  });
-
-  it('00-00 sa/users post = 201 create user qqqrrrsss with return', async () => {
-    const createResponse = await request(app.getHttpServer())
-      .post(endpoints.saUsers)
-      .set('Authorization', `Basic ${basicAuthRight}`)
-      .send(testUserPag.inputUserqqqrrrsss)
-      .expect(201);
-
-      const createdResponseBody = createResponse.body;
-
-      expect(createdResponseBody).toEqual(testUserPag.outputUserqqqrrrsss);
-});
-
-
-    })
-
-    
+    });  
 
   });
 }

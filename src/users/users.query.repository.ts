@@ -6,6 +6,7 @@ import { PaginationOutputModel, RequestBannedUsersQueryModel } from '../models/t
 import { BlogDocument, Blog } from 'src/blogs/blogs.types';
 import { PipelineStage } from 'mongoose';
 import { DataSource } from 'typeorm';
+import { log } from 'console';
 
 @Injectable()
 export class UsersQueryRepository {
@@ -47,6 +48,13 @@ export class UsersQueryRepository {
   }
   }
   
+    // const query = `
+    //   SELECT id, login, email, "createdAt", "isBanned", "banDate", "banReason"
+    //   FROM public."Users"
+    //   WHERE (login ILIKE $1 OR email ILIKE $2)
+    //   ORDER BY $4, $5
+    //   LIMIT $6 OFFSET $7
+    // `;
 
   async getAllUsers(mergedQueryParams): Promise<PaginationOutputModel<UserTypeOutput>> {
     const searchLoginTerm = mergedQueryParams.searchLoginTerm;
@@ -57,34 +65,80 @@ export class UsersQueryRepository {
     const sortDirection = mergedQueryParams.sortDirection;
     const pageNumber = +mergedQueryParams.pageNumber;
     const pageSize = +mergedQueryParams.pageSize;
+    const skipPage = (pageNumber - 1) * pageSize
   
-    // const query = `
-    //   SELECT id, login, email, "createdAt", "isBanned", "banDate", "banReason"
-    //   FROM public."Users"
-    //   WHERE (login ILIKE $1 OR email ILIKE $2)
-    //   ORDER BY $4, $5
-    //   LIMIT $6 OFFSET $7
-    // `;
-
 const queryParams = [
   `%${searchLoginTerm}%`,
   `%${searchEmailTerm}%`,
   sortBy,    
   sortDirection.toUpperCase(),
+  pageNumber,
+  pageSize,
+  skipPage,
 ];
 
 console.log(queryParams[0]);
 
-    const query = `
-    SELECT id, login, email, "createdAt", "isBanned", "banDate", "banReason"
-    FROM public."Users"
-    WHERE "login" ILIKE '${queryParams[0]}' OR "email" ILIKE '${queryParams[1]}'
-    ORDER BY "${queryParams[2]}" ${queryParams[3]};
-  `;
+let query = `
+SELECT id, login, email, "createdAt", "isBanned", "banDate", "banReason"
+FROM public."Users"
+`;
+
+let countQuery = `
+SELECT COUNT(*)
+FROM public."Users"
+`;
+
+if(searchLoginTerm !== '' || searchEmailTerm !== ''){
+  query += `WHERE`
+  countQuery += `WHERE`;
+}
+
+if (searchLoginTerm !== '') {
+query += ` "login" ILIKE '${queryParams[0]}'`
+countQuery += ` "login" ILIKE '${queryParams[0]}'`;
+}
+
+if (searchEmailTerm !== '') {
+query += searchLoginTerm !== '' ? ` OR "email" ILIKE '${queryParams[1]}'` : ` "email" ILIKE '${queryParams[1]}'`
+countQuery += searchLoginTerm !== '' ? ` OR "email" ILIKE '${queryParams[1]}'` : ` "email" ILIKE '${queryParams[1]}'`;
+}
+
+if((searchLoginTerm !== '' || searchEmailTerm !== '') && banStatus !== 'all'){
+  query += `AND`
+  countQuery += `AND`;
+} 
+
+if(banStatus !== 'all'){
+  query += `WHERE`
+  countQuery += `WHERE`;
+}
+
+if (banStatus === 'banned'){
+  query += `"isBanned" = true`
+  countQuery += `"isBanned" = true`
+}
+
+if (banStatus === 'notBanned'){
+  query += `"isBanned" = false`
+  countQuery += `"isBanned" = false`
+}
+
+query += ` ORDER BY "${queryParams[2]}" ${queryParams[3]}
+LIMIT ${queryParams[5]} OFFSET ${queryParams[6]};
+`;
+
+// console.log('countQuery ', countQuery)
+// console.log('query ', query)
+
+const usersCountArr = await this.dataSource.query(countQuery);
+const usersCount = parseInt(usersCountArr[0].count);
+
+// console.log('usersCountArr ', usersCountArr)
+// console.log('usersCount ', usersCount)
+
   const users = await this.dataSource.query(query);
-  
-    const usersCount = users.length;
-  
+    
     const outUsers = users.map((user) => {
       return {
         id: user.id,

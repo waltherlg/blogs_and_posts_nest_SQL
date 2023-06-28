@@ -177,5 +177,28 @@ export let testUserPag = {
       banReason: null
     }
   },
+  outputUsereeefffgggBanned:{
+    id: expect.any(String),
+    login: 'eeefffggg',
+    email: 'hhhhhh@gemeil.com',
+    createdAt: expect.any(String),
+    banInfo: {
+      isBanned: true,
+      banDate: expect.any(String),
+      banReason: expect.any(String)
+    }
+  },
+  outputUseriiijjjkkkBanned:{
+    id: expect.any(String),
+    login: 'iiijjjkkk',
+    email: 'llllll@gemeil.com',
+    createdAt: expect.any(String),
+    banInfo: {
+      isBanned: true,
+      banDate: expect.any(String),
+      banReason: expect.any(String)
+    }
+  },
+  
 
 }

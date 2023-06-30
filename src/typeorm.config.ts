@@ -1,11 +1,12 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-const userName = process.env.SQL_USER_NAME
-const dataBaseName = process.env.SQL_DATABASE_NAME
-const password = process.env.SQL_PASSWORD
-const dataBaseUrl = process.env.SQL_URL
-const hostName = process.env.SQL_HOST_NAME
+const userName = process.env.PGUSER
+const dataBaseName = process.env.PGDATABASE
+const password = process.env.PGPASSWORD
+const port = process.env.PGPORT
+//const dataBaseUrl = process.env.SQL_URPGUSERL
+const hostName = process.env.PGHOST
 
 // const typeOrmConfig: TypeOrmModuleOptions = {
 //   type: 'postgres',
@@ -50,12 +51,12 @@ const hostName = process.env.SQL_HOST_NAME
 
 const typeOrmConfig: TypeOrmModuleOptions = {
   type: 'postgres',
-  host: process.env.PGHOST,
-  port: +process.env.PGPORT, // Если ваша база данных находится на другом порту, укажите соответствующий порт
-  username: process.env.PGUSER,
-  password: process.env.PGPASSWORD,
-  database: process.env.PGDATABASE,
-  synchronize: false,
+  host: hostName,
+  port: +port, // Если ваша база данных находится на другом порту, укажите соответствующий порт
+  username: userName,
+  password: password,
+  database: dataBaseName,
+  synchronize: true,
 };
 
 export default typeOrmConfig;

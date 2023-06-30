@@ -56,7 +56,16 @@ const typeOrmConfig: TypeOrmModuleOptions = {
   username: userName,
   password: password,
   database: dataBaseName,
+  autoLoadEntities: false,
+  //options: { encrypt: false },
+  logging: true,
   synchronize: true,
+  ssl: true,
+  extra: {
+      ssl: {
+          rejectUnauthorized: false,
+      },
+  },
 };
 
 export default typeOrmConfig;

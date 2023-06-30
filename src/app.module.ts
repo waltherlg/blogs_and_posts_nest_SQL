@@ -116,10 +116,10 @@ CreateUserUseCase,]
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      ...typeOrmConfig,
+    TypeOrmModule.forRoot(
+      typeOrmConfig,
       //autoLoadEntities: true,
-    }),
+    ),
     CqrsModule,
     ThrottlerModule.forRoot({
       ttl: 600,

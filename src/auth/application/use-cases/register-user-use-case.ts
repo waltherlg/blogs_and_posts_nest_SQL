@@ -3,6 +3,7 @@ import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { UsersRepository } from "src/users/users.repository";
 import { add } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
+import { EmailManager } from 'src/managers/email-manager';
 
 export class RegisterUserCommand {
     constructor(public registerUserDto){}
@@ -11,7 +12,8 @@ export class RegisterUserCommand {
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserUseCase implements ICommandHandler<RegisterUserCommand>{
     constructor(private readonly usersRepository: UsersRepository,
-        private readonly dtoFactory: DTOFactory){}
+        private readonly dtoFactory: DTOFactory,
+        private readonly emailManager: EmailManager){}
     async execute(command: RegisterUserCommand): Promise<any> {
 
         const registerUserData = {
@@ -23,6 +25,12 @@ export class RegisterUserUseCase implements ICommandHandler<RegisterUserCommand>
             }),
           };
         const userDTO = await this.dtoFactory.createUserDTO(registerUserData);
+        console.log('registerUserData ', registerUserData)
+        try {
+            await this.emailManager.sendEmailConfirmationMessage(registerUserData);
+          } catch (e) {
+            return false;
+          }
         const newUserId = await this.usersRepository.createUser(userDTO)
         return newUserId
     }

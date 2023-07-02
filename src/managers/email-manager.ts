@@ -6,10 +6,10 @@ import { PasswordRecoveryModel } from '../auth/auth.types';
 export class EmailManager {
   constructor(private readonly emailAdapter: EmailAdapter) {}
 
-  async sendEmailConfirmationMessage(user: any) {
-    const confirmationCode = `<a href="https://some-front.com/confirm-registration?code=${user.confirmationCode}">complete registration</a>`;
+  async sendEmailConfirmationMessage(registerUserData: any) {
+    const confirmationCode = `<a href="https://some-front.com/confirm-registration?code=${registerUserData.confirmationCode}">complete registration</a>`;
     await this.emailAdapter.sendEmail(
-      user.email,
+      registerUserData.email,
       'confirmation code',
       confirmationCode,
     );

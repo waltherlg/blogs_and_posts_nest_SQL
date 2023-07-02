@@ -1,8 +1,8 @@
 import { BadRequestException, INestApplication, ValidationPipe } from "@nestjs/common";
 import { useContainer } from "class-validator";
 import cookieParser from "cookie-parser";
-import { AppModule } from "src/app.module";
-import { HttpExceptionFilter } from "src/exception.filter";
+import { AppModule } from "../app.module";
+import { HttpExceptionFilter } from "../exception.filter";
 
 
 export const addAppSettings = (app: INestApplication): INestApplication => {

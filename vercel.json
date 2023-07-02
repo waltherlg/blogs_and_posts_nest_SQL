@@ -1,6 +1,12 @@
 {
   "version": 2,
-  "name": "blogs_and_posts_nest_sql",
+  "name": "blogs_and_posts_nest_SQL",
+  "builds": [
+    {
+      "src": "src/main.ts",
+      "use": "@vercel/node"
+    }
+  ],
   "routes": [
     {
       "src": "/(.*)",

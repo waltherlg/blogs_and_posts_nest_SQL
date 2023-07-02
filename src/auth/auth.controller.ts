@@ -66,7 +66,7 @@ export class newPasswordSetInput {
   @MaxLength(100)
   recoveryCode: string;
 }
-//@Throttle(5, 10)
+@Throttle(5, 10)
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -135,7 +135,7 @@ export class AuthController {
       ); 
     }
   }
-  //@Throttle(5, 60)
+  //@Throttle(5, 10)
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Req() request, @Res({ passthrough: true }) response) {

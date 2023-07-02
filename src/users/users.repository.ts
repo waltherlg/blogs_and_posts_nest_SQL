@@ -308,10 +308,12 @@ export class UsersRepository {
     const query = `
       SELECT COUNT(*) AS count
       FROM public."Users"
-      WHERE email = $1
+      WHERE login = $1
     `;
     const result = await this.dataSource.query(query, [login]);
     const count = result[0].count;
+    console.log('isLoginExists count ', count);
+    
     return count > 0;
   }
 

@@ -44,8 +44,10 @@ export class CheckService {
   }
 
   async isLoginExist(login: string): Promise<boolean> {
-    const emailExist = await this.usersRepository.isLoginExists(login);
-    return !!emailExist;
+    const isLoginExist = await this.usersRepository.isLoginExists(login);
+    console.log('isLoginExist in check service ', isLoginExist);
+    
+    return isLoginExist;
   }
 
   async isPasswordRecoveryCodeExistAndNotExpired(code: string): Promise<boolean> {

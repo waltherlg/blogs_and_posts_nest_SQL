@@ -18,7 +18,7 @@ describe('End-to-End Tests', () => {
   //testPostLikesCrud()
   //testCommentLikesCrud()
   //banCheckOperation()
-  //testAuthOperations()
-  testAuthValidations()
+  testAuthOperations()
+  //testAuthValidations()
   //bloggerUsersControllers()
 });

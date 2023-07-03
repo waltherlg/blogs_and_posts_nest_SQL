@@ -16,9 +16,9 @@ export class UsersQueryRepository {
 
   async getCurrentUserInfo(userId: string) {
     const query = `
-    SELECT email, login, id AS "userId" 
+    SELECT email, login, "userId" 
     FROM public."Users"
-    WHERE id=$1
+    WHERE "userId"=$1
     LIMIT 1
     `
   const user = await this.dataSource.query(query, [userId])
@@ -28,15 +28,15 @@ export class UsersQueryRepository {
   async getUserById(userId): Promise<UserTypeOutput | null> {
 
     const query = `
-    SELECT id, login, email, "createdAt", "isBanned", "banDate", "banReason"
+    SELECT "userId", login, email, "createdAt", "isBanned", "banDate", "banReason"
     FROM public."Users"
-    WHERE id=$1
+    WHERE "userId"=$1
     LIMIT 1
     `
   const userArr = await this.dataSource.query(query, [userId])
   const user = userArr[0]  
   return {
-    id: user.id,
+    id: user.userId,
     login: user.login,
     email: user.email,
     createdAt: user.createdAt,
@@ -80,7 +80,7 @@ const queryParams = [
 console.log(queryParams[0]);
 
 let query = `
-SELECT id, login, email, "createdAt", "isBanned", "banDate", "banReason"
+SELECT "userId", login, email, "createdAt", "isBanned", "banDate", "banReason"
 FROM public."Users"
 `;
 
@@ -141,7 +141,7 @@ const usersCount = parseInt(usersCountArr[0].count);
     
     const outUsers = users.map((user) => {
       return {
-        id: user.id,
+        id: user.userId,
         login: user.login,
         email: user.email,
         createdAt: user.createdAt,

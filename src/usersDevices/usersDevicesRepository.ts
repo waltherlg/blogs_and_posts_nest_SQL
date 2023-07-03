@@ -14,7 +14,7 @@ export class UsersDevicesRepository {
   ) {}
   async addDeviceInfo(deviceInfoDTO): Promise<boolean> {
     const query = `INSERT INTO public."UserDevices"(
-      id,
+      "deviceId",
       "userId", 
       ip, 
       title, 
@@ -29,7 +29,7 @@ export class UsersDevicesRepository {
       $6)`;
 
     const result = await this.dataSource.query(query, [
-      deviceInfoDTO.id,
+      deviceInfoDTO.deviceId,
       deviceInfoDTO.userId, 
       deviceInfoDTO.ip, 
       deviceInfoDTO.title, 
@@ -41,11 +41,11 @@ export class UsersDevicesRepository {
 
   async getDeviceByUsersAndDeviceId(userId: string, deviceId: string) {
     const query = `SELECT * FROM public."UserDevices"
-    WHERE id = $1 AND "userId" = $2
+    WHERE "userId" = $1 AND "deviceId" = $2
     LIMIT 1`;
     const result = await this.dataSource.query(query, [
-      deviceId,
       userId,
+      deviceId,    
     ])
     return result[0]
   }
@@ -57,7 +57,7 @@ export class UsersDevicesRepository {
 
     const query = `UPDATE public."UserDevices"
     SET "lastActiveDate" = $2, "expirationDate" = $3
-    WHERE id = $1 `
+    WHERE "deviceId" = $1 `
     try {
       await this.dataSource.query(query, [
         deviceId,
@@ -83,14 +83,16 @@ export class UsersDevicesRepository {
       return device.prepareUsersDeviceForOutput();
     });
   }
+
   async deleteDeviceByUserAndDeviceId(userId, deviceId): Promise<boolean> {
-    if (Types.ObjectId.isValid(deviceId)) {
-      const result = await this.usersDeviseModel.deleteOne({
-        $and: [{ _id: deviceId }, { userId: userId }],
-      });
-      return result.deletedCount === 1;
-    } else return false;
+    const query = `
+    DELETE FROM public."UserDevices"
+    WHERE "userId" = $1 AND "deviceId" = $2
+    `
+    const result = await this.dataSource.query(query, [userId, deviceId]);
+    return result.rowCount > 0;
   }
+
   async deleteAllUserDevicesExceptCurrent(user): Promise<boolean> {
     if (Types.ObjectId.isValid(user.deviceId)) {
       //let _id = new ObjectId(deviceId)

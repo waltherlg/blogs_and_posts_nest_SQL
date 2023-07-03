@@ -21,7 +21,7 @@ export class UsersRepository {
 
   async createUser(userDTO): Promise<string> {
     const query = `INSERT INTO public."Users"(
-      id, 
+      "userId", 
       login, 
       "passwordHash", 
       email, 
@@ -48,10 +48,10 @@ export class UsersRepository {
       $11,
       $12,
       $13)
-      RETURNING id`;
+      RETURNING "userId"`;
 
     const result = await this.dataSource.query(query, [
-      userDTO.id,
+      userDTO.userId,
       userDTO.login,
       userDTO.passwordHash,
       userDTO.email,
@@ -66,13 +66,13 @@ export class UsersRepository {
       userDTO.expirationDateOfRecoveryCode
     ])
 
-    const userId = result[0].id;
+    const userId = result[0].userId;
     return userId;
   }
 
   async getUserForLoginByLoginOrEmail(loginOrEmail: string){
     const query = `
-    SELECT "id", "isConfirmed", "isBanned", "passwordHash"
+    SELECT "userId" AS id, "isConfirmed", "isBanned", "passwordHash"
     FROM public."Users"
     WHERE email = $1 OR login = $1
     LIMIT 1
@@ -84,7 +84,7 @@ export class UsersRepository {
   async deleteUserById(userId: string): Promise<boolean> {
     const query = `
     DELETE FROM public."Users"
-    WHERE id = $1
+    WHERE "userId" = $1
     `
     const result = await this.dataSource.query(query, [userId]);
     return result.rowCount > 0;   
@@ -265,7 +265,7 @@ export class UsersRepository {
     const query = `
     UPDATE public."Users"
     SET "isBanned" = $2, "banDate" = $3, "banReason" = $4 
-    WHERE id = $1;
+    WHERE "userId" = $1;
     `
     try {
       await this.dataSource.query(query, [
@@ -321,7 +321,7 @@ export class UsersRepository {
     const query = `
       SELECT COUNT(*) AS count
       FROM public."Users"
-      WHERE id = $1
+      WHERE "userId" = $1
     `;
     const result = await this.dataSource.query(query, [userId]);
     const count = result[0].count;
@@ -371,7 +371,7 @@ export class UsersRepository {
     const query = `
     SELECT "isBanned"
     FROM public."Users"
-    WHERE id=$1
+    WHERE "userId"=$1
     LIMIT 1
     `
     const isBanned = await this.dataSource.query(query, [userId]);

@@ -58,7 +58,7 @@ export function testAuthOperations() {
       await request(app.getHttpServer())
         .post(`${endpoints.auth}/registration`)
         .send(testUser.inputUser1)
-        .expect(201);
+        .expect(204);
     });
 
     let confirmationCode1User1: string

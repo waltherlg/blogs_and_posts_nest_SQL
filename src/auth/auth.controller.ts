@@ -176,9 +176,6 @@ export class AuthController {
         request.user.userId,
         request.user.deviceId,
       ));
-     
-
-      console.log('auth - out', refreshToken)
     response
       .status(200)
       .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })

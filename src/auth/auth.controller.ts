@@ -35,7 +35,7 @@ import { PasswordRecoveryViaEmailCommand } from './application/use-cases/passwor
 import { NewPasswordSetCommand } from './application/use-cases/new-password-set-use-case';
 import { RefreshTokenCommand } from './application/use-cases/refresh-token-use-case';
 import { LogoutCommand } from './application/use-cases/logout-use-case';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 export class RegistrationEmailResendingInput {
   @StringTrimNotEmpty()
   @MaxLength(100)
@@ -170,7 +170,6 @@ export class AuthController {
   @UseGuards(RefreshTokenGuard)
   @Post('refresh-token')
   async refreshToken(@Req() request, @Res({ passthrough: true }) response) {
-    console.log('auth-controller cookie', request.cookies)
     const { accessToken, refreshToken } =
       await this.commandBus.execute(new RefreshTokenCommand(
         request.user.userId,
@@ -216,15 +215,13 @@ export class AuthController {
   @SkipThrottle()
   @UseGuards(RefreshTokenGuard)
   @Post('logout')
-  @HttpCode(204)
-  async logout(@Req() request, @Res({ passthrough: true }) response) {
+  //@HttpCode(204)
+  async logout(@Req() request, @Res() response: Response) {
     const isLogout = await this.commandBus.execute(new LogoutCommand(request.user));
     if (isLogout) {
-      response
-        .cookie('refreshToken', '')
-        .sendStatus(204);
+        return response.cookie('refreshToken', '').status(204).send()
     } else {
       throw new CustomisableException('logout', 'logout error', 400);
-    }
+    }    
   }
 }

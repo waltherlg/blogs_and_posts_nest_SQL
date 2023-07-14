@@ -33,7 +33,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from './auth/strategies/local.strategy';
 import { settings } from './settings';
-import { UsersDevicesRepository } from './usersDevices/usersDevicesRepository';
+import { UsersDevicesRepository } from './usersDevices/user.devices.repository';
 import {
   UsersDevice,
   UsersDeviceSchema,

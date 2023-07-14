@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PostsRepository } from '../posts/posts.repository';
 import { UsersRepository } from '../users/users.repository';
 import { CommentsRepository } from '../comments/comments.repository';
-import { UsersDevicesRepository } from '../usersDevices/usersDevicesRepository';
+import { UsersDevicesRepository } from '../usersDevices/user.devices.repository';
 @Injectable()
 export class CheckService {
   constructor(

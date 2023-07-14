@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { UsersDevice, UsersDeviceDocument } from './users-devices.types';
@@ -58,30 +58,25 @@ export class UsersDevicesRepository {
     const query = `UPDATE public."UserDevices"
     SET "lastActiveDate" = $2, "expirationDate" = $3
     WHERE "deviceId" = $1 `
-    try {
-      await this.dataSource.query(query, [
+    
+    const result = await this.dataSource.query(query, [
         deviceId,
         lastActiveDate,
         expirationDate
       ]);
-      return true;
-    } catch (error) {
-      return false;
-    }
+    return (result[1] > 0)
+    
   }
 
   async getActiveUserDevices(userId: string) {
-    console.log('userId ', userId);
-    if (!Types.ObjectId.isValid(userId)) {
-      return null;
-    }
-    const activeUserDevices = await this.usersDeviseModel.find({
-      userId: userId,
-    });
-    console.log('activeUserDevices ', activeUserDevices);
-    return activeUserDevices.map((device: UsersDeviceDocument) => {
-      return device.prepareUsersDeviceForOutput();
-    });
+    const query = `
+    SELECT ip, title, "lastActiveDate", "deviceId"
+    FROM public."UserDevices"
+    WHERE "userId" = $1`
+    const result = await this.dataSource.query(query, [
+      userId
+    ]);
+    return result
   }
 
   async deleteDeviceByUserAndDeviceId(userId, deviceId): Promise<boolean> {
@@ -90,18 +85,18 @@ export class UsersDevicesRepository {
     WHERE "userId" = $1 AND "deviceId" = $2
     `
     const result = await this.dataSource.query(query, [userId, deviceId]);
-    return result.rowCount > 0;
+    return result[1]
   }
 
-  async deleteAllUserDevicesExceptCurrent(user): Promise<boolean> {
-    if (Types.ObjectId.isValid(user.deviceId)) {
-      //let _id = new ObjectId(deviceId)
-      const result = await this.usersDeviseModel.deleteMany({
-        $and: [{ userId: user.userId }, { _id: { $ne: user.deviceId } }],
-      });
-      return result.acknowledged;
-    } else return false;
+  async deleteAllUserDevicesExceptCurrent(userId, deviceId): Promise<boolean> {
+    const query = `
+    DELET from FROM public."UserDevices"
+    WHERE "userId" = $1 AND "deviceId" <> $2;
+    `
+    const result = await this.dataSource.query(query, [userId, deviceId]);
+    return (result[1] > 0)
   }
+
   async getUserDeviceById(deviceId) {
     if (!Types.ObjectId.isValid(deviceId)) {
       return null;

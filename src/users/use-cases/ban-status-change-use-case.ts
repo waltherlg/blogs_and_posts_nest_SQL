@@ -3,7 +3,7 @@ import { BlogsRepository } from 'src/blogs/infrostracture/blogs.repository';
 import { UsersRepository } from '../users.repository';
 import { Injectable } from "@nestjs/common";
 import { PostsRepository } from 'src/posts/posts.repository';
-import { UsersDevicesRepository } from 'src/usersDevices/usersDevicesRepository';
+import { UsersDevicesRepository } from 'src/usersDevices/user.devices.repository';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BanUserInputModel } from '../sa.users.controller';
 

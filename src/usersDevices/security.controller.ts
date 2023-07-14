@@ -7,7 +7,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { UsersDevicesRepository } from './usersDevicesRepository';
+import { UsersDevicesRepository } from './user.devices.repository';
 import { RefreshTokenGuard } from '../auth/guards/refreshToken.guard';
 import { UsersDeviceService } from './users-devices.service';
 import {
@@ -31,7 +31,8 @@ export class SecurityController {
   async terminateAllOtherDeviceSession(@Req() request) {
     const isAllUsersDevisesDeleted =
       await this.usersDeviceService.deleteAllUserDevicesExceptCurrent(
-        request.user,
+        request.user.userId,
+        request.user.deviceId,
       );
     if (!isAllUsersDevisesDeleted) {
       throw new UnableException('terminating All Other Device Session');

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UsersDevicesRepository } from './usersDevicesRepository';
+import { UsersDevicesRepository } from './user.devices.repository';
 
 @Injectable()
 export class UsersDeviceService {
@@ -38,9 +38,9 @@ async getCurrentDeviceDataForRefreshStrategy(userId: string, deviceId: string){
     return isUserDeviceDeleted;
   }
 
-  async deleteAllUserDevicesExceptCurrent(user) {
+  async deleteAllUserDevicesExceptCurrent(userId, deviceId) {
     const isDevicesDeleted =
-      await this.usersDeviceRepository.deleteAllUserDevicesExceptCurrent(user);
+      await this.usersDeviceRepository.deleteAllUserDevicesExceptCurrent(userId, deviceId);
     return isDevicesDeleted;
   }
 }

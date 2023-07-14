@@ -178,6 +178,7 @@ export function testAuthOperations() {
 
       let refreshTokenCookie
       let refreshTokenCookie2
+      let refreshTokenNotValidCookie
 
       it('00-00 login = 204 login user with new password', async () => {
         const createResponse = await request(app.getHttpServer())
@@ -203,10 +204,8 @@ export function testAuthOperations() {
         console.log('refreshTokenCookie ', refreshTokenCookie);
       });
       
-      
-  
       it('00-00 refresh-token = 200 should get new access and refresh token', async () => {
-      //await delay(1000)
+      await delay(1000)
         console.log('refreshTokenCookie ', refreshTokenCookie);
         const createResponse = await request(app.getHttpServer())
           .post(`${endpoints.auth}/refresh-token`)
@@ -220,7 +219,7 @@ export function testAuthOperations() {
         });
         expect(createResponse.headers['set-cookie']).toBeDefined();
         
-        console.log('after upd', createResponse.headers['set-cookie'])
+        //console.log('after upd', createResponse.headers['set-cookie'])
   
        refreshTokenCookie2 = createResponse.headers['set-cookie'] 
         .find((cookie) => cookie.startsWith('refreshToken='));
@@ -230,8 +229,36 @@ export function testAuthOperations() {
         expect(refreshTokenCookie2).toContain('HttpOnly');
         expect(refreshTokenCookie2).toContain('Secure');
         expect(refreshTokenCookie2).not.toBe(refreshTokenCookie);     
-      });   
-    })
+      });  
+      
+      it('00-00 logout = 204 should logout', async () => {
+        //await delay(1000)
+          const createResponse = await request(app.getHttpServer())
+            .post(`${endpoints.auth}/logout`)
+            .set('Cookie', refreshTokenCookie2)
+            .expect(204);
+           
+          const createdResponse = createResponse.body;
+          expect(createResponse.headers['set-cookie']).toBeDefined();       
+    
+         refreshTokenNotValidCookie = createResponse.headers['set-cookie'] 
+          .find((cookie) => cookie.startsWith('refreshToken='));
+    
+          console.log('refreshTokenNotValidCookie ', refreshTokenNotValidCookie);
+          expect(refreshTokenCookie2).toBeDefined();
+          expect(refreshTokenNotValidCookie).not.toBe(refreshTokenCookie2);     
+        }); 
+
+        it('00-00 refresh-token = 401 should get 401 after logout', async () => {
+          await delay(1000)
+            const createResponse = await request(app.getHttpServer())
+              .post(`${endpoints.auth}/refresh-token`)
+              .set('Cookie', refreshTokenCookie2)
+              .expect(401);    
+          });  
+      })
+
+
 
   });
 }

@@ -3,7 +3,7 @@ import { newPasswordSetInput } from "src/auth/auth.controller";
 import { BcryptService } from "src/other.services/bcrypt.service";
 import { TokensService } from "src/other.services/tokens.service";
 import { UsersRepository } from "src/users/users.repository";
-import { UsersDevicesRepository } from "src/usersDevices/usersDevicesRepository";
+import { UsersDevicesRepository } from "src/usersDevices/user.devices.repository";
 
 export class RefreshTokenCommand {
     constructor(public userId: string, public deviceId: string ){}

@@ -35,18 +35,23 @@ export class RefreshTokenStrategy extends PassportStrategy(
   }
   async validate(request: Request, payload: any) {
     if (!payload) {
+      console.log('no payload');
+      
       throw new UnauthorizedException();
     }
     const userId = payload.userId;
     if (!userId) {
+      console.log('no userId');
       throw new CustomisableException('no access', 'no user in cookies', 401);
     }
     const deviceId = payload.deviceId;
     if (!deviceId) {
+      console.log('no deviceId');
       throw new CustomisableException('no access', 'no device in cookies', 401);
     }
     const isUserExist = await this.checkService.isUserIdExist(userId);
     if (!isUserExist) {
+      console.log('no isUserExist');
       throw new CustomisableException('no access', 'user not found', 401);
     }
 
@@ -55,12 +60,14 @@ export class RefreshTokenStrategy extends PassportStrategy(
       deviceId,
     );
     if (!currentDevise) {
+      console.log('no currentDevise');
       throw new CustomisableException('no access', 'device not found', 401);
     }
 
     const lastActiveRefreshToken = new Date(payload.iat * 1000);
     
     if (lastActiveRefreshToken.toISOString() !== currentDevise.lastActiveDate.toISOString()) {
+      console.log('no !==');
       throw new CustomisableException(
         'no access',
         'the last active dates do not match',

@@ -81,7 +81,7 @@ export class CheckService {
   }
 
   async isUserDeviceExist(deviceId): Promise<boolean> {
-    const userDevice = await this.usersDeviceRepository.getUserDeviceById(
+    const userDevice = await this.usersDeviceRepository.isUserDeviceExist(
       deviceId,
     );
     return !!userDevice;

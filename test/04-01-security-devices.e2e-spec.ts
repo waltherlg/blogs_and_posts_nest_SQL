@@ -8,6 +8,7 @@ import { testUser } from './helpers/inputAndOutputObjects/usersObjects';
 import { UsersRepository } from 'src/users/users.repository';
 import { UserDBType } from 'src/users/users.types';
 import { addAppSettings } from 'src/helpers/helpers';
+import { testUserDevice } from './helpers/inputAndOutputObjects/userDevicesObjects';
 
 const delay = async (ms: number) => {
   return new Promise<void>((resolve, reject) => {
@@ -26,6 +27,9 @@ export function testSecurityDevices() {
       Buffer.from('admin:12345').toString('base64');
     const basicAuthWrongLogin = Buffer.from('12345:qwerty').toString('base64');
     const notExistingId = new Types.ObjectId();
+    let accessToken
+    let refreshTokenCookie
+    let userDeviceId1
 
     beforeAll(async () => {
       const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -56,14 +60,30 @@ export function testSecurityDevices() {
         .expect(201);
 
         const createdResponseBody = createResponse.body;
-        userId1 = createdResponseBody.id
 
         expect(createdResponseBody).toEqual(testUser.outputUser1);
     });
 
+    it('00-00 login = 204 1 login user', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .post(`${endpoints.auth}/login`)
+        .send(testUser.loginUser1)
+        .expect(200);
+      const createdResponse = createResponse.body;
+      accessToken = createdResponse.accessToken;
+      expect(createdResponse).toEqual({
+        accessToken: expect.any(String),
+      });
+      expect(createResponse.headers['set-cookie']).toBeDefined();
+      refreshTokenCookie = createResponse.headers['set-cookie']
+        .find((cookie) => cookie.startsWith('refreshToken='));
     
+      expect(refreshTokenCookie).toBeDefined();
+      expect(refreshTokenCookie).toContain('HttpOnly');
+      expect(refreshTokenCookie).toContain('Secure');
+    });
 
-    it('00-00 login = 204 login user', async () => {
+    it('00-00 login = 204 2 login user', async () => {
       const createResponse = await request(app.getHttpServer())
         .post(`${endpoints.auth}/login`)
         .send(testUser.loginUser1)
@@ -82,118 +102,107 @@ export function testSecurityDevices() {
       expect(refreshTokenCookie).toContain('Secure');
     });
 
-    let userId1
-
-    it('get information of current user = 200 and login, email, id of user', async () => {
-      const testsResponse = await request(app.getHttpServer())
-        .get(`${endpoints.auth}/me`)
-        .set('Authorization', `Bearer ${accessToken}`)
+    it('00-00 login = 204 3 login user', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .post(`${endpoints.auth}/login`)
+        .send(testUser.loginUser1)
         .expect(200);
-
-      const responseBody = testsResponse.body;
-      userId1 = responseBody.userId;
-
-      expect(responseBody).toEqual({
-        login: testUser.inputUser1.login,
-        email: testUser.inputUser1.email,
-        userId: expect.any(String),
+      const createdResponse = createResponse.body;
+      accessToken = createdResponse.accessToken;
+      expect(createdResponse).toEqual({
+        accessToken: expect.any(String),
       });
-    });
-
-    it('password recovery via email = 204 and confirmUser', async () => {
-      await request(app.getHttpServer())
-        .post(`${endpoints.auth}/password-recovery`)
-        .send({email: testUser.inputUser1.email})
-        .expect(204);
-    });
-
-    let passwordRecoveryCode: string
-    let passwordHash: string
-
-    it('check that password recovery data in user is prepared and get recovery code', async () => {
-      const user:UserDBType = await usersRepository.getLastCreatedUserDbType(); 
-      passwordRecoveryCode = user.passwordRecoveryCode 
-      passwordHash = user.passwordHash    
-      expect(user.passwordRecoveryCode).not.toBe(null);
-      expect(user.expirationDateOfRecoveryCode).not.toBe(null);
-    });
-
-    it('new password set = 204', async () => {
-      await request(app.getHttpServer())
-        .post(`${endpoints.auth}/new-password`)
-        .send({newPassword: 'qwerty1',
-               recoveryCode: passwordRecoveryCode})
-        .expect(204);
-    });
-
-    let newPasswordHash: string
-
-    it('check that password recovery in user is sucsess', async () => {
-      const user:UserDBType = await usersRepository.getLastCreatedUserDbType();  
-      newPasswordHash = user.passwordHash  
-      expect(user.passwordHash).not.toBe(passwordHash)
-      expect(user.passwordRecoveryCode).toBe(null);
-      expect(user.expirationDateOfRecoveryCode).toBe(null);
-    });
-
-    describe('refresh-token', () => {
-
-      let refreshTokenCookie
-      let refreshTokenCookie2
-
-      it('00-00 login = 204 login user with new password', async () => {
-        const createResponse = await request(app.getHttpServer())
-          .post(`${endpoints.auth}/login`)
-          .send({
-            loginOrEmail: "user1",
-            password: "qwerty1"
-        })
-          .expect(200);
-        const createdResponse = createResponse.body;
-        //accessToken = createdResponse.accessToken;
-        expect(createdResponse).toEqual({
-          accessToken: expect.any(String),
-        });
-        expect(createResponse.headers['set-cookie']).toBeDefined();
-  
-        refreshTokenCookie = createResponse.headers['set-cookie']   
-          .find((cookie) => cookie.startsWith('refreshToken='));
-      
-        expect(refreshTokenCookie).toBeDefined();
-        expect(refreshTokenCookie).toContain('HttpOnly');
-        expect(refreshTokenCookie).toContain('Secure');
-        console.log('refreshTokenCookie ', refreshTokenCookie);
-      });
-      
-      
-  
-      it('00-00 refresh-token = 200 should get new access and refresh token', async () => {
-      await delay(1500)
-        console.log('refreshTokenCookie ', refreshTokenCookie);
-        const createResponse = await request(app.getHttpServer())
-          .post(`${endpoints.auth}/refresh-token`)
-          .set('Cookie', refreshTokenCookie)
-          .expect(200);
-         
-        const createdResponse = createResponse.body;
-       // accessToken = createdResponse.accessToken;
-        expect(createdResponse).toEqual({
-          accessToken: expect.any(String),
-        });
-        expect(createResponse.headers['set-cookie']).toBeDefined();
-        
-        console.log('after upd', createResponse.headers['set-cookie'])
-  
-       refreshTokenCookie2 = createResponse.headers['set-cookie'] 
+      expect(createResponse.headers['set-cookie']).toBeDefined();
+      const refreshTokenCookie = createResponse.headers['set-cookie']
         .find((cookie) => cookie.startsWith('refreshToken='));
-  
-        console.log('refreshTokenCookie2 ', refreshTokenCookie2);
-        expect(refreshTokenCookie2).toBeDefined();
-        expect(refreshTokenCookie2).toContain('HttpOnly');
-        expect(refreshTokenCookie2).toContain('Secure');
-        expect(refreshTokenCookie2).not.toBe(refreshTokenCookie);     
-      });   
-    })
+    
+      expect(refreshTokenCookie).toBeDefined();
+      expect(refreshTokenCookie).toContain('HttpOnly');
+      expect(refreshTokenCookie).toContain('Secure');
+    });
+
+    it('00-00 login = 204 4 login user', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .post(`${endpoints.auth}/login`)
+        .send(testUser.loginUser1)
+        .expect(200);
+      const createdResponse = createResponse.body;
+      accessToken = createdResponse.accessToken;
+      expect(createdResponse).toEqual({
+        accessToken: expect.any(String),
+      });
+      expect(createResponse.headers['set-cookie']).toBeDefined();
+      refreshTokenCookie = createResponse.headers['set-cookie']
+        .find((cookie) => cookie.startsWith('refreshToken='));
+    
+      expect(refreshTokenCookie).toBeDefined();
+      expect(refreshTokenCookie).toContain('HttpOnly');
+      expect(refreshTokenCookie).toContain('Secure');
+    });
+
+    it('00-00 security/devices GET = 200 return 4 device of user1', async () => {
+      const response = await request(app.getHttpServer())
+        .get(endpoints.devices)
+        .set('Cookie', refreshTokenCookie)
+        .expect(200);
+      const responseBody = response.body;
+      console.log(responseBody);
+
+      userDeviceId1 = responseBody[0].deviceId
+      console.log(userDeviceId1);
+
+      expect(responseBody).toEqual([
+        testUserDevice.anyOutputDevice,
+        testUserDevice.anyOutputDevice,
+        testUserDevice.anyOutputDevice,
+        testUserDevice.anyOutputDevice,
+      ]);
+    });
+
+    it('00-00 security/devices/{:deviceId} DELETE = 204 return 4 device of user1', async () => {
+      const response = await request(app.getHttpServer())
+        .delete(`${endpoints.devices}/${userDeviceId1}`)
+        .set('Cookie', refreshTokenCookie)
+        .expect(204);
+    });
+
+    it('00-00 security/devices GET = 200 return 3 deviceы of user1 after deleting one', async () => {
+      const response = await request(app.getHttpServer())
+        .get(endpoints.devices)
+        .set('Cookie', refreshTokenCookie)
+        .expect(200);
+      const responseBody = response.body;
+      console.log(responseBody);
+
+      userDeviceId1 = responseBody[0].deviceId
+      console.log(userDeviceId1);
+
+      expect(responseBody).toEqual([
+        testUserDevice.anyOutputDevice,
+        testUserDevice.anyOutputDevice,
+        testUserDevice.anyOutputDevice,
+      ]);
+    });
+
+    it('00-00 security/devices DELETE = 204 terminate all session exclude current', async () => {
+      const response = await request(app.getHttpServer())
+        .delete(endpoints.devices)
+        .set('Cookie', refreshTokenCookie)
+        .expect(204);
+    });
+
+    it('00-00 security/devices GET = 200 return 1 device of user1 after terminate all session exclude current', async () => {
+      const response = await request(app.getHttpServer())
+        .get(endpoints.devices)
+        .set('Cookie', refreshTokenCookie)
+        .expect(200);
+      const responseBody = response.body;
+
+      expect(responseBody).toEqual([
+        testUserDevice.anyOutputDevice,
+      ]);
+    });
+
 
   });
 }

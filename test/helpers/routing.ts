@@ -7,4 +7,5 @@ export const endpoints = {
   blogs: '/blogs',
   posts: '/posts',
   auth: '/auth',
+  devices: '/security/devices',
 };

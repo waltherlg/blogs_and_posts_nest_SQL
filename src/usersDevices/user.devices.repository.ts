@@ -79,23 +79,24 @@ export class UsersDevicesRepository {
 
   async deleteAllUserDevicesExceptCurrent(userId, deviceId): Promise<boolean> {
     const query = `
-    DELET from FROM public."UserDevices"
+    DELETE FROM public."UserDevices"
     WHERE "userId" = $1 AND "deviceId" <> $2;
     `
     const result = await this.dataSource.query(query, [userId, deviceId]);
     return (result[1] > 0)
   }
 
-  async getUserDeviceById(deviceId) {
-    if (!Types.ObjectId.isValid(deviceId)) {
-      return null;
-    }
-    const userDevice = this.usersDeviseModel.findById(deviceId);
-    if (!userDevice) {
-      return null;
-    }
-    return userDevice;
+  async isUserDeviceExist(deviceId): Promise<boolean> {
+    const query = `
+    SELECT COUNT(*) AS count
+    FROM public."UserDevices"
+    WHERE "deviceId" = $1
+  `;
+  const result = await this.dataSource.query(query, [deviceId]);
+  const count = result[0].count;
+  return count > 0;   
   }
+
   async deleteAllUserDevicesById(userId: string): Promise<boolean> {
     const query = `   
     DELETE FROM public."UserDevices"

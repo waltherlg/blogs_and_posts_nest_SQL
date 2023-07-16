@@ -67,7 +67,6 @@ export function testAuthOperations() {
       const user:UserDBType = await usersRepository.getLastCreatedUserDbType();
       confirmationCode1User1 = user.confirmationCode
       expect(confirmationCode1User1).not.toBeUndefined();
-      console.log(confirmationCode1User1);
     });
 
     it('00-00 registration email resending = 204 resend email and change ConfirmationCode', async () => {     

@@ -41,9 +41,9 @@ async getCurrentDeviceDataForRefreshStrategy(userId: string, deviceId: string){
     return isUserDeviceDeleted;
   }
 
-  async deleteAllUserDevicesExceptCurrent(userId, deviceId) {
+  async deleteAllUserDevicesExceptCurrent(userId, deviceId): Promise<boolean> {
     const isDevicesDeleted =
       await this.usersDeviceRepository.deleteAllUserDevicesExceptCurrent(userId, deviceId);
-    return isDevicesDeleted;
+    return !!isDevicesDeleted;
   }
 }

@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { UsersDevicesRepository } from './user.devices.repository';
+import { UserDevicesQueryRepository } from './user.devices.query.repository';
 
 @Injectable()
 export class UsersDeviceService {
-  constructor(private readonly usersDeviceRepository: UsersDevicesRepository) {}
+  constructor(private readonly usersDeviceRepository: UsersDevicesRepository,
+              private readonly userDeviceQueryRepository: UserDevicesQueryRepository
+              ) {}
 
 async getCurrentDeviceDataForRefreshStrategy(userId: string, deviceId: string){
   const currentDevice =
@@ -23,7 +26,7 @@ async getCurrentDeviceDataForRefreshStrategy(userId: string, deviceId: string){
     return currentDevice;
   }
   async getActiveUserDevices(userId: string) {
-    const foundDevices = await this.usersDeviceRepository.getActiveUserDevices(
+    const foundDevices = await this.userDeviceQueryRepository.getActiveUserDevices(
       userId,
     );
     return foundDevices;

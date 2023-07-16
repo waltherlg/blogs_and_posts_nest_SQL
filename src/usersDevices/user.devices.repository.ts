@@ -68,17 +68,6 @@ export class UsersDevicesRepository {
     
   }
 
-  async getActiveUserDevices(userId: string) {
-    const query = `
-    SELECT ip, title, "lastActiveDate", "deviceId"
-    FROM public."UserDevices"
-    WHERE "userId" = $1`
-    const result = await this.dataSource.query(query, [
-      userId
-    ]);
-    return result
-  }
-
   async deleteDeviceByUserAndDeviceId(userId, deviceId): Promise<boolean> {
     const query = `
     DELETE FROM public."UserDevices"

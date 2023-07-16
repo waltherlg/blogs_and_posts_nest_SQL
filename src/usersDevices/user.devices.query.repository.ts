@@ -6,13 +6,23 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 @Injectable()
-export class UsersDevicesRepository {
+export class UserDevicesQueryRepository {
   constructor(
     @InjectModel(UsersDevice.name)
     private usersDeviseModel: Model<UsersDeviceDocument>,
     @InjectDataSource() protected dataSource: DataSource,
   ) {}
-  async 
+
+  async getActiveUserDevices(userId: string) {
+    const query = `
+    SELECT ip, title, "lastActiveDate", "deviceId"
+    FROM public."UserDevices"
+    WHERE "userId" = $1`
+    const result = await this.dataSource.query(query, [
+      userId
+    ]);
+    return result
+  } 
 
 
 }

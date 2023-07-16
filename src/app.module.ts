@@ -86,6 +86,7 @@ import { NewPasswordSetUseCase } from './auth/application/use-cases/new-password
 import { RefreshTokenUseCase } from './auth/application/use-cases/refresh-token-use-case';
 import { LogoutUseCase } from './auth/application/use-cases/logout-use-case';
 import { CreateUserUseCase } from './users/use-cases/create-user-use-case';
+import { UserDevicesQueryRepository } from './usersDevices/user.devices.query.repository';
 const mongoUri = process.env.MONGO_URL;
 const emailUser = process.env.MAIL_USER;
 const emailPassword = process.env.MAIL_PASSWORD;
@@ -203,6 +204,7 @@ CreateUserUseCase,]
     UsersRepository,
     UsersQueryRepository,
     UsersDevicesRepository,
+    UserDevicesQueryRepository,
     CommentsRepository,
     CommentsQueryRepository,
     LocalStrategy,

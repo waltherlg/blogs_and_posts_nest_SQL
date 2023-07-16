@@ -50,6 +50,7 @@ export class SecurityController {
     }
     return usersDevises;
   }
+  
   @UseGuards(RefreshTokenGuard)
   @Delete('devices/:deviceId')
   @HttpCode(204)

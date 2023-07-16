@@ -17,10 +17,10 @@ describe('End-to-End Tests', () => {
   //testSaUsersGetWithPagination()
   //testBloggerCrud()
   //testPostLikesCrud()
-  testSecurityDevices()
+  //testSecurityDevices()
   //testCommentLikesCrud()
   //banCheckOperation()
-  //testAuthOperations()
-  //testAuthValidations()
+  testAuthOperations()
+  testAuthValidations()
   //bloggerUsersControllers()
 });

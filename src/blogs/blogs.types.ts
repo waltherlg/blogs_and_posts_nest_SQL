@@ -3,7 +3,7 @@ import mongoose, { HydratedDocument, Types } from 'mongoose';
 
 export class BlogDBType {
   constructor(
-    public _id: Types.ObjectId,
+    public blogId: string,
     public name: string,
     public isBlogBanned: boolean,
     public blogBanDate: string | null,
@@ -12,8 +12,7 @@ export class BlogDBType {
     public description: string,
     public websiteUrl: string,
     public createdAt: string,
-    public isMembership: boolean,
-    public bannedUsers: Array<BannedBlogUsersType>,    
+    public isMembership: boolean,    
   ) {}
 }
 

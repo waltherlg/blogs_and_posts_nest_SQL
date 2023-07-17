@@ -9,6 +9,7 @@ import {
 import { CommandHandler } from '@nestjs/cqrs/dist';
 import { ICommandHandler } from '@nestjs/cqrs/dist/interfaces';
 import { UsersRepository } from 'src/users/users.repository';
+import { v4 as uuidv4 } from 'uuid';
 
 export class CreateBlogCommand {
   constructor(public userId, public blogCreateInputModel: CreateBlogInputModelType){}
@@ -20,19 +21,17 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
   async execute(
     command: CreateBlogCommand
   ): Promise<string> {
-    const user = await this.usersRepository.getUserDBTypeById(command.userId)
     const blogDTO = new BlogDBType(
-      new Types.ObjectId(),
+      uuidv4(),
       command.blogCreateInputModel.name,
       false,
       null,
       command.userId,
-      user.login,      
+      null,      
       command.blogCreateInputModel.description,
       command.blogCreateInputModel.websiteUrl,
       new Date().toISOString(),
       false,
-      [],
     );
     const newBlogsId = await this.blogsRepository.createBlog(blogDTO);
     return newBlogsId;

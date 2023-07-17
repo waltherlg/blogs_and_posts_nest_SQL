@@ -139,8 +139,10 @@ export class BloggerBlogsController {
     handleBlogOperationResult(result)
   }
   //ready
+
   @Post()
   async createBlog(@Req() request, @Body() blogCreateInputModel: CreateBlogInputModelType) {
+    
     const newBlogsId = await this.commandBus.execute(new CreateBlogCommand(request.user.userId, blogCreateInputModel));
     const newBlog = await this.blogsQueryRepository.getBlogById(newBlogsId);
     if (!newBlog) {
@@ -148,6 +150,9 @@ export class BloggerBlogsController {
     }
     return newBlog;
   }
+
+
+  
   //ready
   @Get()
   async getAllBlogsForCurrentUser(@Query() queryParams: RequestBlogsQueryModel, @Req() request) {

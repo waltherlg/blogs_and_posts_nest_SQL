@@ -25,16 +25,16 @@ export class BlogsRepository {
 
   async createBlog(blogDTO: BlogDBType): Promise<string> {
     const query = `
-    INSERT INTO publoc."Blogs"(
-      "blogId"
-      name
-      "isBlogBanned"
-      "blogBanDate"
-      "userId"
-      "userName"
-      description
-      "websiteUrl"
-      "createdAt"
+    INSERT INTO public."Blogs"(
+      "blogId",
+      "name",
+      "isBlogBanned",
+      "blogBanDate",
+      "userId",
+      "userName",
+      description,
+      "websiteUrl",
+      "createdAt",
       "isMembership")
       VALUES (
       $1,  
@@ -42,14 +42,14 @@ export class BlogsRepository {
       $3, 
       $4, 
       $5, 
-      (SELECT "userName" FROM public."Users" WHERE "userId" = $5),
+      (SELECT login FROM public."Users" WHERE "userId" = $5),
       $6,
       $7,
       $8,
-      $9,
+      $9
       )
       RETURNING "blogId"
-    `
+    `;
     const result = await this.dataSource.query(query, [
       blogDTO.blogId,
       blogDTO.name,
@@ -61,6 +61,8 @@ export class BlogsRepository {
       blogDTO.createdAt,
       blogDTO.isMembership
     ])
+    console.log(result);
+    
     const blogId = result[0].blogId;
     return blogId;
   }

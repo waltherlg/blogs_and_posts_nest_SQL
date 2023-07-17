@@ -39,7 +39,9 @@ export class SaBanBlogUseCase implements ICommandHandler<SaBanBlogCommand> {
     } else {
       blog.blogBanDate = null
     }
-    const isBlogSave = await this.blogsRepository.saveBlog(blog)
+
+    //заглушка
+    const isBlogSave = true // await this.blogsRepository.saveBlog(blog)
     const isPostsUpdated = await this.postsRepository.setBlogBanStatusForPostDocument(blogId, newBanStatus)
 
 

@@ -9,7 +9,7 @@ import { ICommandHandler } from '@nestjs/cqrs/dist/interfaces';
 import { BlogActionResult } from '../../helpers/blogs.enum.action.result';
 
 export class UpdateBlogByIdFromUriCommand {
-  constructor(public blogsId: string, public userId: string,
+  constructor(public blogId: string, public userId: string,
     public blogUpdateInputModel: UpdateBlogInputModelType){}
 }
 
@@ -24,14 +24,12 @@ export class UpdateBlogByIdFromUriUseCase implements ICommandHandler<UpdateBlogB
      const description = command.blogUpdateInputModel.description;
      const websiteUrl = command.blogUpdateInputModel.websiteUrl;
 
-    const blog = await this.blogsRepository.getBlogDBTypeById(command.blogsId);
+    const blog = await this.blogsRepository.getBlogDBTypeById(command.blogId);
+    
     if(!blog) return BlogActionResult.BlogNotFound
     if(blog.userId !== command.userId) return BlogActionResult.NotOwner
-    
-    blog.name = command.blogUpdateInputModel.name;
-    blog.description = command.blogUpdateInputModel.description;
-    blog.websiteUrl = command.blogUpdateInputModel.websiteUrl;
-    const result = await this.blogsRepository.saveBlog(blog);
+
+    const result = await this.blogsRepository.updateBlogById(command.blogId, name, description, websiteUrl);
     if(result) {
       return BlogActionResult.Success
     } else { 

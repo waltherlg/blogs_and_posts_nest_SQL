@@ -76,6 +76,19 @@ export class BlogsRepository {
     return result[0];
   }
 
+  async updateBlogById(blogId, name, description, websiteUrl): Promise<boolean>{
+    const query = `
+    UPDATE public."Blogs"
+    SET name = $2, description = $3, "websiteUrl" = $4
+    WHERE "blogId" = $1
+    `
+    const result = await this.dataSource.query(query, [blogId, name, description, websiteUrl])
+    return true
+    //добавить проверку
+
+
+  }
+
   async isBlogExist(blogId): Promise<boolean> {
     if (!Types.ObjectId.isValid(blogId)) {
       return false;

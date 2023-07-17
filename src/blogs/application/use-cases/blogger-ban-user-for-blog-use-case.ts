@@ -52,7 +52,9 @@ export class BanUserForSpecificBlogUseCase implements ICommandHandler<BanUserFor
       }
       blog.bannedUsers.push(banUserInfo)
       blog.markModified('bannedUsers');
-      const result = await this.blogsRepository.saveBlog(blog)
+
+      //заглушка
+      const result = true //await this.blogsRepository.saveBlog(blog)
       if (result){
         return BlogActionResult.Success
       } else {
@@ -67,7 +69,9 @@ export class BanUserForSpecificBlogUseCase implements ICommandHandler<BanUserFor
       }
       blog.bannedUsers.splice(banedIndex, 1);
       blog.markModified('bannedUsers');
-      const result = await this.blogsRepository.saveBlog(blog)
+
+      //заглушка
+      const result = true // await this.blogsRepository.saveBlog(blog)
       if (result){
         return BlogActionResult.Success
       } else {

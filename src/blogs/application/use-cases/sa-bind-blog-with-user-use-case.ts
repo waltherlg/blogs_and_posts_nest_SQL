@@ -24,7 +24,9 @@ export class BindBlogWithUserUseCase implements ICommandHandler<BindBlogWithUser
     if(!blog) return BlogActionResult.BlogNotFound
     if(blog.userId !== null) return BlogActionResult.UserAlreadyBound
     blog.userId = command.userId
-    const result = await this.blogsRepository.saveBlog(blog)
+
+    //заглушка
+    const result = true // await this.blogsRepository.saveBlog(blog)
     if (result) return BlogActionResult.Success
   }
 }

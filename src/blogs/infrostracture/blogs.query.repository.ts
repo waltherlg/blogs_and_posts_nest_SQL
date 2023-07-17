@@ -3,20 +3,23 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Blog, BlogDBType, BlogDocument, BlogTypeOutput, blogSaTypeOutput } from '../blogs.types';
 import { HydratedDocument, Model, Types } from 'mongoose';
 import { PaginationOutputModel, RequestBannedUsersQueryModel } from '../../models/types';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class BlogsQueryRepository {
-  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>) {}
+  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>, 
+  @InjectDataSource() protected dataSource: DataSource) {}
 
   async getBlogById(blogId): Promise<BlogTypeOutput | null> {
-    if (!Types.ObjectId.isValid(blogId)) {
-      return null;
-    }
-    const blog: BlogDocument = await this.blogModel.findById(blogId);
-    if (!blog || blog.isBlogBanned === true) {
-      return null;
-    }
-    return blog.prepareBlogForOutput();
+    const query = `
+    SELECT "blogId" AS id, name, description, "websiteUrl", "createdAt", "isMembership"
+    FROM public."Blogs"
+    WHERE "blogId" = $1
+    LIMIT 1
+    `;
+    const result = await this.dataSource.query(query, [blogId]); 
+    return result[0];
   }
 
   async getAllBlogs(mergedQueryParams) {

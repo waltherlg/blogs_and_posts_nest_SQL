@@ -20,9 +20,14 @@ export class UpdateBlogByIdFromUriUseCase implements ICommandHandler<UpdateBlogB
   async execute(
     command: UpdateBlogByIdFromUriCommand,
   ): Promise<BlogActionResult> {
+     const name = command.blogUpdateInputModel.name;
+     const description = command.blogUpdateInputModel.description;
+     const websiteUrl = command.blogUpdateInputModel.websiteUrl;
+
     const blog = await this.blogsRepository.getBlogDBTypeById(command.blogsId);
     if(!blog) return BlogActionResult.BlogNotFound
     if(blog.userId !== command.userId) return BlogActionResult.NotOwner
+    
     blog.name = command.blogUpdateInputModel.name;
     blog.description = command.blogUpdateInputModel.description;
     blog.websiteUrl = command.blogUpdateInputModel.websiteUrl;

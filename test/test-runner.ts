@@ -15,12 +15,12 @@ import { bloggerUsersControllers } from './11-blogger.usrers.controller.e2e-spec
 describe('End-to-End Tests', () => {
   //testSaUsersCrud()
   //testSaUsersGetWithPagination()
-  //testBloggerCrud()
+  testBloggerCrud()
   //testPostLikesCrud()
   //testSecurityDevices()
   //testCommentLikesCrud()
   //banCheckOperation()
-  testAuthOperations()
-  testAuthValidations()
+  //testAuthOperations()
+  //testAuthValidations()
   //bloggerUsersControllers()
 });

@@ -8,6 +8,7 @@ import { PasswordRecoveryModel } from '../auth/auth.types';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { log } from 'console';
 import { newPasswordSetInput } from 'src/auth/auth.controller';
+import { validate as isValidUUID } from 'uuid';
 
 @Injectable()
 export class UsersRepository {
@@ -82,6 +83,9 @@ export class UsersRepository {
   }
 
   async deleteUserById(userId: string): Promise<boolean> {
+    if (!isValidUUID(userId)) {
+      return false;
+    }
     const query = `
     DELETE FROM public."Users"
     WHERE "userId" = $1
@@ -263,6 +267,9 @@ export class UsersRepository {
   }
 
   async changeUserBanStatus(userBanDto): Promise<boolean> {
+    if (!isValidUUID(userBanDto.userId)) {
+      return false;
+    }
     const query = `
     UPDATE public."Users"
     SET "isBanned" = $2, "banDate" = $3, "banReason" = $4 
@@ -317,6 +324,9 @@ export class UsersRepository {
   }
 
   async isUserIdExist(userId: string): Promise<boolean> {
+    if (!isValidUUID(userId)) {
+      return false;
+    }
     const query = `
       SELECT COUNT(*) AS count
       FROM public."Users"
@@ -367,6 +377,9 @@ export class UsersRepository {
   }
 
   async isUserBanned(userId): Promise<boolean>{
+    if (!isValidUUID(userId)) {
+      return false;
+    }
     const query = `
     SELECT "isBanned"
     FROM public."Users"

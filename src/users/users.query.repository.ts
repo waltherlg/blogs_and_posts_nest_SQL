@@ -6,7 +6,7 @@ import { PaginationOutputModel, RequestBannedUsersQueryModel } from '../models/t
 import { BlogDocument, Blog } from 'src/blogs/blogs.types';
 import { PipelineStage } from 'mongoose';
 import { DataSource } from 'typeorm';
-import { log } from 'console';
+import { validate as isValidUUID } from 'uuid';
 
 @Injectable()
 export class UsersQueryRepository {
@@ -15,6 +15,9 @@ export class UsersQueryRepository {
   private dataSource: DataSource) {}
 
   async getCurrentUserInfo(userId: string) {
+    if (!isValidUUID(userId)) {
+      return false;
+    }
     const query = `
     SELECT email, login, "userId" 
     FROM public."Users"
@@ -26,7 +29,9 @@ export class UsersQueryRepository {
   }
 
   async getUserById(userId): Promise<UserTypeOutput | null> {
-
+    if (!isValidUUID(userId)) {
+      return null;
+    }
     const query = `
     SELECT "userId", login, email, "createdAt", "isBanned", "banDate", "banReason"
     FROM public."Users"
@@ -47,14 +52,6 @@ export class UsersQueryRepository {
     }
   }
   }
-  
-    // const query = `
-    //   SELECT id, login, email, "createdAt", "isBanned", "banDate", "banReason"
-    //   FROM public."Users"
-    //   WHERE (login ILIKE $1 OR email ILIKE $2)
-    //   ORDER BY $4, $5
-    //   LIMIT $6 OFFSET $7
-    // `;
 
   async getAllUsers(mergedQueryParams): Promise<PaginationOutputModel<UserTypeOutput>> {
     const searchLoginTerm = mergedQueryParams.searchLoginTerm;

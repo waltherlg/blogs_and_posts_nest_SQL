@@ -5,6 +5,7 @@ import { HydratedDocument, Model, Types } from 'mongoose';
 import { PaginationOutputModel, RequestBannedUsersQueryModel } from '../../models/types';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { validate as isValidUUID } from 'uuid';
 
 @Injectable()
 export class BlogsQueryRepository {
@@ -12,6 +13,9 @@ export class BlogsQueryRepository {
   @InjectDataSource() protected dataSource: DataSource) {}
 
   async getBlogById(blogId): Promise<BlogTypeOutput | null> {
+    if (!isValidUUID(blogId)) {
+      return null;
+    }
     const query = `
     SELECT "blogId" AS id, name, description, "websiteUrl", "createdAt", "isMembership"
     FROM public."Blogs"

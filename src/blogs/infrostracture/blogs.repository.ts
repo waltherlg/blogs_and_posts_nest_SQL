@@ -19,7 +19,7 @@ export class BlogsRepository {
 
   async deleteBlogById(blogId: string): Promise<boolean> {
     if (!isValidUUID(blogId)) {
-      false;
+      return false;
     }
     const query = `
     DELETE FROM  public."Blogs"
@@ -75,7 +75,7 @@ export class BlogsRepository {
 
   async getBlogDBTypeById(blogId): Promise<BlogDocument | null> {
     if (!isValidUUID(blogId)) {
-      null;
+      return null;
     }
     const query = `
     SELECT * FROM public."Blogs"
@@ -91,7 +91,7 @@ export class BlogsRepository {
 
   async updateBlogById(blogId, name, description, websiteUrl): Promise<boolean>{
     if (!isValidUUID(blogId)) {
-      false;
+      return false;
     }
     const query = `
     UPDATE public."Blogs"
@@ -105,7 +105,7 @@ export class BlogsRepository {
 
   async isBlogExist(blogId): Promise<boolean> {
     if (!isValidUUID(blogId)) {
-      false;
+      return false;
     }
     const query = `
     SELECT COUNT(*) AS count

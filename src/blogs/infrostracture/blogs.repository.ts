@@ -107,7 +107,7 @@ export class BlogsRepository {
     }
     const query = `
     UPDATE public."Blogs"
-    SET   "userId" = $2
+    SET "userId" = $2
     WHERE "blogId" = $1
     `
     const result = await this.dataSource.query(query, [blogId, userId])

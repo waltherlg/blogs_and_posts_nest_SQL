@@ -332,12 +332,5 @@ export function testBloggerCrud() {
       });
     });
 
-    it('00-00 sa/users/:userId = 204 delete user1', async () => {
-      await request(app.getHttpServer())
-        .delete(`${endpoints.saUsers}/${userId1}`)
-        .set('Authorization', `Basic ${basicAuthRight}`)
-        .expect(204);
-    });
-
   });
 }

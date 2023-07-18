@@ -4,6 +4,7 @@ import { Model, Types } from 'mongoose';
 import { UsersDevice, UsersDeviceDocument } from './users-devices.types';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { validate as isValidUUID } from 'uuid';
 
 @Injectable()
 export class UsersDevicesRepository {
@@ -40,6 +41,9 @@ export class UsersDevicesRepository {
   }
 
   async getDeviceByUsersAndDeviceId(userId: string, deviceId: string) {
+    if (!isValidUUID(userId) || !isValidUUID(deviceId)) {
+      return null;
+    }
     const query = `SELECT * FROM public."UserDevices"
     WHERE "userId" = $1 AND "deviceId" = $2
     LIMIT 1`;
@@ -54,7 +58,9 @@ export class UsersDevicesRepository {
     lastActiveDate,
     expirationDate,
   ): Promise<boolean> {
-
+    if (!isValidUUID(deviceId)) {
+      return false;
+    }
     const query = `UPDATE public."UserDevices"
     SET "lastActiveDate" = $2, "expirationDate" = $3
     WHERE "deviceId" = $1 `
@@ -69,6 +75,9 @@ export class UsersDevicesRepository {
   }
 
   async deleteDeviceByUserAndDeviceId(userId, deviceId): Promise<boolean> {
+    if (!isValidUUID(userId) || !isValidUUID(deviceId)) {
+      return false;
+    }
     const query = `
     DELETE FROM public."UserDevices"
     WHERE "userId" = $1 AND "deviceId" = $2
@@ -78,6 +87,9 @@ export class UsersDevicesRepository {
   }
 
   async deleteAllUserDevicesExceptCurrent(userId, deviceId): Promise<boolean> {
+    if (!isValidUUID(userId) || !isValidUUID(deviceId)) {
+      return false;
+    }
     const query = `
     DELETE FROM public."UserDevices"
     WHERE "userId" = $1 AND "deviceId" <> $2;
@@ -87,6 +99,9 @@ export class UsersDevicesRepository {
   }
 
   async isUserDeviceExist(deviceId): Promise<boolean> {
+    if (!isValidUUID(deviceId)) {
+      return false;
+    }
     const query = `
     SELECT COUNT(*) AS count
     FROM public."UserDevices"
@@ -98,6 +113,9 @@ export class UsersDevicesRepository {
   }
 
   async deleteAllUserDevicesById(userId: string): Promise<boolean> {
+    if (!isValidUUID(userId)) {
+      return false;
+    }
     const query = `   
     DELETE FROM public."UserDevices"
     WHERE "userId" = $1

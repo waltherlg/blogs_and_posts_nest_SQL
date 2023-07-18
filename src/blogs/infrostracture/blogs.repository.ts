@@ -5,6 +5,7 @@ import { HydratedDocument, Model, Types } from 'mongoose';
 import { log } from 'console';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { validate as isValidUUID } from 'uuid';
 
 @Injectable()
 export class BlogsRepository {
@@ -17,8 +18,10 @@ export class BlogsRepository {
   }
 
   async deleteBlogById(blogId: string): Promise<boolean> {
+    if (!isValidUUID(blogId)) {
+      false;
+    }
     const query = `
-    
     DELETE FROM  public."Blogs"
     WHERE "blogId" = $1
     `
@@ -71,6 +74,9 @@ export class BlogsRepository {
   }
 
   async getBlogDBTypeById(blogId): Promise<BlogDocument | null> {
+    if (!isValidUUID(blogId)) {
+      null;
+    }
     const query = `
     SELECT * FROM public."Blogs"
     WHERE "blogId" = $1
@@ -78,10 +84,15 @@ export class BlogsRepository {
     const result = await this.dataSource.query(query, [
       blogId
     ]);
+    console.log('result getBlogDBTypeById ', result[0]);
+    
     return result[0];
   }
 
   async updateBlogById(blogId, name, description, websiteUrl): Promise<boolean>{
+    if (!isValidUUID(blogId)) {
+      false;
+    }
     const query = `
     UPDATE public."Blogs"
     SET name = $2, description = $3, "websiteUrl" = $4
@@ -93,6 +104,9 @@ export class BlogsRepository {
   }
 
   async isBlogExist(blogId): Promise<boolean> {
+    if (!isValidUUID(blogId)) {
+      false;
+    }
     const query = `
     SELECT COUNT(*) AS count
     FROM public."Blogs"

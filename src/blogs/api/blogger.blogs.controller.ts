@@ -121,11 +121,11 @@ export class BloggerBlogsController {
   @HttpCode(204)
   async updateBlogById(
     @Req() request,
-    @Param('id') blogsId: string,
+    @Param('id') blogId: string,
     @Body() blogUpdateInputModel: UpdateBlogInputModelType,
   ) {  
     const result: BlogActionResult = await this.commandBus.execute(new UpdateBlogByIdFromUriCommand(
-      blogsId,
+      blogId,
       request.user.userId,
       blogUpdateInputModel,
     ));

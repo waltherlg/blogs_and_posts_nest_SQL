@@ -8,7 +8,6 @@ export class BlogDBType {
     public isBlogBanned: boolean,
     public blogBanDate: string | null,
     public userId: string | null,
-    public userName: string | null,
     public description: string,
     public websiteUrl: string,
     public createdAt: string,

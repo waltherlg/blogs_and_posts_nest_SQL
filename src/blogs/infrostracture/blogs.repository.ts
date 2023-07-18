@@ -37,7 +37,6 @@ export class BlogsRepository {
       "isBlogBanned",
       "blogBanDate",
       "userId",
-      "userName",
       description,
       "websiteUrl",
       "createdAt",
@@ -48,7 +47,6 @@ export class BlogsRepository {
       $3, 
       $4, 
       $5, 
-      (SELECT login FROM public."Users" WHERE "userId" = $5),
       $6,
       $7,
       $8,
@@ -99,6 +97,20 @@ export class BlogsRepository {
     WHERE "blogId" = $1
     `
     const result = await this.dataSource.query(query, [blogId, name, description, websiteUrl])
+    const count = result[1];
+    return count === 1
+  }
+
+  async bindBlogWithUser(blogId, userId){
+    if (!isValidUUID(blogId) || !isValidUUID(userId)) {
+      return false;
+    }
+    const query = `
+    UPDATE public."Blogs"
+    SET   "userId" = $2
+    WHERE "blogId" = $1
+    `
+    const result = await this.dataSource.query(query, [blogId, userId])
     const count = result[1];
     return count === 1
   }

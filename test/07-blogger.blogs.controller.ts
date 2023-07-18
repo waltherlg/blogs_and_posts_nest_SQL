@@ -4,6 +4,7 @@ import request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { Types } from 'mongoose';
 import { endpoints } from './helpers/routing';
+import { testUser } from './helpers/inputAndOutputObjects/usersObjects';
 export function testBloggerCrud() {
   describe('Blogger CRUD operation \"if all is ok\" (e2e). ', () => {
     let app: INestApplication;
@@ -33,6 +34,7 @@ export function testBloggerCrud() {
 
     let firstCreatedBlogId: string;
     let createdPostId: string;
+    let userId1: string
 
     it('00-00 testing/all-data DELETE = 204 removeAllData', async () => {
       await request(app.getHttpServer())
@@ -40,16 +42,18 @@ export function testBloggerCrud() {
         .expect(204);
     });
 
-    it('00-00 auth/registration = 204 register user1', async () => {
-        await request(app.getHttpServer())
-          .post(`${endpoints.auth}/registration`)
-          .send({
-            login: 'user1',
-            password: 'qwerty',
-            email: 'ruslan@gmail-1.com',
-          })
-          .expect(204);
-      });
+    it('00-00 sa/users post = 201 create user1 with return', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .post(endpoints.saUsers)
+        .set('Authorization', `Basic ${basicAuthRight}`)
+        .send(testUser.inputUser1)
+        .expect(201);
+
+        const createdResponseBody = createResponse.body;
+        userId1 = createdResponseBody.id
+
+        expect(createdResponseBody).toEqual(testUser.outputUser1);
+    });
 
       it('00-00 auth/registration = 204 register user2', async () => {
         await request(app.getHttpServer())
@@ -302,6 +306,37 @@ export function testBloggerCrud() {
         totalCount: 0,
         items: [],
       });
+    });
+
+    it('01-02 blogger/blogs POST = 201 user1 create new blog', async () => {
+      const testsResponse = await request(app.getHttpServer())
+        .post(endpoints.bloggerBlogs)
+        .set('Authorization', `Bearer ${accessTokenUser1}`)
+        .send({
+          name: 'BlogForPosts',
+          description: 'description BlogForPosts',
+          websiteUrl: 'https://www.someweb.com',
+        })
+        .expect(201);
+
+      const createdResponseOfFirstBlog = testsResponse.body;
+      firstCreatedBlogId = createdResponseOfFirstBlog.id;
+
+      expect(createdResponseOfFirstBlog).toEqual({
+        id: firstCreatedBlogId,
+        name: 'BlogForPosts',
+        description: 'description BlogForPosts',
+        websiteUrl: 'https://www.someweb.com',
+        createdAt: expect.any(String),
+        isMembership: false,
+      });
+    });
+
+    it('00-00 sa/users/:userId = 204 delete user1', async () => {
+      await request(app.getHttpServer())
+        .delete(`${endpoints.saUsers}/${userId1}`)
+        .set('Authorization', `Basic ${basicAuthRight}`)
+        .expect(204);
     });
 
   });

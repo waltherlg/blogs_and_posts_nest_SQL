@@ -21,9 +21,10 @@ export class BindBlogWithUserUseCase implements ICommandHandler<BindBlogWithUser
     command: BindBlogWithUserCommand
   ): Promise<BlogActionResult> {
     const blog = await this.blogsRepository.getBlogDBTypeById(command.blogId)
+
     if(!blog) return BlogActionResult.BlogNotFound
+
     if(blog.userId !== null) return BlogActionResult.UserAlreadyBound
-    blog.userId = command.userId
 
     //заглушка
     const result = true // await this.blogsRepository.saveBlog(blog)

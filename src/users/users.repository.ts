@@ -86,6 +86,8 @@ export class UsersRepository {
     if (!isValidUUID(userId)) {
       return false;
     }
+    console.log(userId);
+    
     const query = `
     DELETE FROM public."Users"
     WHERE "userId" = $1

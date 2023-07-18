@@ -85,18 +85,19 @@ export class BlogsRepository {
     WHERE "blogId" = $1
     `
     const result = await this.dataSource.query(query, [blogId, name, description, websiteUrl])
-    return true
-    //добавить проверку
-
-
+    const count = result[1];
+    return count === 1
   }
 
   async isBlogExist(blogId): Promise<boolean> {
-    if (!Types.ObjectId.isValid(blogId)) {
-      return false;
-    }
-    const count = await this.blogModel.countDocuments({ _id: blogId });
-    return count > 0;
+    const query = `
+    SELECT COUNT(*) AS count
+    FROM public."Blogs"
+    WHERE "blogId" = $1
+    `
+    const result = await this.dataSource.query(query, [blogId]);
+    console.log('result isBlogExist ', result);
+    return result;
   }
 
   async deleteAllBlogs() {

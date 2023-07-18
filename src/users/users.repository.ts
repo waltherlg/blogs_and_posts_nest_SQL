@@ -288,7 +288,7 @@ export class UsersRepository {
       WHERE email = $1
     `;
     const result = await this.dataSource.query(query, [email]);
-    const count = result[0].count;
+    const count = result[0].count;   
     return count > 0;
   }
 
@@ -300,7 +300,6 @@ export class UsersRepository {
     `;
     const result = await this.dataSource.query(query, [email]);
     console.log('result isEmailConfirmed ', result);
-    
     return result;
   }
 
@@ -313,7 +312,6 @@ export class UsersRepository {
     const result = await this.dataSource.query(query, [login]);
     const count = result[0].count;
     console.log('isLoginExists count ', count);
-    
     return count > 0;
   }
 

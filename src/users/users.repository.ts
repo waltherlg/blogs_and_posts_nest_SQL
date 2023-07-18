@@ -87,7 +87,8 @@ export class UsersRepository {
     WHERE "userId" = $1
     `
     const result = await this.dataSource.query(query, [userId]);
-    return result.rowCount > 0;   
+    //console.log('resu;t deleteUserById ', result[1]);
+    return result[1] > 0;   
   }
 
   async getUserDBTypeById(userId): Promise<UserDocument | null> {

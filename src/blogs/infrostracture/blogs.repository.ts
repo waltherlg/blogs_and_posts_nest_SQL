@@ -17,10 +17,13 @@ export class BlogsRepository {
   }
 
   async deleteBlogById(blogId: string): Promise<boolean> {
-    if (!Types.ObjectId.isValid(blogId)) {
-      return false;
-    }
-    return this.blogModel.findByIdAndDelete(blogId);
+    const query = `
+    
+    DELETE FROM  public."Blogs"
+    WHERE "blogId" = $1
+    `
+    const result = await this.dataSource.query(query,[blogId]);
+    return result[1] > 0;
   }
 
   async createBlog(blogDTO: BlogDBType): Promise<string> {

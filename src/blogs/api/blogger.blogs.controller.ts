@@ -151,8 +151,6 @@ export class BloggerBlogsController {
     return newBlog;
   }
 
-
-  
   //ready
   @Get()
   async getAllBlogsForCurrentUser(@Query() queryParams: RequestBlogsQueryModel, @Req() request) {

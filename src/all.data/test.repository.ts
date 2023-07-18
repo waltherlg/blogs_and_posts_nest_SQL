@@ -30,7 +30,8 @@ export class TestRepository {
     await this.usersDeviseModel.deleteMany({});
     await this.commentModel.deleteMany({});
     await this.dataSource.query(`DELETE FROM public."UserDevices";
-    DELETE FROM public."Users"; `)
+    DELETE FROM public."Users";
+    DELETE FROM public."Blogs"; `)
     return true;
   }
 }

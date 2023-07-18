@@ -130,33 +130,58 @@ export class BlogsQueryRepository {
   }
 
   async getAllBlogsForCurrentUser(mergedQueryParams, userId) {
-    const { searchNameTerm, pageNumber, pageSize, sortBy, sortDirection } = mergedQueryParams;
-    const searchQuery = {
-      userId: userId,
-      isBlogBanned: false,
-      ...(searchNameTerm !== '' ? { name: new RegExp(searchNameTerm, 'gi') } : {})
-    };
-  
-    const [blogsCount, blogs] = await Promise.all([
-      this.blogModel.countDocuments(searchQuery),
-      this.blogModel
-        .find(searchQuery)
-        .skip(this.skipPage(pageNumber, pageSize))
-        .limit(+pageSize)
-        .sort({ [sortBy]: this.sortByDesc(sortDirection) })
-    ]);
-    
-    const blogsOutput = blogs.map(blog => blog.prepareBlogForOutput());
-    const pageCount = Math.ceil(blogsCount / +pageSize);
-  
+    const searchNameTerm = mergedQueryParams.searchNameTerm;
+    const sortBy = mergedQueryParams.sortBy;   
+    const sortDirection = mergedQueryParams.sortDirection;
+    const pageNumber = +mergedQueryParams.pageNumber;
+    const pageSize = +mergedQueryParams.pageSize;
+    const skipPage = (pageNumber - 1) * pageSize
+
+    const queryParams = [
+      `%${searchNameTerm}%`,
+      sortBy,    
+      sortDirection.toUpperCase(),
+      pageNumber,
+      pageSize,
+      skipPage,
+      userId
+    ];
+
+    let query = `
+    SELECT "blogId" AS id, name, description, "websiteUrl", "createdAt", "isMembership"
+    FROM public."Blogs"
+    WHERE "userId" = '${queryParams[6]}'
+
+    `;
+    let countQuery = `
+    SELECT COUNT(*)
+    FROM public."Blogs"
+    WHERE "userId" = '${queryParams[6]}'
+    `;
+
+    if (searchNameTerm !== ''){
+      query += `AND name ILIKE '${queryParams[0]}'`
+      countQuery += `AND name ILIKE '${queryParams[0]}'`;
+    }
+
+    query += ` ORDER BY "${queryParams[1]}" ${queryParams[2]}
+    LIMIT ${queryParams[4]} OFFSET ${queryParams[5]};
+    `;
+
+    const blogsCountArr = await this.dataSource.query(countQuery);
+    const blogsCount = parseInt(blogsCountArr[0].count);
+
+    const blogs = await this.dataSource.query(query);
+
+    const pageCount = Math.ceil(blogsCount / pageSize);
+
     const outputBlogs = {
       pagesCount: pageCount,
       page: +pageNumber,
       pageSize: +pageSize,
       totalCount: blogsCount,
-      items: blogsOutput
+      items: blogs
     };
-  
     return outputBlogs;
   }
   

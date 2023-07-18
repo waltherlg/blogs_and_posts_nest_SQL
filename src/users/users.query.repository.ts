@@ -74,8 +74,6 @@ const queryParams = [
   skipPage,
 ];
 
-console.log(queryParams[0]);
-
 let query = `
 SELECT "userId", login, email, "createdAt", "isBanned", "banDate", "banReason"
 FROM public."Users"

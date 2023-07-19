@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export class PostDBType {
   constructor(
-    public postId: UUID,
+    public postId: string,
     public title: string,
     public shortDescription: string,
     public content: string,

@@ -2,10 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { HydratedDocument, Model, Types } from 'mongoose';
 import { Post, PostDBType, PostDocument } from './posts.types';
+import { DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 @Injectable()
 export class PostsRepository {
-  constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) {}
+  constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>,
+  @InjectDataSource() protected dataSource: DataSource) {}
 
   async savePost(post: PostDocument) {
     const result = await post.save();
@@ -13,9 +16,33 @@ export class PostsRepository {
   }
 
   async createPost(postDTO: PostDBType): Promise<string> {
-    const newPost = new this.postModel(postDTO);
-    await newPost.save();
-    return newPost._id.toString();
+    const query = `
+    INSERT INTO public."Posts"(
+      "postId",
+      title,
+      "shortDescription",
+      content,
+      "blogId",
+      "createdAt")
+      VALUES (
+        $1,  
+        $2, 
+        $3, 
+        $4, 
+        $5, 
+        $6,)
+      RETURNING "postId"
+    `;
+    const result = await this.dataSource.query(query, [
+      postDTO.postId,
+      postDTO.title,
+      postDTO.shortDescription,
+      postDTO.content,
+      postDTO.blogId,
+      postDTO.createdAt
+    ])
+    const postId = result[0].postId;
+    return postId;
   }
 
   async deletePostById(postId: string): Promise<boolean> {

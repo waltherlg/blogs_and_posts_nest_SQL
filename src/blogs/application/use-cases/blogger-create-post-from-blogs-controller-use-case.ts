@@ -31,20 +31,12 @@ export class CreatePostFromBloggerControllerUseCase implements ICommandHandler<C
     if(!blog) return BlogActionResult.BlogNotFound
     if(blog.userId !== command.userId) return BlogActionResult.NotOwner
     const postDto = new PostDBType(
-      new Types.ObjectId,
+      uuidv4(),
       command.postCreateDto.title,
       command.postCreateDto.shortDescription,
       command.postCreateDto.content,
-      command.userId,
-      false,
       command.blogId,
-      blog.name,
-      false,
       new Date().toISOString(),
-      0,
-      0,
-      'None',
-      []
     )
     const newPostId = await this.postsRepository.createPost(postDto)
     if(!newPostId) return BlogActionResult.NotCreated

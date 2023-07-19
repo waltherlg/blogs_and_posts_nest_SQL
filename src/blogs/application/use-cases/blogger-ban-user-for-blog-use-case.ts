@@ -71,7 +71,7 @@ export class BanUserForSpecificBlogUseCase implements ICommandHandler<BanUserFor
       blog.markModified('bannedUsers');
 
       //заглушка
-      const result = true // await this.blogsRepository.saveBlog(blog)
+      const result = true // await this.blogsRepository.saveBlog(blog) // [ ]: fix plug
       if (result){
         return BlogActionResult.Success
       } else {

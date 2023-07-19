@@ -1,22 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { UUID } from 'crypto';
 import mongoose, { HydratedDocument, ObjectId, Types } from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
 
 export class PostDBType {
   constructor(
-    public _id: Types.ObjectId,
+    public postId: UUID,
     public title: string,
     public shortDescription: string,
     public content: string,
-    public userId: string | null,
-    public isBanned: boolean,
     public blogId: string,
-    public blogName: string,
-    public isBlogBanned: boolean,
     public createdAt: string,
-    public likesCount: number,
-    public dislikesCount: number,
-    public myStatus: string,
-    public likesCollection: Array<likesCollectionType>,
   ) {}
 }
 

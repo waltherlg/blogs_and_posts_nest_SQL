@@ -11,6 +11,7 @@ import { CreatePostByBlogsIdInputModelType } from 'src/blogs/api/blogger.blogs.c
 import { PostsRepository } from 'src/posts/posts.repository';
 import { PostDBType } from 'src/posts/posts.types';
 import { Types } from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
 
 export class CreatePostFromBloggerControllerCommand {
   constructor(

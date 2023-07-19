@@ -4,6 +4,7 @@ import { HydratedDocument, Model, Types } from 'mongoose';
 import { PaginationOutputModel } from '../models/types';
 import { PostDocument, PostTypeOutput, Post } from './posts.types';
 import { BlogDocument, Blog } from 'src/blogs/blogs.types';
+import { validate as isValidUUID } from 'uuid';
 
 @Injectable()
 export class PostsQueryRepository {
@@ -11,13 +12,15 @@ export class PostsQueryRepository {
   @InjectModel(Blog.name) private blogModel: Model<BlogDocument>) {}
 
   async getPostById(postId, userId?): Promise<PostTypeOutput | null> {
-    if (!Types.ObjectId.isValid(postId)) {
+    if (!isValidUUID(postId)) {
       return null;
     }
+
     const post: PostDocument = await this.postModel.findById(postId);
     if (!post || post.isBanned === true || post.isBlogBanned === true) {
       return null;
     }
+
     const userPostStatus = post.likesCollection.find(
       (p) => p.userId === userId,
     );
@@ -25,6 +28,26 @@ export class PostsQueryRepository {
       post.myStatus = userPostStatus.status;
     }
     return post.preparePostForOutput();
+    {
+      id: string;
+      title: string;
+      shortDescription: string;
+      content: string;
+      blogId: string;
+      blogName: string;
+      createdAt: string;
+      extendedLikesInfo: {
+          likesCount: number;
+          dislikesCount: number;
+          myStatus: string;
+          newestLikes: {
+              ...;
+          }[];
+      };
+  }
+
+
+
   }
 
   async getAllPosts(mergedQueryParams, userId?) {

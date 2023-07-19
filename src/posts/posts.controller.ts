@@ -125,36 +125,7 @@ export class PostController {
     }
     return post;
   }
-  @UseGuards(BasicAuthGuard)
-  @Put(':id')
-  @HttpCode(204)
-  async updatePostById(
-    @Param('id') postId: string,
-    @Body() postUpdateInputModel: UpdatePostInputModelType,
-  ) {
-    if (!(await this.checkService.isPostExist(postId))) {
-      throw new PostNotFoundException();
-    }
-    const result = await this.postsService.updatePostById(
-      postId,
-      postUpdateInputModel,
-    );
-    if (!result) {
-      throw new UnableException('post updating');
-    }
-  }
-  @UseGuards(BasicAuthGuard)
-  @Delete(':id')
-  @HttpCode(204)
-  async deletePostById(@Param('id') postId: string) {
-    if (!(await this.checkService.isPostExist(postId))) {
-      throw new PostNotFoundException();
-    }
-    const result = await this.postsService.deletePostById(postId);
-    if (!result) {
-      throw new UnableException('post deleting');
-    }
-  }
+
   @UseGuards(OptionalJwtAuthGuard)
   @Get()
   async getAllPosts(

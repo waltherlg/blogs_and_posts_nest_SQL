@@ -5,50 +5,52 @@ import { PaginationOutputModel } from '../models/types';
 import { PostDocument, PostTypeOutput, Post } from './posts.types';
 import { BlogDocument, Blog } from 'src/blogs/blogs.types';
 import { validate as isValidUUID } from 'uuid';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class PostsQueryRepository {
   constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>,
-  @InjectModel(Blog.name) private blogModel: Model<BlogDocument>) {}
+  @InjectModel(Blog.name) private blogModel: Model<BlogDocument>, 
+  @InjectDataSource() protected dataSource: DataSource) {}
 
   async getPostById(postId, userId?): Promise<PostTypeOutput | null> {
     if (!isValidUUID(postId)) {
       return null;
     }
-
-    const post: PostDocument = await this.postModel.findById(postId);
-    if (!post || post.isBanned === true || post.isBlogBanned === true) {
-      return null;
-    }
-
-    const userPostStatus = post.likesCollection.find(
-      (p) => p.userId === userId,
-    );
-    if (userPostStatus) {
-      post.myStatus = userPostStatus.status;
-    }
-    return post.preparePostForOutput();
-    {
-      id: string;
-      title: string;
-      shortDescription: string;
-      content: string;
-      blogId: string;
-      blogName: string;
-      createdAt: string;
-      extendedLikesInfo: {
-          likesCount: number;
-          dislikesCount: number;
-          myStatus: string;
-          newestLikes: {
-              ...;
-          }[];
-      };
+    const query = `
+      SELECT "Posts".*, "Blogs".name, "Users"."isBanned"
+      FROM public."Posts"
+      INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
+      INNER JOIN "Users" ON "Blogs"."userId" = "Users"."userId"
+      WHERE "postId" = $1
+    `;
+  
+    const result = await this.dataSource.query(query, [postId])
+    return result[0];
   }
 
+    // {
+    //   id: string;
+    //   title: string;
+    //   shortDescription: string;
+    //   content: string;
+    //   blogId: string;
+    //   blogName: string;
+    //   createdAt: string;
+    //   extendedLikesInfo: {
+    //       likesCount: number;
+    //       dislikesCount: number;
+    //       myStatus: string;
+    //       newestLikes: {
+    //           ...;
+    //       }[];
+    //   };
+    // }
 
 
-  }
+
+  
 
   async getAllPosts(mergedQueryParams, userId?) {
     const postCount = await this.postModel.countDocuments({ isBanned: false, isBlogBanned: false });

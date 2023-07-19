@@ -67,7 +67,7 @@ export class UsersController {
 
   @Put(':userId/ban')
   @HttpCode(204)
-  async changeBanStatus(@Param('userId') userId: string, @Body()banDTO: BanUserInputModel){
+  async changeBanStatus(@Param('userId') userId: string, @Body()banDTO: BanUserInputModel){ 
     if(!await this.checkService.isUserIdExist(userId)){
       throw new CustomNotFoundException('user')
     }

@@ -30,9 +30,11 @@ export class SaBanBlogUseCase implements ICommandHandler<SaBanBlogCommand> {
 
     const blog = await this.blogsRepository.getBlogDBTypeById(blogId);
     if(!blog) return BlogActionResult.BlogNotFound
+
     if(blog.isBlogBanned === newBanStatus){
       return BlogActionResult.NoChangeNeeded
     }
+    
     blog.isBlogBanned = newBanStatus
     if(newBanStatus === true){
       blog.blogBanDate = new Date().toISOString()
@@ -42,10 +44,11 @@ export class SaBanBlogUseCase implements ICommandHandler<SaBanBlogCommand> {
 
     //заглушка
     const isBlogSave = true // await this.blogsRepository.saveBlog(blog)
-    const isPostsUpdated = await this.postsRepository.setBlogBanStatusForPostDocument(blogId, newBanStatus)
+    
+    
 
 
-    if(isBlogSave && isPostsUpdated){
+    if(isBlogSave){
       return BlogActionResult.Success
     } else {
       return BlogActionResult.NotSaved

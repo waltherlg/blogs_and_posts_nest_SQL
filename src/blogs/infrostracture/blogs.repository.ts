@@ -129,6 +129,20 @@ export class BlogsRepository {
     return result;
   }
 
+  async newBanStatus(blogId, newBanStatus: boolean, newBanDate): Promise<boolean>{
+    if (!isValidUUID(blogId)) {
+      return false;
+    }
+    const query = `
+    UPDATE public."Blogs"
+    SET "isBlogBanned" = $2, "blogBanDate" = $3
+    WHERE "blogId" = $1
+    `
+    const result = await this.dataSource.query(query, [blogId, newBanStatus, newBanDate])
+    const count = result[1];
+    return count === 1
+  }
+
   async deleteAllBlogs() {
     await this.blogModel.deleteMany({});
   }

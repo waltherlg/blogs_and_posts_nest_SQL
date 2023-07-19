@@ -30,7 +30,7 @@ export class PostsRepository {
         $3, 
         $4, 
         $5, 
-        $6,)
+        $6)
       RETURNING "postId"
     `;
     const result = await this.dataSource.query(query, [

@@ -11,34 +11,6 @@ export class PostsService {
     private readonly postsRepository: PostsRepository,
     private readonly blogRepository: BlogsRepository,
   ) {}
-  async createPost(
-    postCreateInputModel: CreatePostInputModelType, userId: string,
-  ): Promise<string> {
-    const blog = await this.blogRepository.getBlogDBTypeById(
-      postCreateInputModel.blogId,
-    );
-    if (!blog) {
-      throw new BlogNotFoundException();
-    }
-    const postDTO = new PostDBType(
-      new Types.ObjectId(),
-      postCreateInputModel.title,
-      postCreateInputModel.shortDescription,
-      postCreateInputModel.content,
-      userId,
-      false,
-      postCreateInputModel.blogId,
-      blog.name,
-      false,
-      new Date().toISOString(),
-      0,
-      0,
-      'None',
-      [],
-    );
-    const newPostsId = await this.postsRepository.createPost(postDTO);
-    return newPostsId;
-  }
 
   async updatePostById(postId, postUpdateInputModel): Promise<boolean> {
     const post = await this.postsRepository.getPostDBTypeById(postId);

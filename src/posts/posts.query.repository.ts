@@ -19,7 +19,7 @@ export class PostsQueryRepository {
       return null;
     }
     const query = `
-      SELECT "Posts".*, "Blogs".name, "Users"."isBanned"
+      SELECT "Posts".*, "Blogs".name AS "blogName", "Users"."isBanned" AS "isUserBanned"
       FROM public."Posts"
       INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
       INNER JOIN "Users" ON "Blogs"."userId" = "Users"."userId"

@@ -4,7 +4,7 @@ import request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { Types } from 'mongoose';
 import { endpoints } from './helpers/routing';
-export function testCommentsCrud() {
+export function saBlogsControllerCrud() {
   describe('andpoints of SA blogs.controller (e2e)', () => {
     let app: INestApplication;
 
@@ -61,33 +61,6 @@ export function testCommentsCrud() {
       accessToken = createdResponse.accessToken;
       expect(createdResponse).toEqual({
         accessToken: expect.any(String),
-      });
-    });
-
-    it('01-02 /posts POST  = 201 create new comment by postId in params', async () => {
-      const testsResponse = await request(app.getHttpServer())
-        .post(`${endpoints.posts}/${createdPostId}/comments`)
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send({
-          content: 'some comment for testing',
-        })
-        .expect(201);
-
-      const createdResponseOfFirstComment = testsResponse.body;
-
-      expect(createdResponseOfFirstComment).toEqual({
-        id: expect.any(String),
-        content: 'some comment for testing',
-        commentatorInfo: {
-          userId: expect.any(String),
-          userLogin: 'ruslan',
-        },
-        createdAt: expect.any(String),
-        likesInfo: {
-          likesCount: 0,
-          dislikesCount: 0,
-          myStatus: 'None',
-        },
       });
     });
   });

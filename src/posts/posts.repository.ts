@@ -4,6 +4,7 @@ import { HydratedDocument, Model, Types } from 'mongoose';
 import { Post, PostDBType, PostDocument } from './posts.types';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { validate as isValidUUID } from 'uuid';
 
 @Injectable()
 export class PostsRepository {
@@ -46,13 +47,19 @@ export class PostsRepository {
   }
 
   async deletePostById(postId: string): Promise<boolean> {
-    if (!Types.ObjectId.isValid(postId)) {
+        if (!isValidUUID(postId)) {
       return false;
     }
-    return this.postModel.findByIdAndDelete(postId);
+    const query = `
+    DELETE FROM  public."Posts"
+    WHERE "postId" = $1
+    `
+    const result = await this.dataSource.query(query,[postId]);
+    return result[1] > 0;
   }
 
   async getPostDBTypeById(postId): Promise<PostDocument | null> {
+
     if (!Types.ObjectId.isValid(postId)) {
       return null;
     }

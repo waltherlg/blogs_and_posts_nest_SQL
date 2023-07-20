@@ -47,7 +47,7 @@ export class PostsRepository {
   }
 
   async deletePostById(postId: string): Promise<boolean> {
-        if (!isValidUUID(postId)) {
+    if (!isValidUUID(postId)) {
       return false;
     }
     const query = `
@@ -59,15 +59,15 @@ export class PostsRepository {
   }
 
   async getPostDBTypeById(postId): Promise<PostDocument | null> {
-
-    if (!Types.ObjectId.isValid(postId)) {
+    if (!isValidUUID(postId)) {
       return null;
     }
-    const post: PostDocument = await this.postModel.findById(postId);
-    if (!post) {
-      return null;
-    }
-    return post;
+    const query = `
+    SELECT * FROM public."Posts"
+    WHERE "postId" = $1
+    `
+    const result = await this.dataSource.query(query, [postId]);    
+    return result[0];
   }
 
  async getAllPostsByUserId(userId): Promise<Array<PostDBType>>{

@@ -25,10 +25,11 @@ export class UpdatePostByIdFromBloggerControllerUseCase implements ICommandHandl
     const post = await this.postsRepository.getPostDBTypeById(command.postId)
     if(!post) return BlogActionResult.PostNotFound
     if(post.userId !== command.userId) return BlogActionResult.NotOwner
-    
-    post.title = command.postUpdateDto.title
-    post.shortDescription = command.postUpdateDto.shortDescription
-    post.content = command.postUpdateDto.content
+
+    const title = command.postUpdateDto.title
+    const shortDescription = command.postUpdateDto.shortDescription
+    const content = command.postUpdateDto.content
+
     const result = await this.postsRepository.savePost(post)
     if(result) {
       return BlogActionResult.Success

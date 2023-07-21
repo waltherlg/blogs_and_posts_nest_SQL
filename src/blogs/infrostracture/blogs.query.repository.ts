@@ -27,52 +27,65 @@ export class BlogsQueryRepository {
   }
 
   async getAllBlogs(mergedQueryParams) {
-    const blogsCount = await this.blogModel.countDocuments({
-      name: new RegExp(mergedQueryParams.searchNameTerm, 'gi'),
-    }, { isBlogBanned: false});
-    let blogs;
-    if (mergedQueryParams.searchNameTerm !== '') {
-      blogs = await this.blogModel
-        .find({ name: new RegExp(mergedQueryParams.searchNameTerm, 'gi') }, { isBlogBanned: false})
-        .skip(
-          this.skipPage(
-            mergedQueryParams.pageNumber,
-            mergedQueryParams.pageSize,
-          ),
-        )
-        .limit(+mergedQueryParams.pageSize)
-        .sort({
-          [mergedQueryParams.sortBy]: this.sortByDesc(
-            mergedQueryParams.sortDirection,
-          ),
-        });
-    } else {
-      blogs = await this.blogModel
-        .find({ isBlogBanned: false})
-        .skip(
-          this.skipPage(
-            mergedQueryParams.pageNumber,
-            mergedQueryParams.pageSize,
-          ),
-        )
-        .limit(+mergedQueryParams.pageSize)
-        .sort({
-          [mergedQueryParams.sortBy]: this.sortByDesc(
-            mergedQueryParams.sortDirection,
-          ),
-        });
-    }
-    const blogsOutput = blogs.map((blog: BlogDocument) => {
-      return blog.prepareBlogForOutput();
-    });
-    const pageCount = Math.ceil(blogsCount / +mergedQueryParams.pageSize);
+    const searchNameTerm = mergedQueryParams.searchNameTerm;
+    const sortBy = mergedQueryParams.sortBy;   
+    const sortDirection = mergedQueryParams.sortDirection;
+    const pageNumber = +mergedQueryParams.pageNumber;
+    const pageSize = +mergedQueryParams.pageSize;
+    const skipPage = (pageNumber - 1) * pageSize
 
-    const outputBlogs: PaginationOutputModel<BlogTypeOutput> = {
+    const queryParams = [
+      `%${searchNameTerm}%`,
+      sortBy,    
+      sortDirection.toUpperCase(),
+      pageNumber,
+      pageSize,
+      skipPage,
+    ];
+
+    let query = `
+    SELECT "Blogs".*, "Users".login
+    FROM public."Blogs"
+    INNER JOIN "Users"
+    ON "Blogs"."userId" = "Users"."userId"
+    `;
+    let countQuery = `
+    SELECT COUNT(*)
+    FROM public."Blogs"
+    `;
+
+    if (searchNameTerm !== ''){
+      query += `WHERE name ILIKE '${queryParams[0]}'`
+      countQuery += `WHERE name ILIKE '${queryParams[0]}'`;
+    }
+
+    query += ` ORDER BY "${queryParams[1]}" ${queryParams[2]}
+    LIMIT ${queryParams[4]} OFFSET ${queryParams[5]};
+    `;
+
+    const blogsCountArr = await this.dataSource.query(countQuery);
+    const blogsCount = parseInt(blogsCountArr[0].count);
+
+    const blogs = await this.dataSource.query(query);
+    const blogsForOutput = blogs.map(blog => {
+      return {
+          id: blog.blogId, 
+          name: blog.name,
+          description: blog.description,
+          websiteUrl: blog.websiteUrl,
+          createdAt: blog.createdAt,
+          isMembership: blog.isMembership,
+      }
+    })
+
+    const pageCount = Math.ceil(blogsCount / pageSize);
+
+    const outputBlogs = {
       pagesCount: pageCount,
-      page: +mergedQueryParams.pageNumber,
-      pageSize: +mergedQueryParams.pageSize,
+      page: +pageNumber,
+      pageSize: +pageSize,
       totalCount: blogsCount,
-      items: blogsOutput,
+      items: blogsForOutput
     };
     return outputBlogs;
   }

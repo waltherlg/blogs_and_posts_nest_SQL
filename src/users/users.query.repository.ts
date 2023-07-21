@@ -123,14 +123,8 @@ query += ` ORDER BY "${queryParams[2]}" ${queryParams[3]}
 LIMIT ${queryParams[5]} OFFSET ${queryParams[6]};
 `;
 
-// console.log('countQuery ', countQuery)
-// console.log('query ', query)
-
 const usersCountArr = await this.dataSource.query(countQuery);
 const usersCount = parseInt(usersCountArr[0].count);
-
-// console.log('usersCountArr ', usersCountArr)
-// console.log('usersCount ', usersCount)
 
   const users = await this.dataSource.query(query);
     
@@ -233,13 +227,5 @@ const usersCount = parseInt(usersCountArr[0].count);
 
   
 
-  }
-
-  sortByDesc(sortDirection: string) {
-    return sortDirection === 'desc' ? -1 : 1;
-  }
-
-  skipPage(pageNumber: string, pageSize: string): number {
-    return (+pageNumber - 1) * +pageSize;
   }
 }

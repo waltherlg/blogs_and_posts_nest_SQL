@@ -161,58 +161,78 @@ const usersCount = parseInt(usersCountArr[0].count);
     return outputUsers;
   }
 
-  async getBannedUsersForCurrentBlog(userId: string, blogId: string, mergedQueryParams: RequestBannedUsersQueryModel) {
-    const sortByField = `bannedUsers.${mergedQueryParams.sortBy}`;
-  
-    const aggregationPipeline: PipelineStage[] = [
-      { $match: { _id: new Types.ObjectId(blogId) } },
-      { $project: { _id: 0, bannedUsers: 1 } },
-      { $unwind: "$bannedUsers" },
-      { $match: { "bannedUsers.login": { $regex: mergedQueryParams.searchLoginTerm || "", $options: "i" } } },
-      { $sort: { [sortByField]: this.sortByDesc(mergedQueryParams.sortDirection) } },
-      { $skip: this.skipPage(mergedQueryParams.pageNumber, mergedQueryParams.pageSize) },
-      { $limit: +mergedQueryParams.pageSize },
-      {
-        $group: {
-          _id: null,
-          bannedUsers: { $push: "$bannedUsers" }
-        }
-      },
+  async getBannedUsersForCurrentBlog(blogId: string, mergedQueryParams: RequestBannedUsersQueryModel) {
+    const searchLoginTerm = mergedQueryParams.searchLoginTerm;
+    const sortBy = mergedQueryParams.sortBy;   
+    const sortDirection = mergedQueryParams.sortDirection;
+    const pageNumber = +mergedQueryParams.pageNumber;
+    const pageSize = +mergedQueryParams.pageSize;
+    const skipPage = (pageNumber - 1) * pageSize
+
+    const queryParams = [
+      `%${searchLoginTerm}%`,
+      sortBy,    
+      sortDirection.toUpperCase(),
+      pageNumber,
+      pageSize,
+      skipPage,
+      blogId
     ];
-  
-    const [result] = await this.blogModel.aggregate(aggregationPipeline);
-    const users = result ? result.bannedUsers : [];
-  
-    const usersCountPipeline: PipelineStage[] = [
-      { $match: { _id: new Types.ObjectId(blogId) } },
-      { $unwind: "$bannedUsers" },
-      { $match: { "bannedUsers.login": { $regex: mergedQueryParams.searchLoginTerm || "", $options: "i" } } },
-      { $group: { _id: null, count: { $sum: 1 } } },
-    ];
-    const [countResult] = await this.blogModel.aggregate(usersCountPipeline);
-    const usersCount = countResult ? countResult.count : 0;
-  
-    const outUsers = users.map((user) => {
+
+    let query = `
+    SELECT "BlogBannedUsers".*, "Users".login
+    FROM public."BlogBannedUsers"
+    INNER JOIN "Users"
+    ON "BlogBannedUsers"."bannedUserId" = "Users"."userId"
+    WHERE "blogId" = '${queryParams[6]}'
+    `
+    let countQuery = `
+    SELECT COUNT(*)
+    FROM public."BlogBannedUsers"
+    INNER JOIN "Users"
+    ON "BlogBannedUsers"."bannedUserId" = "Users"."userId"
+    WHERE "blogId" = '${queryParams[6]}'
+    `;
+    if (searchLoginTerm !== ''){
+      query += `AND login ILIKE '${queryParams[0]}'`
+      countQuery += `AND login ILIKE '${queryParams[0]}'`;
+    }
+
+    query += ` ORDER BY "${queryParams[1]}" ${queryParams[2]}
+    LIMIT ${queryParams[4]} OFFSET ${queryParams[5]};
+    `;
+
+    const bannedUsersCountArr = await this.dataSource.query(countQuery);
+    const bannedUsersCount = parseInt(bannedUsersCountArr[0].count);
+
+    const bannedUsers = await this.dataSource.query(query);
+
+    const bannedUsersForOutput = bannedUsers.map(user => {
       return {
-        id: user.id,
+        id: user.userId,
         login: user.login,
         banInfo: {
-          isBanned: user.isBanned,
+          isBanned: true,
           banDate: user.banDate,
-          banReason: user.banReason,
+          banReason: user.banReason
         }
       }
-    });
-    const pageCount = Math.ceil(usersCount / +mergedQueryParams.pageSize);
-  
-    const outputUsers: PaginationOutputModel<UserTypeOutput> = {
+    })
+
+    const pageCount = Math.ceil(bannedUsersCount / pageSize);
+
+    const outputBannedUsers = {
       pagesCount: pageCount,
-      page: +mergedQueryParams.pageNumber,
-      pageSize: +mergedQueryParams.pageSize,
-      totalCount: usersCount,
-      items: outUsers,
+      page: +pageNumber,
+      pageSize: +pageSize,
+      totalCount: bannedUsersCount,
+      items: bannedUsersForOutput
     };
-    return outputUsers;
+    return outputBannedUsers;
+
+
+  
+
   }
 
   sortByDesc(sortDirection: string) {

@@ -38,6 +38,6 @@ export class BloggerUsersController {
       throw new CustomisableException('blogId', 'you are not owner of this blog', 403)
     }
     const mergedQueryParams = { ...DEFAULT_BANNED_USERS_QUERY_PARAMS, ...queryParams }
-    return await this.usersQueryRepository.getBannedUsersForCurrentBlog(request.user.userId, blogId, mergedQueryParams)
+    return await this.usersQueryRepository.getBannedUsersForCurrentBlog(blogId, mergedQueryParams)
   }
 }

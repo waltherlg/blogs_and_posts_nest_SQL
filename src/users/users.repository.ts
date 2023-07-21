@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { User, UserDocument } from './users.types';
+import { User, UserDBType, UserDocument } from './users.types';
 import { PasswordRecoveryModel } from '../auth/auth.types';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { log } from 'console';
@@ -97,15 +97,18 @@ export class UsersRepository {
     return result[1] > 0;   
   }
 
-  async getUserDBTypeById(userId): Promise<UserDocument | null> {
-    if (!Types.ObjectId.isValid(userId)) {
+  async getUserDBTypeById(userId): Promise<UserDBType | null> {
+    if (!isValidUUID(userId)) {
       return null;
     }
-    const user = await this.userModel.findById(userId);
-    if (!user) {
-      return null;
-    }
-    return user;
+    const query = `
+    SELECT * FROM public."Users"
+    WHERE "userId" = $1
+    `
+    const result = await this.dataSource.query(query, [
+      userId
+    ]); 
+    return result[0];
   }
 
   async deleteAllUsers() {

@@ -11,6 +11,7 @@ import { BanUserForBlogInputModelType } from 'src/blogs/api/blogger.blogs.contro
 import { BannedBlogUsersType, Blog } from 'src/blogs/blogs.types';
 import { th } from 'date-fns/locale';
 import { UsersRepository } from 'src/users/users.repository';
+import { CheckService } from 'src/other.services/check.service';
 
 export class BanUserForSpecificBlogCommand {
   constructor(public bloggerId: string, public bannedUserId: string,
@@ -19,11 +20,14 @@ export class BanUserForSpecificBlogCommand {
 
 @CommandHandler(BanUserForSpecificBlogCommand)
 export class BanUserForSpecificBlogUseCase implements ICommandHandler<BanUserForSpecificBlogCommand> {
-  constructor(private readonly blogsRepository: BlogsRepository, private readonly usersRepository: UsersRepository,) {}
+  constructor(private readonly blogsRepository: BlogsRepository, 
+              private readonly usersRepository: UsersRepository,
+              private readonly checkService: CheckService) {}
 
   async execute(
     command: BanUserForSpecificBlogCommand,
   ): Promise<BlogActionResult> {
+
     const bloggerId = command.bloggerId
     const bannedUserId = command.bannedUserId
     const banStatus = command.banUserDto.isBanned
@@ -34,27 +38,26 @@ export class BanUserForSpecificBlogUseCase implements ICommandHandler<BanUserFor
     if(!blog) return BlogActionResult.BlogNotFound
 
     if(blog.userId !== bloggerId) return BlogActionResult.NotOwner
+
     const user = await this.usersRepository.getUserDBTypeById(bannedUserId)
     if(!user){
       return BlogActionResult.UserNotFound
     }
 
     if(banStatus === true){
-      if(blog.bannedUsers.some(user => user.id === bannedUserId)){
+
+      if(await this.checkService.isUserBannedForBlog(blogId, bannedUserId)){
         return BlogActionResult.UserAlreadyBanned
       }
+
       const banUserInfo: BannedBlogUsersType = {
-        id: bannedUserId,
-        login: user.login,
-        isBanned: true,
+        blogId: blogId,
+        bannedUserId: bannedUserId,
         banDate: new Date().toISOString(),
         banReason: banReason,
       }
-      blog.bannedUsers.push(banUserInfo)
-      blog.markModified('bannedUsers');
 
-      //заглушка
-      const result = true //await this.blogsRepository.saveBlog(blog)
+      const result = await this.blogsRepository.addUserToBlogBanList(banUserInfo)
       if (result){
         return BlogActionResult.Success
       } else {
@@ -63,15 +66,10 @@ export class BanUserForSpecificBlogUseCase implements ICommandHandler<BanUserFor
     }
 
     if(banStatus === false){
-      const banedIndex = blog.bannedUsers.findIndex(user => user.id === bannedUserId)
-      if (banedIndex === -1) {
+      if (!await this.checkService.isUserBannedForBlog(blogId, bannedUserId)) {
         return BlogActionResult.UserNotBanned
       }
-      blog.bannedUsers.splice(banedIndex, 1);
-      blog.markModified('bannedUsers');
-
-      //заглушка
-      const result = true // await this.blogsRepository.saveBlog(blog) // [ ]: fix plug
+      const result = await this.blogsRepository.removeUserFromBlogBanList(blogId, bannedUserId) // [ ]: fix plug
       if (result){
         return BlogActionResult.Success
       } else {

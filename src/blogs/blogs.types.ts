@@ -16,9 +16,8 @@ export class BlogDBType {
 }
 
 export type BannedBlogUsersType = {
-  id: string;
-  login: string;
-  isBanned: boolean;
+  blogId: string,
+  bannedUserId: string,
   banDate: string;
   banReason: string;
 }

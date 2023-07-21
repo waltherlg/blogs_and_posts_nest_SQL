@@ -100,4 +100,9 @@ export class CheckService {
     const isBanned = await this.usersRepository.isUserBanned(userId)
     return isBanned
   }
+
+  async isUserBannedForBlog(blogId, userId){
+    const isBanned = await this.blogsRepository.isUserBannedForBlog(blogId, userId)
+    return isBanned
+  }
 }

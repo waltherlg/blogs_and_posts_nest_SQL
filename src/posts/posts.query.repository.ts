@@ -96,8 +96,8 @@ export class PostsQueryRepository {
     WHERE "Users"."isBanned" = false;
     `;
 
-    query += ` ORDER BY "${queryParams[0]}" ${queryParams[1]}
-    LIMIT ${queryParams[3]} OFFSET ${queryParams[4]};
+    query += ` ORDER BY "${queryParams[0]}" "${queryParams[1]}"
+    LIMIT "${queryParams[3]}" OFFSET "${queryParams[4]}";
     `;
 
     const postCountArr = await this.dataSource.query(countQuery);
@@ -139,45 +139,71 @@ export class PostsQueryRepository {
     blogId,
     userId?,
   ): Promise<PaginationOutputModel<PostTypeOutput>> {
-    const postCount = await this.postModel.countDocuments({ blogId: blogId, isBanned: false, isBlogBanned: false });
-    const posts = await this.postModel
-      .find({ blogId: blogId, isBanned: false, isBlogBanned: false })
-      .skip(
-        this.skipPage(mergedQueryParams.pageNumber, mergedQueryParams.pageSize),
-      )
-      .limit(+mergedQueryParams.pageSize)
-      .sort({
-        [mergedQueryParams.sortBy]: this.sortByDesc(
-          mergedQueryParams.sortDirection,
-        ),
-      });
+    const sortBy = mergedQueryParams.sortBy;   
+    const sortDirection = mergedQueryParams.sortDirection;
+    const pageNumber = +mergedQueryParams.pageNumber;
+    const pageSize = +mergedQueryParams.pageSize;
+    const skipPage = (pageNumber - 1) * pageSize
 
-    const postsOutput = posts.map((post: PostDocument) => {
-      const userPostStatus = post.likesCollection.find(
-        (p) => p.userId === userId,
-      );
-      if (userPostStatus) {
-        post.myStatus = userPostStatus.status;
+    const queryParams = [
+      sortBy,    
+      sortDirection.toUpperCase(),
+      pageNumber,
+      pageSize,
+      skipPage,
+      blogId
+    ];
+
+    let query = `
+    SELECT "Posts".*, "Blogs".name AS "blogName", "Users"."isBanned" AS "isUserBanned"
+    FROM public."Posts"
+    INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
+    INNER JOIN "Users" ON "Blogs"."userId" = "Users"."userId"
+    WHERE "Users"."isBanned" = false AND "Posts"."blogId" = "${queryParams[5]}"
+    `;
+    let countQuery = `
+    SELECT "Posts".*, "Blogs".name AS "blogName", "Users"."isBanned" AS "isUserBanned"
+    FROM public."Posts"
+    INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
+    INNER JOIN "Users" ON "Blogs"."userId" = "Users"."userId"
+    WHERE "Users"."isBanned" = false AND "Posts"."blogId" = "${queryParams[5]}"
+    `;
+
+    query += ` ORDER BY "${queryParams[0]}" "${queryParams[1]}"
+    LIMIT "${queryParams[3]}" OFFSET "${queryParams[4]}";
+    `;
+
+    const postCountArr = await this.dataSource.query(countQuery);
+    const postCount = parseInt(postCountArr[0].count);
+
+    const posts = await this.dataSource.query(query);
+    const postsForOutput = posts.map(post => {
+      return {
+        id: post.postId,
+        title: post.title,
+        shortDescription: post.shortDescription,
+        content: post.content,
+        blogId: post.blogId,
+        blogName: post.blogName,
+        createdAt: post.createdAt,
+        extendedLikesInfo: {
+            likesCount: 0,
+            dislikesCount: 0,
+            myStatus: "none",
+            newestLikes: []
+        },
       }
-      return post.preparePostForOutput();
-    });
-    const pageCount = Math.ceil(postCount / +mergedQueryParams.pageSize);
+    })
 
-    const outputPosts: PaginationOutputModel<PostTypeOutput> = {
+    const pageCount = Math.ceil(postCount / pageSize);
+
+    const outputPosts = {
       pagesCount: pageCount,
-      page: +mergedQueryParams.pageNumber,
-      pageSize: +mergedQueryParams.pageSize,
+      page: +pageNumber,
+      pageSize: +pageSize,
       totalCount: postCount,
-      items: postsOutput,
+      items: postsForOutput
     };
     return outputPosts;
-  }
-
-  sortByDesc(sortDirection: string) {
-    return sortDirection === 'desc' ? -1 : 1;
-  }
-
-  skipPage(pageNumber: string, pageSize: string): number {
-    return (+pageNumber - 1) * +pageSize;
   }
 }

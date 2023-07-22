@@ -111,19 +111,6 @@ export class UsersRepository {
     return result[0];
   }
 
-  async deleteAllUsers() {
-    await this.userModel.deleteMany({});
-  }
-
-  async findUserByLoginOrEmail(
-    loginOrEmail: string,
-  ) {
-    const user = await this.userModel.findOne({
-      $or: [{ email: loginOrEmail }, { login: loginOrEmail }],
-    });
-    return user;
-  }
-
   async addPasswordRecoveryData(
     passwordRecoveryData: PasswordRecoveryModel,
   ): Promise<boolean> {    

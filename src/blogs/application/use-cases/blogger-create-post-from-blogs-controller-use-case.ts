@@ -37,6 +37,7 @@ export class CreatePostFromBloggerControllerUseCase implements ICommandHandler<C
       command.postCreateDto.content,
       command.blogId,
       new Date().toISOString(),
+      blog.userId,
     )
     const newPostId = await this.postsRepository.createPost(postDto)
     if(!newPostId) return BlogActionResult.NotCreated

@@ -174,7 +174,7 @@ export class BloggerBlogsController {
   }
 
   //ready?
-  @Put(':blogId/posts/:postId')
+  @Put(':blogId/posts/:postId') // FIX:
   @HttpCode(204)
   async updatePost(@Req() request, 
   @Param('blogId') blogId: string, 
@@ -187,7 +187,7 @@ export class BloggerBlogsController {
     handleBlogOperationResult(result)
   }
 
-  @Delete(':blogId/posts/:postId')
+  @Delete(':blogId/posts/:postId') // FIX: 
   @HttpCode(204)
   async deletePost(@Req() request,
   @Param('blogId') blogId: string,

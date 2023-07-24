@@ -42,7 +42,7 @@ export class PostsQueryRepository {
       extendedLikesInfo: {
           likesCount: 0,
           dislikesCount: 0,
-          myStatus: "none",
+          myStatus: "None",
           newestLikes: []
       },
     }
@@ -116,7 +116,7 @@ export class PostsQueryRepository {
         extendedLikesInfo: {
             likesCount: 0,
             dislikesCount: 0,
-            myStatus: "none",
+            myStatus: "None",
             newestLikes: []
         },
       }
@@ -189,7 +189,7 @@ export class PostsQueryRepository {
         extendedLikesInfo: {
             likesCount: 0,
             dislikesCount: 0,
-            myStatus: "none",
+            myStatus: "None",
             newestLikes: []
         },
       }

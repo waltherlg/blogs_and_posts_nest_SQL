@@ -22,7 +22,8 @@ export class UpdatePostByIdFromBloggerControllerUseCase implements ICommandHandl
   async execute(
     command: UpdatePostByIdFromBloggerControllerCommand,
   ): Promise<BlogActionResult> {
-    const post = await this.postsRepository.getPostDBTypeById(command.postId)
+    const postId = command.postId
+    const post = await this.postsRepository.getPostDBTypeById(postId)
     if(!post) return BlogActionResult.PostNotFound
     if(post.userId !== command.userId) return BlogActionResult.NotOwner
 
@@ -30,7 +31,7 @@ export class UpdatePostByIdFromBloggerControllerUseCase implements ICommandHandl
     const shortDescription = command.postUpdateDto.shortDescription
     const content = command.postUpdateDto.content
 
-    const result = await this.postsRepository.savePost(post)
+    const result = await this.postsRepository.updatePostById(postId, title, shortDescription, content)
     if(result) {
       return BlogActionResult.Success
     } else { 

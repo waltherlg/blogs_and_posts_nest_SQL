@@ -29,9 +29,13 @@ export class TestRepository {
     await this.userModel.deleteMany({});
     await this.usersDeviseModel.deleteMany({});
     await this.commentModel.deleteMany({});
-    await this.dataSource.query(`DELETE FROM public."UserDevices";
+    await this.dataSource.query(`
+    DELETE FROM public."Posts";
+    DELETE FROM public."BlogBannedUsers";
+    DELETE FROM public."Blogs";
+    DELETE FROM public."UserDevices";
     DELETE FROM public."Users";
-    DELETE FROM public."Blogs"; `)
+     `)
     return true;
   }
 }

@@ -24,14 +24,16 @@ export class PostsRepository {
       "shortDescription",
       content,
       "blogId",
-      "createdAt")
+      "createdAt",
+      "userId")
       VALUES (
         $1,  
         $2, 
         $3, 
         $4, 
         $5, 
-        $6)
+        $6,
+        $7)
       RETURNING "postId"
     `;
     const result = await this.dataSource.query(query, [
@@ -40,7 +42,8 @@ export class PostsRepository {
       postDTO.shortDescription,
       postDTO.content,
       postDTO.blogId,
-      postDTO.createdAt
+      postDTO.createdAt,
+      postDTO.userId,
     ])
     const postId = result[0].postId;
     return postId;

@@ -27,7 +27,7 @@ const typeOrmConfig: TypeOrmModuleOptions = {
   database: dataBaseName,
   autoLoadEntities: false,
   //options: { encrypt: false },
-  logging: true,
+  logging: false,
   synchronize: true,
   ssl: true,
   extra: {

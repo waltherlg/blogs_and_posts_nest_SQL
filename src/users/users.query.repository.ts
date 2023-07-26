@@ -200,10 +200,12 @@ const usersCount = parseInt(usersCountArr[0].count);
     const bannedUsersCount = parseInt(bannedUsersCountArr[0].count);
 
     const bannedUsers = await this.dataSource.query(query);
+    console.log("bannedUsers ", bannedUsers);
+    
 
     const bannedUsersForOutput = bannedUsers.map(user => {
       return {
-        id: user.userId,
+        id: user.bannedUserId,
         login: user.login,
         banInfo: {
           isBanned: true,

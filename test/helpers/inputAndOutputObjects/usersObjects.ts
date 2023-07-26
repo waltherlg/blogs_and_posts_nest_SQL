@@ -66,6 +66,17 @@ export let testUser = {
         banReason: null
       }
     },
+    outputUser2:{
+      id: expect.any(String),
+      login: 'user2',
+      email: 'ruslan@gmail-2.com',
+      createdAt: expect.any(String),
+      banInfo: {
+        isBanned: false,
+        banDate: null,
+        banReason: null
+      }
+    },
     outputUser1Banned:{
       id: expect.any(String),
       login: 'user1',
@@ -199,6 +210,35 @@ export let testUserPag = {
       banReason: expect.any(String)
     }
   },
-  
+}
 
+export let testBloggerBanBody = {
+  ban: {
+    isBanned: true,
+    banReason: "some reason for ban user for this blog",
+    blogId: "string"
+  },
+  unban: {
+    isBanned: false,
+    banReason: "some reason for unban user for this blog",
+    blogId: "string"
+  },
+  bannedUser1ForBlogOutput:{
+    id: expect.any(String),
+    login: testUser.inputUser1.login,
+    banInfo: {
+      isBanned: true,
+      banDate: expect.any(String),
+      banReason: expect.any(String),
+    }
+  },
+  bannedUser2ForBlogOutput:{
+    id: expect.any(String),
+    login: testUser.inputUser2.login,
+    banInfo: {
+      isBanned: true,
+      banDate: expect.any(String),
+      banReason: expect.any(String),
+    }
+  }
 }

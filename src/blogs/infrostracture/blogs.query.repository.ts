@@ -19,7 +19,7 @@ export class BlogsQueryRepository {
     const query = `
     SELECT "blogId" AS id, name, description, "websiteUrl", "createdAt", "isMembership"
     FROM public."Blogs"
-    WHERE "blogId" = $1
+    WHERE "blogId" = $1 AND "isBlogBanned" = false
     LIMIT 1
     `;
     const result = await this.dataSource.query(query, [blogId]); 
@@ -55,8 +55,13 @@ export class BlogsQueryRepository {
     `;
 
     if (searchNameTerm !== ''){
-      query += `WHERE name ILIKE '${queryParams[0]}'`
-      countQuery += `WHERE name ILIKE '${queryParams[0]}'`;
+      query += `WHERE name ILIKE '${queryParams[0]}' AND "isBlogBanned" = false`
+      countQuery += `WHERE name ILIKE '${queryParams[0]}' AND "isBlogBanned" = false`;
+    }
+
+    if (searchNameTerm === ''){
+      query += `WHERE "isBlogBanned" = false`
+      countQuery += `WHERE "isBlogBanned" = false`;
     }
 
     query += ` ORDER BY "${queryParams[1]}" ${queryParams[2]}
@@ -185,13 +190,13 @@ export class BlogsQueryRepository {
     let query = `
     SELECT "blogId" AS id, name, description, "websiteUrl", "createdAt", "isMembership"
     FROM public."Blogs"
-    WHERE "userId" = '${queryParams[6]}'
+    WHERE "userId" = '${queryParams[6]}' AND "isBlogBanned" = false
 
     `;
     let countQuery = `
     SELECT COUNT(*)
     FROM public."Blogs"
-    WHERE "userId" = '${queryParams[6]}'
+    WHERE "userId" = '${queryParams[6]}' AND "isBlogBanned" = false
     `;
 
     if (searchNameTerm !== ''){

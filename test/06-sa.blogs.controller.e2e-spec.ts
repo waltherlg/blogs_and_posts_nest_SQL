@@ -11,6 +11,7 @@ export function saBlogsControllerCrudAndBan() {
     let accessTokenUser1
     let accessTokenUser2
     let blogId1
+    let blogId2
     let userId1
     let userId2
     let app: INestApplication;
@@ -113,9 +114,26 @@ export function saBlogsControllerCrudAndBan() {
         .send(testInputBlogBody.blog2)
         .expect(201);
       const createdResponseBody = createResponse.body;     
-      blogId1 = createdResponseBody.id;
+      blogId2 = createdResponseBody.id;
       expect(createdResponseBody).toEqual(testOutputBlogBody.blog2);
     });
+
+    it('00-00 /blogs GET = 200 get blog1 and blog2', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .get(`${endpoints.blogs}`)
+        .expect(200);
+        const createdResponseBody = createResponse.body;
+        expect(createdResponseBody).toEqual({
+          pagesCount: 1,
+          page: 1,
+          pageSize: 10,
+          totalCount: 2,
+          items: [
+            testOutputBlogBody.blog2,
+            testOutputBlogBody.blog1],
+      });
+    });
+    
 
     it('00-00 sa/blogs PUT = 204 sa ban blog1', async () => {
       const createResponse = await request(app.getHttpServer())
@@ -125,12 +143,43 @@ export function saBlogsControllerCrudAndBan() {
         .expect(204);
     });
 
+    it('00-00 /blogs GET = 200 get blog2 after ban blog1', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .get(`${endpoints.blogs}`)
+        .expect(200);
+        const createdResponseBody = createResponse.body;
+        expect(createdResponseBody).toEqual({
+          pagesCount: 1,
+          page: 1,
+          pageSize: 10,
+          totalCount: 1,
+          items: [
+            testOutputBlogBody.blog2],
+      });
+    });
+
     it('00-00 sa/blogs PUT = 204 sa unban blog1', async () => {
       const createResponse = await request(app.getHttpServer())
         .put(`${endpoints.saBlogs}/${blogId1}/ban`)
         .set('Authorization', `Basic ${basicAuthRight}`)
         .send({isBanned: false})
         .expect(204);
+    });
+
+    it('00-00 /blogs GET = 200 get blog1 and blog2 after unban blog1', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .get(`${endpoints.blogs}`)
+        .expect(200);
+        const createdResponseBody = createResponse.body;
+        expect(createdResponseBody).toEqual({
+          pagesCount: 1,
+          page: 1,
+          pageSize: 10,
+          totalCount: 2,
+          items: [
+            testOutputBlogBody.blog2,
+            testOutputBlogBody.blog1],
+      });
     });
 
   });

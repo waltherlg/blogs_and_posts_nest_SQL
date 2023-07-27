@@ -20,7 +20,7 @@ export class SaBanBlogCommand {
 
 @CommandHandler(SaBanBlogCommand)
 export class SaBanBlogUseCase implements ICommandHandler<SaBanBlogCommand> {
-  constructor(private readonly blogsRepository: BlogsRepository, private readonly postsRepository: PostsRepository,) {}
+  constructor(private readonly blogsRepository: BlogsRepository) {}
 
   async execute(
     command: SaBanBlogCommand,
@@ -44,7 +44,6 @@ export class SaBanBlogUseCase implements ICommandHandler<SaBanBlogCommand> {
       blogBanDate = null
     }
 
-    //заглушка
     const isBlogSave = await this.blogsRepository.newBanStatus(blogId, newBanStatus, blogBanDate)
     
     if(isBlogSave){

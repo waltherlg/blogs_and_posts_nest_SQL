@@ -34,7 +34,7 @@ export let testOutputBlogBody = {
   blog2: {
     id: expect.any(String),
     name: 'Blog2',
-    description: 'Description1',
+    description: 'Description2',
     websiteUrl: 'https://www.someweb.com',
     createdAt: expect.any(String),
     isMembership: false,
@@ -42,7 +42,7 @@ export let testOutputBlogBody = {
   blog3: {
     id: expect.any(String),
     name: 'Blog3',
-    description: 'Description1',
+    description: 'Description3',
     websiteUrl: 'https://www.someweb.com',
     createdAt: expect.any(String),
     isMembership: false,
@@ -50,7 +50,7 @@ export let testOutputBlogBody = {
   blog4: {
     id: expect.any(String),
     name: 'Blog4',
-    description: 'Description1',
+    description: 'Description4',
     websiteUrl: 'https://www.someweb.com',
     createdAt: expect.any(String),
     isMembership: false,

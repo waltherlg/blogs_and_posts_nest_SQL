@@ -4,6 +4,7 @@ export const endpoints = {
   bloggerUsers: '/blogger/users',
   comments: '/comments',
   saUsers: '/sa/users',
+  saBlogs: '/sa/blogs',
   blogs: '/blogs',
   posts: '/posts',
   auth: '/auth',

@@ -19,11 +19,11 @@ export class PostsQueryRepository {
       return null;
     }
     const query = `
-      SELECT "Posts".*, "Blogs".name AS "blogName", "Users"."isBanned" AS "isUserBanned"
+      SELECT "Posts".*, "Blogs".name AS "blogName", "Blogs"."isBlogBanned", "Users"."isBanned" AS "isUserBanned"
       FROM public."Posts"
       INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
       INNER JOIN "Users" ON "Blogs"."userId" = "Users"."userId"
-      WHERE "postId" = $1 AND "Users"."isBanned" = false;
+      WHERE "postId" = $1 AND "Users"."isBanned" = false AND "Blogs"."isBlogBanned" = false;
     `;
   
     const result = await this.dataSource.query(query, [postId])
@@ -82,18 +82,18 @@ export class PostsQueryRepository {
     ];
 
     let query = `
-    SELECT "Posts".*, "Blogs".name AS "blogName", "Users"."isBanned" AS "isUserBanned"
+    SELECT "Posts".*, "Blogs".name AS "blogName", "Blogs"."isBlogBanned", "Users"."isBanned" AS "isUserBanned"
     FROM public."Posts"
     INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
     INNER JOIN "Users" ON "Blogs"."userId" = "Users"."userId"
-    WHERE "Users"."isBanned" = false;
+    WHERE "Users"."isBanned" = false AND "Blogs"."isBlogBanned" = false;
     `;
     let countQuery = `
-    SELECT "Posts".*, "Blogs".name AS "blogName", "Users"."isBanned" AS "isUserBanned"
+    SELECT "Posts".*, "Blogs".name AS "blogName", "Blogs"."isBlogBanned", "Users"."isBanned" AS "isUserBanned"
     FROM public."Posts"
     INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
     INNER JOIN "Users" ON "Blogs"."userId" = "Users"."userId"
-    WHERE "Users"."isBanned" = false;
+    WHERE "Users"."isBanned" = false AND "Blogs"."isBlogBanned" = false;
     `;
 
     query += ` ORDER BY "${queryParams[0]}" "${queryParams[1]}"
@@ -155,18 +155,18 @@ export class PostsQueryRepository {
     ];
 
     let query = `
-    SELECT "Posts".*, "Blogs".name AS "blogName", "Users"."isBanned" AS "isUserBanned"
+    SELECT "Posts".*, "Blogs".name AS "blogName", "Blogs"."isBlogBanned", "Users"."isBanned" AS "isUserBanned"
     FROM public."Posts"
     INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
     INNER JOIN "Users" ON "Blogs"."userId" = "Users"."userId"
-    WHERE "Users"."isBanned" = false AND "Posts"."blogId" = "${queryParams[5]}"
+    WHERE "Posts"."blogId" = "${queryParams[5]}" AND "Users"."isBanned" = false AND "Blogs"."isBlogBanned" = false
     `;
     let countQuery = `
     SELECT "Posts".*, "Blogs".name AS "blogName", "Users"."isBanned" AS "isUserBanned"
     FROM public."Posts"
     INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
     INNER JOIN "Users" ON "Blogs"."userId" = "Users"."userId"
-    WHERE "Users"."isBanned" = false AND "Posts"."blogId" = "${queryParams[5]}"
+    WHERE "Posts"."blogId" = "${queryParams[5]}" AND "Users"."isBanned" = false AND "Blogs"."isBlogBanned" = false
     `;
 
     query += ` ORDER BY "${queryParams[0]}" "${queryParams[1]}"

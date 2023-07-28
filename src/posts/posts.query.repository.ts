@@ -146,15 +146,15 @@ export class PostsQueryRepository {
     WHERE "Posts"."blogId" = "${queryParams[5]}" AND "Users"."isBanned" = false AND "Blogs"."isBlogBanned" = false
     `;
     let countQuery = `
-    SELECT "Posts".*, "Blogs".name AS "blogName", "Users"."isBanned" AS "isUserBanned"
+    SELECT COUNT(*)
     FROM public."Posts"
     INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
     INNER JOIN "Users" ON "Blogs"."userId" = "Users"."userId"
     WHERE "Posts"."blogId" = "${queryParams[5]}" AND "Users"."isBanned" = false AND "Blogs"."isBlogBanned" = false
     `;
 
-    query += ` ORDER BY "${queryParams[0]}" "${queryParams[1]}"
-    LIMIT "${queryParams[3]}" OFFSET "${queryParams[4]}";
+    query += ` ORDER BY "${queryParams[0]}" ${queryParams[1]}
+    LIMIT ${queryParams[3]} OFFSET ${queryParams[4]};
     `;
 
     const postCountArr = await this.dataSource.query(countQuery);

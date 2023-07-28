@@ -7,6 +7,7 @@ import { CommentDBType } from "src/comments/comments.types";
 import { Types } from "mongoose";
 import { CommentsRepository } from "src/comments/comments.repository";
 import { PostActionResult } from "../helpers/post.enum.action.result";
+import { v4 as uuidv4 } from 'uuid';
 
 export class CreateCommentForSpecificPostCommand {
     constructor(public userId: string, public postId: string,
@@ -39,21 +40,15 @@ async execute(command: CreateCommentForSpecificPostCommand)
     if (isUserBannedForBlog) {
       return PostActionResult.UserBannedForBlog
     }
-    const user = await this.usersRepository.getUserDBTypeById(userId);
 
     const CommentDTO = new CommentDBType(
-      new Types.ObjectId(),
-      'post',
+      uuidv4(),
       postId,
       content,
-      userId,
-      user.login,
-      false,
       new Date().toISOString(),
+      userId,
       0,
       0,
-      'None',
-      []
     );
     const createdCommentId = await this.commentsRepository.createComment(
       CommentDTO,

@@ -9,6 +9,7 @@ import { Post, PostDocument } from 'src/posts/posts.types';
 import { Blog, BlogDocument } from 'src/blogs/blogs.types';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { validate as isValidUUID } from 'uuid';
 @Injectable()
 export class CommentsQueryRepository {
   constructor(
@@ -19,14 +20,44 @@ export class CommentsQueryRepository {
     @InjectDataSource() protected dataSource: DataSource
   ) {}
   async getCommentById(commentId: string, userId?: string): Promise<CommentTypeOutput | null> {
+    if (!isValidUUID(commentId)) {
+      return null;
+    }
     const query = `
-      SELECT "PostComments".*, "CommentLikes".*
-      FROM public."PostComments"
-      LEFT JOIN "CommentLikes" ON "CommentLikes"."commentId" = "PostComments"."commentId" AND "CommentLikes"."userId" = $2
-      WHERE "PostComments"."commentId" = $1;
+      SELECT "PostComments".*, "Users"."login", "Users"."isBanned", "CommentLikes".status
+      FROM public."PostComments" 
+      INNER JOIN "Users" ON "PostComments"."userId" = "Users"."userId"
+      WHERE "commentId" = $1 AND "isBanned" = false; 
     `;
-    const result = await this.dataSource.query(query, [commentId, userId]);
-    return result;
+    const result = await this.dataSource.query(query, [commentId]);
+    const comment = result[0];
+    if(!comment){
+      return null
+    }
+    let myStatus = "None"
+    if(userId){
+          const myStatusQuery = `
+          SELECT "status" FROM public."CommentLikes"
+          WHERE "commentId" = $1 AND "userId" = $2
+          `;
+          const result = await this.dataSource.query(myStatusQuery, [commentId, userId]);
+          myStatus = result[0]
+    } 
+    return {
+      id: comment.commentId,
+      content: comment.content,
+      commentatorInfo: {
+        userId: comment.userId,
+        userLogin: comment.login,
+      },
+      createdAt: comment.createdAt,
+      likesInfo: {
+        likesCount: comment.likesCount,
+        dislikesCount: comment.dislikesCount,
+        myStatus: myStatus
+      }
+      
+    }
   }
 
   async getAllCommentsByPostId(postId: string, mergedQueryParams, userId?) {

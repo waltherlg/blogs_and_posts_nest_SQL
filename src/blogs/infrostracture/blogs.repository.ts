@@ -65,7 +65,6 @@ export class BlogsRepository {
       blogDTO.createdAt,
       blogDTO.isMembership
     ])
-    console.log(result);
     
     const blogId = result[0].blogId;
     return blogId;

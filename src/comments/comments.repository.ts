@@ -21,21 +21,27 @@ export class CommentsRepository {
     const query = `
     INSERT INTO public."PostComments"(
       "commentId",
+      "postId",
       content,
-      "userId",
-      "createdAt")
+      "createdAt",
+      "userId")
     VALUES (
       $1,  
       $2, 
       $3, 
-      $4)
+      $4,
+      $5)
       RETURNING "commentId" 
     `;
     const result = await this.dataSource.query(query, [
-      commentDTO.
+      commentDTO.commentId,
+      commentDTO.postId,
+      commentDTO.content,
+      commentDTO.createdAt,
+      commentDTO.userId
     ])
-
-
+    const commentId = result[0].commentId;
+    return commentId
   }
 
   async getCommentDbTypeById(commentId) {
@@ -50,6 +56,7 @@ export class CommentsRepository {
     }
     return comment;
   }
+  
   async deleteCommentById(commentId): Promise<boolean> {
     if (!Types.ObjectId.isValid(commentId)) {
       return false;

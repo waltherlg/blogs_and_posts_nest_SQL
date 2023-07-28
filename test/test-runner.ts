@@ -12,6 +12,7 @@ import { testCommentLikesCrud } from './09-comments-likes.operation.e2e-spec';
 import { bloggerUsersControllers } from './11-blogger.usrers.controller.e2e-spec';
 import { saBlogsControllerCrudAndBan } from './06-sa.blogs.controller.e2e-spec';
 import { testBanUserForBlogByBlogger } from './05-01-blogger.users.ban.check-e2e-spec';
+import { postCrudOperations } from './07-00-post.CRUD.e2e-spec copy 2';
 
 describe('End-to-End Tests', () => {
   //testSaUsersCrud()
@@ -21,7 +22,8 @@ describe('End-to-End Tests', () => {
   //testAuthValidations()
   //testBloggerCrudOnlyBlogs()
   //testBanUserForBlogByBlogger()
-  saBlogsControllerCrudAndBan()
+  //saBlogsControllerCrudAndBan()
+  postCrudOperations()
   //testPostLikesCrud()
   
   //testCommentLikesCrud()

@@ -10,31 +10,7 @@ export class CommentsService {
     private readonly commentsRepository: CommentsRepository,
     private readonly usersRepository: UsersRepository,
   ) {}
-  async createComment(
-    postId: string,
-    content: string,
-    userId: string,
-  ): Promise<string> {
-    const user = await this.usersRepository.getUserDBTypeById(userId);
-    const CommentDTO = new CommentDBType(
-      new Types.ObjectId(),
-      'post',
-      postId,
-      content,
-      userId!,
-      user!.login,
-      false,
-      new Date().toISOString(),
-      0,
-      0,
-      'None',
-      []
-    );
-    const createdCommentId = await this.commentsRepository.createComment(
-      CommentDTO,
-    );
-    return createdCommentId;
-  }
+
   async deleteCommentById(commentId): Promise<boolean> {
     const isDeleted = await this.commentsRepository.deleteCommentById(
       commentId,

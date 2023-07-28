@@ -2,11 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CommentDocument, Comment, CommentDBType } from './comments.types';
+import { DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { validate as isValidUUID } from 'uuid';
 
 @Injectable()
 export class CommentsRepository {
   constructor(
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
+    @InjectDataSource() protected dataSource: DataSource
   ) {}
   async saveComment(comment: CommentDocument) {
     const result = await comment.save();
@@ -14,9 +18,24 @@ export class CommentsRepository {
   }
 
   async createComment(commentDTO: CommentDBType): Promise<string> {
-    const comment = new this.commentModel(commentDTO);
-    await comment.save();
-    return comment._id.toString();
+    const query = `
+    INSERT INTO public."PostComments"(
+      "commentId",
+      content,
+      "userId",
+      "createdAt")
+    VALUES (
+      $1,  
+      $2, 
+      $3, 
+      $4)
+      RETURNING "commentId" 
+    `;
+    const result = await this.dataSource.query(query, [
+      commentDTO.
+    ])
+
+
   }
 
   async getCommentDbTypeById(commentId) {

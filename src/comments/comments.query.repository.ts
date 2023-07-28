@@ -7,35 +7,28 @@ import { CommentsLikeType } from '../users/users.types';
 import { CommentDBType } from './comments.types';
 import { Post, PostDocument } from 'src/posts/posts.types';
 import { Blog, BlogDocument } from 'src/blogs/blogs.types';
+import { DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 @Injectable()
 export class CommentsQueryRepository {
   constructor(
     @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>, 
+    @InjectDataSource() protected dataSource: DataSource
   ) {}
-  async getCommentById(
-    commentId: string,
-    userId?: string,
-  ): Promise<CommentTypeOutput | null> {
-    if (!Types.ObjectId.isValid(commentId)) {
-      return null;
-    }
-    const comment: CommentDocument = await this.commentModel.findById(
-      commentId,
-    );
-    if (!comment || comment.isBanned === true) {
-      return null;
-    }
-    const userCommentStatus = comment.likesCollection.find(
-      (p) => p.userId === userId,
-    );
-    if (userCommentStatus) {
-      comment.myStatus = userCommentStatus.status;
-    }
-    return comment.prepareCommentForOutput();
+  async getCommentById(commentId: string, userId?: string): Promise<CommentTypeOutput | null> {
+    const query = `
+      SELECT "PostComments".*, "CommentLikes".*
+      FROM public."PostComments"
+      LEFT JOIN "CommentLikes" ON "CommentLikes"."commentId" = "PostComments"."commentId" AND "CommentLikes"."userId" = $2
+      WHERE "PostComments"."commentId" = $1;
+    `;
+    const result = await this.dataSource.query(query, [commentId, userId]);
+    return result;
   }
+
   async getAllCommentsByPostId(postId: string, mergedQueryParams, userId?) {
     const commentsCount = await this.commentModel.countDocuments({
       postId: postId,

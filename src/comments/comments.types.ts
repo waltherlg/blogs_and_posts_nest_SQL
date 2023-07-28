@@ -1,21 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsNotEmpty } from 'class-validator';
+import { UUID } from 'crypto';
 import mongoose, { HydratedDocument, Types } from 'mongoose';
 
 export class CommentDBType {
   constructor(
-    public _id: Types.ObjectId,
-    public parentType: string,
+    public commentId: string,
     public postId: string,
     public content: string,
-    public userId: string,
-    public userLogin: string,
-    public isBanned: boolean,
     public createdAt: string,
+    public userId: string,
     public likesCount: number,
     public dislikesCount: number,
-    public myStatus: string,
-    public likesCollection: Array<likesCollectionType>
   ) {}
 }
 

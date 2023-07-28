@@ -103,16 +103,7 @@ export class PostController {
     private readonly commentsQueryRepository: CommentsQueryRepository,
     private readonly commandBus: CommandBus,
   ) {}
-  // @UseGuards(BasicAuthGuard)
-  // @Post()
-  // async createPost(@Body() postCreateInputModel: CreatePostInputModelType) {
-  //   const newPostId = await this.postsService.createPost(postCreateInputModel);
-  //   const newPost = await this.postsQueryRepository.getPostById(newPostId);
-  //   if (!newPost) {
-  //     throw new UnableException('post creating');
-  //   }
-  //   return newPost;
-  // }
+
   @UseGuards(OptionalJwtAuthGuard)
   @Get(':id')
   async getPostById(@Req() request, @Param('id') postId: string) {
@@ -140,7 +131,7 @@ export class PostController {
   }
   @UseGuards(JwtAuthGuard)
   @Post(':id/comments')
-  async createCommentByPostId(
+  async createCommentByPostId( // TODO: createCommentByPostId
     @Req() request,
     @Param('id') postId: string,
     @Body() content: CreateCommentInputModelType,
@@ -153,7 +144,7 @@ export class PostController {
   
   @UseGuards(OptionalJwtAuthGuard)
   @Get(':id/comments')
-  async getAllCommentsByPostId(
+  async getAllCommentsByPostId( // TODO: getAllCommentsByPostId
     @Req() request,
     @Param('id') postId: string,
     @Query() queryParams: RequestQueryParamsModel,
@@ -172,7 +163,7 @@ export class PostController {
   @UseGuards(JwtAuthGuard)
   @Put(':id/like-status')
   @HttpCode(204)
-  async setLikeStatusForPost(
+  async setLikeStatusForPost( // TODO: setLikeStatusForPost
     @Req() request,
     @Param('id') postId: string,
     @Body()

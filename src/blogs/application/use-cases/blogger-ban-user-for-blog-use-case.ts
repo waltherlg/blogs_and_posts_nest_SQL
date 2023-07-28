@@ -71,7 +71,7 @@ export class BanUserForSpecificBlogUseCase implements ICommandHandler<BanUserFor
       if (!await this.checkService.isUserBannedForBlog(blogId, bannedUserId)) {
         return BlogActionResult.UserNotBanned
       }
-      const result = await this.blogsRepository.removeUserFromBlogBanList(blogId, bannedUserId) // [ ]: fix plug
+      const result = await this.blogsRepository.removeUserFromBlogBanList(blogId, bannedUserId) 
       if (result){
         return BlogActionResult.Success
       } else {

@@ -114,8 +114,8 @@ export class PostsRepository {
   const result = await this.dataSource.query(query, [postId]);
   const count = result[0].count;
   return count > 0;
-}
-
+  }
+  
   async deleteAllPosts() {
     await this.postModel.deleteMany({});
   }

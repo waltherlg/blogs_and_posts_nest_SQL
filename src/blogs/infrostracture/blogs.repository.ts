@@ -70,7 +70,7 @@ export class BlogsRepository {
     return blogId;
   }
 
-  async getBlogDBTypeById(blogId): Promise<BlogDocument | null> {
+  async getBlogDBTypeById(blogId): Promise<BlogDBType | null> {
     if (!isValidUUID(blogId)) {
       return null;
     }

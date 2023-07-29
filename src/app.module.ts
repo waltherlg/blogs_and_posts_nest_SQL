@@ -48,7 +48,7 @@ import { CommentsRepository } from './comments/comments.repository';
 import { CommentsQueryRepository } from './comments/comments.query.repository';
 import { CommentsService } from './comments/comments.service';
 import { CommentsControllers } from './comments/comments.controller';
-import { LikeService } from './other.services/like.service';
+import { LikeService } from './likes/like.service';
 import {
   CustomBlogIdValidator,
   CustomUrlValidator,

@@ -38,7 +38,7 @@ import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CommentsService } from '../comments/comments.service';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
-import { LikeService } from '../other.services/like.service';
+import { LikeService } from '../likes/like.service';
 import {
   BlogIdCustomValidator,
   LikeStatusValidator,

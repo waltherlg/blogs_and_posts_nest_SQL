@@ -13,7 +13,7 @@ import {
 import { CommentsService } from './comments.service';
 import { CommentsQueryRepository } from './comments.query.repository';
 import { CheckService } from '../other.services/check.service';
-import { LikeService } from '../other.services/like.service';
+import { LikeService } from '../likes/like.service';
 import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
 import {
   BlogNotFoundException,

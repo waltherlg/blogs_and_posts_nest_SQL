@@ -8,10 +8,11 @@ import { Types } from "mongoose";
 import { CommentsRepository } from "src/comments/comments.repository";
 import { PostActionResult } from "../helpers/post.enum.action.result";
 import { v4 as uuidv4 } from 'uuid';
+import { CheckService } from "src/other.services/check.service";
 
 export class SetLikeStatusForPostCommand {
     constructor(public userId: string, public postId: string,
-      public content: string){}
+      public status: string){}
   }
 
 @CommandHandler(SetLikeStatusForPostCommand)
@@ -20,13 +21,14 @@ export class SetLikeStatusForPostUseCase implements ICommandHandler<SetLikeStatu
       private readonly blogRepository: BlogsRepository,
       private readonly postRepository: PostsRepository,
       private readonly usersRepository: UsersRepository,
-      private readonly commentsRepository: CommentsRepository,){}
+      private readonly commentsRepository: CommentsRepository,
+      private readonly checkService: CheckService){}
 
 async execute(command: SetLikeStatusForPostCommand)
   : Promise<PostActionResult | string> {
     const userId = command.userId
     const postId = command.postId
-    const content = command.content
+    const status = command.status
 
     const post = await this.postRepository.getPostDBTypeById(postId)
     if(!post){
@@ -36,10 +38,13 @@ async execute(command: SetLikeStatusForPostCommand)
     if(!blog){
       return PostActionResult.BlogNotFound
     }
-    const isUserBannedForBlog = blog.bannedUsers.some(user => user.bannedUserId === userId)
+
+    const isUserBannedForBlog = await this.checkService.isUserBannedForBlog(blog.blogId, userId)
     if (isUserBannedForBlog) {
       return PostActionResult.UserBannedForBlog
     }
+
+    const isUserAlreadyLikedPost = await this.
 
     const CommentDTO = new CommentDBType(
       uuidv4(),

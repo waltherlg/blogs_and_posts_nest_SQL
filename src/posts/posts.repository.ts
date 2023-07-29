@@ -99,9 +99,22 @@ export class PostsRepository {
     { $set: { "likesCollection.$[elem].isBanned": isBanned } },
     { arrayFilters: [{ "elem.userId": userId }] }
   );
-
   return !!banLikesPostResult
  }
+
+ async isPostExist(postId: string): Promise<boolean> {
+  if (!isValidUUID(postId)) {
+    return false;
+  }
+  const query = `
+    SELECT COUNT(*) AS count
+    FROM public."Posts"
+    WHERE "postId" = $1
+  `;
+  const result = await this.dataSource.query(query, [postId]);
+  const count = result[0].count;
+  return count > 0;
+}
 
   async deleteAllPosts() {
     await this.postModel.deleteMany({});

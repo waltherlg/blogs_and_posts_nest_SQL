@@ -19,7 +19,7 @@ export class CheckService {
   }
 
   async isPostExist(postId): Promise<boolean> {
-    const post = await this.postsRepository.getPostDBTypeById(postId);
+    const post = await this.postsRepository.isPostExist(postId);
     return !!post;
   }
 

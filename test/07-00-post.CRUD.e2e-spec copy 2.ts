@@ -153,19 +153,19 @@ export function postCrudOperations() {
       });
     });
 
-    // it('00-11 blogger/blogs/{blogId}/posts/{postId} DELETE = 204 user1 delete post1 for blog1', async () => {
-    //   const createResponse = await request(app.getHttpServer())
-    //     .delete(`${endpoints.bloggerBlogs}/${blogId1}/posts/${postId1}`)
-    //     .set('Authorization', `Bearer ${accessTokenUser1}`)
-    //     .send(testPosts.inputBodyPost2forBlog1)
-    //     .expect(204);
-    // });
+    it('00-11 blogger/blogs/{blogId}/posts/{postId} DELETE = 204 user1 delete post1 for blog1', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .delete(`${endpoints.bloggerBlogs}/${blogId1}/posts/${postId1}`)
+        .set('Authorization', `Bearer ${accessTokenUser1}`)
+        .send(testPosts.inputBodyPost2forBlog1)
+        .expect(204);
+    });
 
-    // it('00-09 posts/{postId} GET = 404 not found post1 after delete', async () => {
-    //   const createResponse = await request(app.getHttpServer())
-    //     .get(`${endpoints.posts}/${postId1}`)
-    //     .expect(404);
-    // });
+    it('00-09 posts/{postId} GET = 404 not found post1 after delete', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .get(`${endpoints.posts}/${postId1}`)
+        .expect(404);
+    });
 
 
   });

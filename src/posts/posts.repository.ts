@@ -34,7 +34,7 @@ export class PostsRepository {
         $5, 
         $6,
         $7)
-      RETURNING "postId"
+      RETURNING "postId";
     `;
     const result = await this.dataSource.query(query, [
       postDTO.postId,
@@ -115,7 +115,7 @@ export class PostsRepository {
   const count = result[0].count;
   return count > 0;
   }
-  
+
   async deleteAllPosts() {
     await this.postModel.deleteMany({});
   }

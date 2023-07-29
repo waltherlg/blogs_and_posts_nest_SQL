@@ -40,8 +40,8 @@ export class PostsQueryRepository {
       blogName: post.blogName,
       createdAt: post.createdAt,
       extendedLikesInfo: {
-          likesCount: 0,
-          dislikesCount: 0,
+          likesCount: parseInt(post.likesCount),
+          dislikesCount: parseInt(post.dislikesCount),
           myStatus: "None",
           newestLikes: []
       },
@@ -98,8 +98,8 @@ export class PostsQueryRepository {
         blogName: post.blogName,
         createdAt: post.createdAt,
         extendedLikesInfo: {
-            likesCount: 0,
-            dislikesCount: 0,
+            likesCount: parseInt(post.likesCount),
+            dislikesCount: parseInt(post.dislikesCount),
             myStatus: "None",
             newestLikes: []
         },

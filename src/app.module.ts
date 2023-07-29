@@ -88,6 +88,7 @@ import { LogoutUseCase } from './auth/application/use-cases/logout-use-case';
 import { CreateUserUseCase } from './users/use-cases/create-user-use-case';
 import { UserDevicesQueryRepository } from './usersDevices/user.devices.query.repository';
 import { SetLikeStatusForPostUseCase } from './posts/use-cases/set-like-status-for-post-use-case';
+import { PostLikesRepository } from './likes/post.likes.repository';
 const mongoUri = process.env.MONGO_URL;
 const emailUser = process.env.MAIL_USER;
 const emailPassword = process.env.MAIL_PASSWORD;
@@ -209,6 +210,7 @@ SetLikeStatusForPostUseCase,]
     UserDevicesQueryRepository,
     CommentsRepository,
     CommentsQueryRepository,
+    PostLikesRepository,
     LocalStrategy,
     JwtStrategy,
     RefreshTokenStrategy,

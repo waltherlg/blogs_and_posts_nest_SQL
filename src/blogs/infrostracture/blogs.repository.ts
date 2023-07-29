@@ -81,7 +81,6 @@ export class BlogsRepository {
     const result = await this.dataSource.query(query, [
       blogId
     ]);
-    console.log('result getBlogDBTypeById ', result[0]);
     
     return result[0];
   }

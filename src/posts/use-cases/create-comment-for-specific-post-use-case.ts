@@ -8,6 +8,7 @@ import { Types } from "mongoose";
 import { CommentsRepository } from "src/comments/comments.repository";
 import { PostActionResult } from "../helpers/post.enum.action.result";
 import { v4 as uuidv4 } from 'uuid';
+import { CheckService } from "src/other.services/check.service";
 
 export class CreateCommentForSpecificPostCommand {
     constructor(public userId: string, public postId: string,
@@ -20,6 +21,7 @@ export class CreateCommentForSpecificPostUseCase implements ICommandHandler<Crea
       private readonly blogRepository: BlogsRepository,
       private readonly postRepository: PostsRepository,
       private readonly usersRepository: UsersRepository,
+      private readonly checkService: CheckService,
       private readonly commentsRepository: CommentsRepository,){}
 
 async execute(command: CreateCommentForSpecificPostCommand)
@@ -36,7 +38,7 @@ async execute(command: CreateCommentForSpecificPostCommand)
     if(!blog){
       return PostActionResult.BlogNotFound
     }
-    const isUserBannedForBlog = blog.bannedUsers.some(user => user.bannedUserId === userId)
+    const isUserBannedForBlog = await this.checkService.isUserBannedForBlog(blog.blogId, userId)
     if (isUserBannedForBlog) {
       return PostActionResult.UserBannedForBlog
     }

@@ -12,6 +12,8 @@ export class PostDBType {
     public blogId: string,
     public createdAt: string,
     public userId: string,
+    public likesCount: number,
+    public dislikesCount: number
   ) {}
 }
 

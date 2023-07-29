@@ -46,6 +46,7 @@ import {
 } from '../middlewares/validators';
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateCommentForSpecificPostCommand } from './use-cases/create-comment-for-specific-post-use-case';
+import { SetLikeStatusForPostCommand } from './use-cases/set-like-status-for-post-use-case'; 
 import { handlePostActionResult } from './helpers/post.enum.action.result';
 
 export class CreatePostInputModelType {
@@ -93,12 +94,7 @@ export class SetLikeStatusForPostInputModel {
 @Controller('posts')
 export class PostController {
   constructor(
-    private readonly appService: AppService,
-    private readonly postsService: PostsService,
     private readonly checkService: CheckService,
-    private readonly commentService: CommentsService,
-    private readonly likeService: LikeService,
-    private readonly postsRepository: PostsRepository,
     private readonly postsQueryRepository: PostsQueryRepository,
     private readonly commentsQueryRepository: CommentsQueryRepository,
     private readonly commandBus: CommandBus,
@@ -169,16 +165,11 @@ export class PostController {
     @Body()
     likeStatus: SetLikeStatusForPostInputModel,
   ) {
-    if (!(await this.checkService.isPostExist(postId))) {
-      throw new CustomNotFoundException('post');
-    }
-    const isPostLiked = await this.likeService.updatePostLike(
+    const result = await this.commandBus.execute(new SetLikeStatusForPostCommand(
       request.user.userId,
       postId,
       likeStatus.likeStatus,
-    );
-    if (!isPostLiked) {
-      throw new UnableException('set like status for post');
-    }
+    ))
+    handlePostActionResult(result)
   }
 }

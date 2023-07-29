@@ -9,6 +9,8 @@ import { CommentsRepository } from "src/comments/comments.repository";
 import { PostActionResult } from "../helpers/post.enum.action.result";
 import { v4 as uuidv4 } from 'uuid';
 import { CheckService } from "src/other.services/check.service";
+import { PostLikesRepository } from "src/likes/post.likes.repository";
+import { PostLikeDbType } from "src/likes/likes.types";
 
 export class SetLikeStatusForPostCommand {
     constructor(public userId: string, public postId: string,
@@ -20,6 +22,7 @@ export class SetLikeStatusForPostUseCase implements ICommandHandler<SetLikeStatu
     constructor(
       private readonly blogRepository: BlogsRepository,
       private readonly postRepository: PostsRepository,
+      private readonly postLikesRepository: PostLikesRepository,
       private readonly usersRepository: UsersRepository,
       private readonly commentsRepository: CommentsRepository,
       private readonly checkService: CheckService){}
@@ -44,23 +47,43 @@ async execute(command: SetLikeStatusForPostCommand)
       return PostActionResult.UserBannedForBlog
     }
 
-    const isUserAlreadyLikedPost = await this.
+    //check is user already liked post
+    const likeObject = await this.postLikesRepository.getPostLikeObject(userId, postId)
 
-    const CommentDTO = new CommentDBType(
-      uuidv4(),
-      postId,
-      content,
-      new Date().toISOString(),
-      userId,
-      0,
-      0,
-    );
-    const createdCommentId = await this.commentsRepository.createComment(
-      CommentDTO,
-    );
-    if(!createdCommentId){
-      return PostActionResult.NotCreated
+    //if user never set likestatus, create it
+    if(!likeObject){
+      const postLikeDto = new PostLikeDbType(
+        postId,
+        new Date().toISOString(),
+        userId,
+        null,
+        false,
+        status
+      )
+      const isLikeAdded = await this.postLikesRepository.addPostLikeStatus(postLikeDto)
+      if(isLikeAdded){
+        return PostActionResult.Success
+      } else {
+        PostActionResult.NotSaved
+      }
     }
-    return createdCommentId;
+
+    if(likeObject.status === status){
+      return PostActionResult.NoChangeNeeded
+    }
+
+    const islikeUpdated = await this.postLikesRepository.updatePostLike(postId, userId, status)
+    if(islikeUpdated){
+      return PostActionResult.Success
+    } else {
+      return PostActionResult.NotSaved
+    }
+
+
+
+    
+
+
+
   }
 }

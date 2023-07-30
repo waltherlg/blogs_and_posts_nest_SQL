@@ -27,6 +27,15 @@ export class PostsQueryRepository {
       WHERE "postId" = $1 AND "Users"."isBanned" = false AND "Blogs"."isBlogBanned" = false;
     `;
 
+    const newestLikesQuery = `
+    SELECT "addedAt", "login", "userId" 
+    FROM public."PostLikes"
+    WHERE "postId" = $1 
+    ORDER BY "addedAt" DESC
+    LIMIT 3
+    `
+    const newestLikes = await this.dataSource.query(newestLikesQuery, [postId])
+
     let myStatus = "None"
     if(userId){
       const usersLike = await this.getPostLikeObject(userId, postId)
@@ -52,7 +61,7 @@ export class PostsQueryRepository {
           likesCount: parseInt(post.likesCount),
           dislikesCount: parseInt(post.dislikesCount),
           myStatus: myStatus,
-          newestLikes: []
+          newestLikes: newestLikes
       },
     }
   }

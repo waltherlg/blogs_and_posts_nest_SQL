@@ -311,7 +311,6 @@ export class UsersRepository {
     `;
     const result = await this.dataSource.query(query, [login]);
     const count = result[0].count;
-    console.log('isLoginExists count ', count);
     return count > 0;
   }
 

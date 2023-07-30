@@ -25,7 +25,6 @@ export class RegisterUserUseCase implements ICommandHandler<RegisterUserCommand>
             }),
           };
         const userDTO = await this.dtoFactory.createUserDTO(registerUserData);
-        console.log('registerUserData ', registerUserData)
         try {
             await this.emailManager.sendEmailConfirmationMessage(registerUserData);
           } catch (e) {

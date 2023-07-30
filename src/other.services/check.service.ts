@@ -45,8 +45,7 @@ export class CheckService {
 
   async isLoginExist(login: string): Promise<boolean> {
     const isLoginExist = await this.usersRepository.isLoginExists(login);
-    console.log('isLoginExist in check service ', isLoginExist);
-    
+   
     return isLoginExist;
   }
 

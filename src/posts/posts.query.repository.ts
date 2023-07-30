@@ -106,7 +106,24 @@ export class PostsQueryRepository {
     
 
     const posts = await this.dataSource.query(query);
+    
+    const postLikesObjectQuery = `
+    SELECT * FROM public."PostLikes";
+    `
+    const postLikesObjectArray = await this.dataSource.query(postLikesObjectQuery)
+    const onlyLikeObjects = postLikesObjectArray.filter(likeObject => likeObject.status === "Like" && likeObject.isUserBanned === false)
+
+
     const postsForOutput = posts.map(post => {
+      const thisPostLikes = onlyLikeObjects.filter(likeObj => likeObj.postId === post.postId)
+      const newestLikes = thisPostLikes.slice(-3)
+      let myStatus = "None"
+      if(userId){
+        const foundLike = postLikesObjectArray.find(postLikeObject => postLikeObject.postId === post.postId && postLikeObject.postId && userId)
+        if(foundLike){
+          myStatus = foundLike.status
+        }
+      }
       return {
         id: post.postId,
         title: post.title,
@@ -118,8 +135,8 @@ export class PostsQueryRepository {
         extendedLikesInfo: {
             likesCount: parseInt(post.likesCount),
             dislikesCount: parseInt(post.dislikesCount),
-            myStatus: "None",
-            newestLikes: []
+            myStatus: myStatus,
+            newestLikes: newestLikes
         },
       }
     })

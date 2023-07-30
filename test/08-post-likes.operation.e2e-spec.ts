@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { Types } from 'mongoose';
-import { endpoints } from './helpers/routing';
+import { delayFunction, endpoints } from './helpers/routing';
 export function testPostLikesCrud() {
   describe('Post Likes Crud CRUD operation \"if all is ok\" (e2e). ', () => {
     let app: INestApplication;
@@ -324,7 +324,7 @@ export function testPostLikesCrud() {
         .expect(204);
     });
 
-    it('01-07 /posts GET = 200 return post for auth user2 with 4 like and 3 last liked users', async () => {
+    it('01-07 /posts/{postId} GET = 200 return post for auth user2 with 4 like and 3 last liked users', async () => {
       const createResponse = await request(app.getHttpServer())
         .get(`${endpoints.posts}/${createdPostId}`)
         .set('Authorization', `Bearer ${accessTokenUser2}`)
@@ -384,7 +384,8 @@ export function testPostLikesCrud() {
         .expect(204);
     });
 
-    it('01-07 /posts GET = 200 return post for auth user5 with 2 like and 1 dislike, 2 last liked users, and my status Dislike', async () => {
+    it('01-07 /posts/{postId} GET = 200 return post for auth user5 with 2 like and 1 dislike, 2 last liked users, and my status Dislike', async () => {
+      await delayFunction(1000)
       const createResponse = await request(app.getHttpServer())
         .get(`${endpoints.posts}/${createdPostId}`)
         .set('Authorization', `Bearer ${accessTokenUser5}`)
@@ -416,6 +417,48 @@ export function testPostLikesCrud() {
             },
           ],
         },
+      });
+    });
+
+    it('00-10 /posts GET = 200 return post1 with pagination', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .get(endpoints.posts)
+        .expect(200);
+      const createdResponse = createResponse.body;
+
+      expect(createdResponse).toEqual({
+        pagesCount: 1,
+        page: 1,
+        pageSize: 10,
+        totalCount: 1,
+        items: [
+          {
+            id: createdPostId,
+            title: 'newCreatedPost',
+            shortDescription: 'newPostsShortDescription',
+            content: 'some content',
+            blogId: expect.any(String),
+            blogName: 'BlogForPosts',
+            createdAt: expect.any(String),
+            extendedLikesInfo: {
+              likesCount: 2,
+              dislikesCount: 1,
+              myStatus: 'None',
+              newestLikes: [
+                {
+                  addedAt: expect.any(String),
+                  login: 'user4',
+                  userId: expect.any(String),
+                },
+                {
+                  addedAt: expect.any(String),
+                  login: 'user3',
+                  userId: expect.any(String),
+                },
+              ],
+            },
+          }
+        ],
       });
     });
 

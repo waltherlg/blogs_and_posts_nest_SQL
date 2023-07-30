@@ -10,3 +10,11 @@ export const endpoints = {
   auth: '/auth',
   devices: '/security/devices',
 };
+
+export const delayFunction = async (ms: number) => {
+  return new Promise<void>((resolve, reject) => {
+    setTimeout(() => {
+      resolve()
+    }, ms)
+  })
+}

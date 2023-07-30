@@ -30,9 +30,9 @@ export class PostsQueryRepository {
     const newestLikesQuery = `
     SELECT "addedAt", "login", "userId" 
     FROM public."PostLikes"
-    WHERE "postId" = $1 
+    WHERE "postId" = $1 AND "status" = 'Like' AND "isUserBanned" = false
     ORDER BY "addedAt" DESC
-    LIMIT 3
+    LIMIT 3;
     `
     const newestLikes = await this.dataSource.query(newestLikesQuery, [postId])
 
@@ -101,9 +101,7 @@ export class PostsQueryRepository {
     `;
 
     const postCountArr = await this.dataSource.query(countQuery);
-    const postCount = parseInt(postCountArr[0].count);
-    console.log("query ", query);
-    
+    const postCount = parseInt(postCountArr[0].count);    
 
     const posts = await this.dataSource.query(query);
     
@@ -111,12 +109,21 @@ export class PostsQueryRepository {
     SELECT * FROM public."PostLikes";
     `
     const postLikesObjectArray = await this.dataSource.query(postLikesObjectQuery)
+    console.log(postLikesObjectArray);
+    
     const onlyLikeObjects = postLikesObjectArray.filter(likeObject => likeObject.status === "Like" && likeObject.isUserBanned === false)
+    console.log("onlyLikeObjects ", onlyLikeObjects);
+    
 
 
     const postsForOutput = posts.map(post => {
       const thisPostLikes = onlyLikeObjects.filter(likeObj => likeObj.postId === post.postId)
-      const newestLikes = thisPostLikes.slice(-3)
+      const newestLikes = thisPostLikes.slice(-3).map(like => {return{
+        addedAt: like.addedAt,
+        userId: like.userId,
+        login: like.login
+      }})
+    
       let myStatus = "None"
       if(userId){
         const foundLike = postLikesObjectArray.find(postLikeObject => postLikeObject.postId === post.postId && postLikeObject.postId && userId)

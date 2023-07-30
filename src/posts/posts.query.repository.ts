@@ -7,6 +7,7 @@ import { BlogDocument, Blog } from 'src/blogs/blogs.types';
 import { validate as isValidUUID } from 'uuid';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { PostLikeDbType } from 'src/likes/likes.types';
 
 @Injectable()
 export class PostsQueryRepository {
@@ -16,7 +17,7 @@ export class PostsQueryRepository {
 
   async getPostById(postId, userId?): Promise<PostTypeOutput | null> {
     if (!isValidUUID(postId)) {
-      return null;
+      return null; 
     }
     const query = `
       SELECT "Posts".*, "Blogs".name AS "blogName", "Blogs"."isBlogBanned", "Users"."isBanned" AS "isUserBanned"
@@ -25,6 +26,14 @@ export class PostsQueryRepository {
       INNER JOIN "Users" ON "Blogs"."userId" = "Users"."userId"
       WHERE "postId" = $1 AND "Users"."isBanned" = false AND "Blogs"."isBlogBanned" = false;
     `;
+
+    let myStatus = "None"
+    if(userId){
+      const usersLike = await this.getPostLikeObject(userId, postId)
+      if(usersLike){
+        myStatus = usersLike.status
+      }
+    }
   
     const result = await this.dataSource.query(query, [postId])
     const post = result[0];
@@ -42,7 +51,7 @@ export class PostsQueryRepository {
       extendedLikesInfo: {
           likesCount: parseInt(post.likesCount),
           dislikesCount: parseInt(post.dislikesCount),
-          myStatus: "None",
+          myStatus: myStatus,
           newestLikes: []
       },
     }
@@ -190,4 +199,13 @@ export class PostsQueryRepository {
     };
     return outputPosts;
   }
+
+  private async getPostLikeObject(userId, postId): Promise<PostLikeDbType | null>{
+    const query = `
+    SELECT * FROM public."PostLikes"
+    WHERE "userId" = $1 AND "postId" = $2    
+    ;`
+    const result = await this.dataSource.query(query, [userId, postId])
+    return result[0]    
+}
 }

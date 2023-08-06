@@ -159,7 +159,7 @@ export class PostController {
   @UseGuards(JwtAuthGuard)
   @Put(':id/like-status')
   @HttpCode(204)
-  async setLikeStatusForPost( // TODO: setLikeStatusForPost
+  async setLikeStatusForPost(
     @Req() request,
     @Param('id') postId: string,
     @Body()

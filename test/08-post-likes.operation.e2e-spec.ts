@@ -412,7 +412,7 @@ export function testPostLikesCrud() {
             },
             {
               addedAt: expect.any(String),
-              login: 'user3',
+              login: 'user3',  
               userId: expect.any(String),
             },
           ],

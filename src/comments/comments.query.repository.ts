@@ -10,6 +10,7 @@ import { Blog, BlogDocument } from 'src/blogs/blogs.types';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { validate as isValidUUID } from 'uuid';
+import { CommentLikeDbType } from 'src/likes/likes.types';
 @Injectable()
 export class CommentsQueryRepository {
   constructor(
@@ -24,7 +25,7 @@ export class CommentsQueryRepository {
       return null;
     }
     const query = `
-      SELECT "PostComments".*, "Users"."login", "Users"."isBanned", "CommentLikes".status
+      SELECT "PostComments".*, "Users"."login", "Users"."isBanned"
       FROM public."PostComments" 
       INNER JOIN "Users" ON "PostComments"."userId" = "Users"."userId"
       WHERE "commentId" = $1 AND "isBanned" = false; 
@@ -35,12 +36,17 @@ export class CommentsQueryRepository {
       return null
     }
     let myStatus = "None"
+    console.log("userId ", userId);
+    
     if(userId){
           const myStatusQuery = `
-          SELECT "status" FROM public."CommentLikes"
+          SELECT "status" 
+          FROM public."CommentLikes"
           WHERE "commentId" = $1 AND "userId" = $2
           `;
           const result = await this.dataSource.query(myStatusQuery, [commentId, userId]);
+          console.log("SELECT status FROM public.CommentLikes result ", result);
+          
           myStatus = result[0]
     } 
     return {
@@ -52,53 +58,106 @@ export class CommentsQueryRepository {
       },
       createdAt: comment.createdAt,
       likesInfo: {
-        likesCount: comment.likesCount,
-        dislikesCount: comment.dislikesCount,
+        likesCount: parseInt(comment.likesCount),
+        dislikesCount: parseInt(comment.dislikesCount),
         myStatus: myStatus
-      }
-      
+      }  
     }
   }
 
-  async getAllCommentsByPostId(postId: string, mergedQueryParams, userId?) {
-    const commentsCount = await this.commentModel.countDocuments({
-      postId: postId,
-      isBanned: { $ne: true }
-    });
+  async getAllCommentsByPostId(postId: string, mergedQueryParams, userId?) {// TODO: refactor tu SQL
+
     const sortBy = mergedQueryParams.sortBy;
     const sortDirection = mergedQueryParams.sortDirection;
     const pageNumber = mergedQueryParams.pageNumber;
     const pageSize = mergedQueryParams.pageSize;
+    const skipPage = (pageNumber - 1) * pageSize
 
-    const comments = await this.commentModel
-      .find({
-        postId: postId,
-        isBanned: { $ne: true }
-      })
-      .sort({ [sortBy]: this.sortByDesc(sortDirection) })
-      .skip(this.skipPage(pageNumber, pageSize))
-      .limit(+pageSize);
+    const queryParams = [
+      sortBy,    
+      sortDirection.toUpperCase(),
+      pageNumber,
+      pageSize,
+      skipPage,
+      postId,
+    ];
 
-    const outComments = comments.map((comment: CommentDocument) => {
-      
-      const userCommentStatus = comment.likesCollection.find(
-        (p) => p.userId === userId,
-      );
-      if (userCommentStatus) {
-        comment.myStatus = userCommentStatus.status;
+    let query = `
+    SELECT "PostComments".*, "Users".login, "Users"."isBanned", "Blogs"."isBlogBanned"
+    FROM public."PostComments"
+    INNER JOIN "Users" ON "PostComments"."userId" = "Users"."userId"
+    INNER JOIN "Posts" ON "PostComments"."postId" = "Posts"."postId"
+    INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
+    WHERE "Users"."isBanned" = false AND "Blogs"."isBlogBanned" = false AND "PostComments"."postId" = '${queryParams[5]}'
+    `
+    
+    let countQuery = `
+    SELECT COUNT(*) as "count"
+    FROM public."PostComments"
+    INNER JOIN "Users" ON "PostComments"."userId" = "Users"."userId"
+    INNER JOIN "Posts" ON "PostComments"."postId" = "Posts"."postId"
+    INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
+    WHERE "Users"."isBanned" = false AND "Blogs"."isBlogBanned" = false AND "PostComments"."postId" = '${queryParams[5]}'
+    `
+    query += ` ORDER BY "${queryParams[0]}" ${queryParams[1]}
+    LIMIT ${queryParams[3]} OFFSET ${queryParams[4]};
+    `;
+
+    const commentCountArr = await this.dataSource.query(countQuery);
+    const commentCount = parseInt(commentCountArr[0].count);
+
+    const comments = await this.dataSource.query(query);
+    
+    let usersLikeObjectsForThisComments
+    if(userId){
+      //если пришел userId то нужно узнать его лайкстатус для каждого коммента
+      //нужен массив из айдишек комментов, которые вернул основной запрос
+      const arrayOfCommentsId = comments.map(comment => { return comment.commentId })
+      // нужно найти все лайки где есть айди пользователя и коммент айди из массива выше
+      const usersLikeObjectsQuery = `
+      SELECT *
+      FROM public."CommentLikes"
+      WHERE "userId" = "${userId}" AND "commentId" = ANY(:${arrayOfCommentsId})
+      `
+      usersLikeObjectsForThisComments = await this.dataSource.query(usersLikeObjectsQuery)
+    }
+
+    const commentsForOutput: CommentTypeOutput = comments.map(comment => {
+      let myStatus = "None"
+          if(userId){
+            const foundLike = usersLikeObjectsForThisComments.find(commentLikeObject => commentLikeObject.commentId === comment.commentId)
+            if(foundLike){
+              myStatus = foundLike.status
+            }
+          }
+      return {
+        id: comment.commentId,
+        content: comment.content,
+        commentatorInfo: {
+          userId: comment.userId,
+          userLogin: comment.login,
+        },
+        createdAt: comment.createdAt,
+        likesInfo: {
+          likesCount: parseInt(comment.likesCount),
+          dislikesCount: parseInt(comment.dislikesCount),
+          myStatus: myStatus
+        }
       }
-      return comment.prepareCommentForOutput();
-    });
-    const pageCount = Math.ceil(commentsCount / +pageSize);
+    })
+
+    const pageCount = Math.ceil(commentCount / pageSize);
 
     const outputComments = {
       pagesCount: pageCount,
       page: +pageNumber,
       pageSize: +pageSize,
-      totalCount: commentsCount,
-      items: outComments,
+      totalCount: commentCount,
+      items: commentsForOutput
     };
     return outputComments;
+
+
   }
 
   async getAllCommentsForBlogger(mergedQueryParams, userId){
@@ -165,4 +224,13 @@ export class CommentsQueryRepository {
   skipPage(pageNumber: string, pageSize: string): number {
     return (+pageNumber - 1) * +pageSize;
   }
+
+  async getCommentLikeObject(userId, postId): Promise<CommentLikeDbType | null>{
+    const query = `
+    SELECT * FROM public."CommentLikes"
+    WHERE "userId" = $1 AND "commentId" = $2    
+    ;`
+    const result = await this.dataSource.query(query, [userId, postId])
+    return result[0]    
+}
 }

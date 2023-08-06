@@ -106,16 +106,13 @@ export class PostsQueryRepository {
     const posts = await this.dataSource.query(query);
     
     const postLikesObjectQuery = `
-    SELECT * FROM public."PostLikes";
+    SELECT * FROM public."PostLikes"
+    ORDER BY "addedAt" DESC;
     `
     const postLikesObjectArray = await this.dataSource.query(postLikesObjectQuery)
-    console.log(postLikesObjectArray);
     
     const onlyLikeObjects = postLikesObjectArray.filter(likeObject => likeObject.status === "Like" && likeObject.isUserBanned === false)
-    console.log("onlyLikeObjects ", onlyLikeObjects);
-    
-
-
+  
     const postsForOutput = posts.map(post => {
       const thisPostLikes = onlyLikeObjects.filter(likeObj => likeObj.postId === post.postId)
       const newestLikes = thisPostLikes.slice(-3).map(like => {return{
@@ -188,7 +185,7 @@ export class PostsQueryRepository {
     WHERE "Posts"."blogId" = "${queryParams[5]}" AND "Users"."isBanned" = false AND "Blogs"."isBlogBanned" = false
     `;
     let countQuery = `
-    SELECT COUNT(*)
+    SELECT COUNT(*) as "count"
     FROM public."Posts"
     INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
     INNER JOIN "Users" ON "Blogs"."userId" = "Users"."userId"

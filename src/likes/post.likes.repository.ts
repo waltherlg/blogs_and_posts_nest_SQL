@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource } from 'typeorm';
 import { validate as isValidUUID } from 'uuid';
-import { PostLikeDbType } from "./likes.types";
+import { CommentLikeDbType, PostLikeDbType } from "./likes.types";
 
 
 @Injectable()
@@ -41,7 +41,7 @@ async addPostLikeStatus(postLikeDto: PostLikeDbType){
         postLikeDto.postId,
         postLikeDto.addedAt,
         postLikeDto.userId,
-        postLikeDto.login,
+ -       postLikeDto.login,
         postLikeDto.isUserBanned,
         postLikeDto.status
     ])
@@ -62,6 +62,15 @@ async updatePostLike(postId, userId, status): Promise<boolean>{
     const result = await this.dataSource.query(query, [postId, userId, status])
     const count = result[1]
     return count === 1
+}
+
+async getCommentLikeObject(userId, postId): Promise<CommentLikeDbType | null>{
+    const query = `
+    SELECT * FROM public."CommentLikes"
+    WHERE "userId" = $1 AND "commentId" = $2    
+    ;`
+    const result = await this.dataSource.query(query, [userId, postId])
+    return result[0]    
 }
 
 

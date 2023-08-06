@@ -9,3 +9,14 @@ export class PostLikeDbType {
         public status: string,
     ) {}
 }
+
+export class CommentLikeDbType {
+    constructor(
+        public postId: string,
+        public addedAt: string,
+        public userId: string,
+        public login: string,
+        public isUserBanned: boolean,
+        public status: string,
+    ) {}
+}

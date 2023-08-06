@@ -9,7 +9,7 @@ export let testUser = {
         isBanned: false,
         banReason: 'some ban or unban reason'
     },    
-    inputUser1: {
+     inputUser1: {
         login: 'user1',
         password: 'qwerty',
         email: 'ruslan@gmail-1.com',

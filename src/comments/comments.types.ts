@@ -73,9 +73,9 @@ export class Comment {
   countLikesAndDislikes() {
     return this.likesCollection!.reduce(
       (acc, comment) => {
-        if (comment.isBanned === false && comment.status === 'Like') {
+        if (comment.isUserBanned === false && comment.status === 'Like') {
           acc.likesCount++;
-        } else if (comment.isBanned === false && comment.status === 'Dislike') {
+        } else if (comment.isUserBanned === false && comment.status === 'Dislike') {
           acc.dislikesCount++;
         }
         return acc;
@@ -115,6 +115,6 @@ type likesCollectionType = {
   addedAt: string;
   userId: string;
   login: string;
-  isBanned: boolean;
+  isUserBanned: boolean;
   status: string;
 };

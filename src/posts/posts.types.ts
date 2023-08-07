@@ -52,9 +52,9 @@ export class Post {
   countLikesAndDislikes() {
     return this.likesCollection!.reduce(
       (acc, post) => {
-        if (post.isBanned === false && post.status === 'Like') {
+        if (post.isUserBanned === false && post.status === 'Like') {
           acc.likesCount++;
-        } else if (post.isBanned === false && post.status === 'Dislike') {
+        } else if (post.isUserBanned === false && post.status === 'Dislike') {
           acc.dislikesCount++;
         }
         return acc;
@@ -64,7 +64,7 @@ export class Post {
   }
   getNewestLikes() {
     return this.likesCollection
-      .filter((n) => n.status === 'Like' && n.isBanned === false)
+      .filter((n) => n.status === 'Like' && n.isUserBanned === false)
       .sort((a, b) => b.addedAt.localeCompare(a.addedAt))
       .slice(0, 3);
   }
@@ -127,7 +127,7 @@ type likesCollectionType = {
   addedAt: string;
   userId: string;
   login: string;
-  isBanned: boolean;
+  isUserBanned: boolean;
   status: string;
 };
 

@@ -377,8 +377,8 @@ export class UsersRepository {
     WHERE "userId"=$1
     LIMIT 1
     `
-    const isBanned = await this.dataSource.query(query, [userId]);
-    return isBanned[0].isBanned
+    const isUserBanned = await this.dataSource.query(query, [userId]);
+    return isUserBanned[0].isUserBanned
   }
 
   async getConfirmationCodeOfLastCreatedUser(){

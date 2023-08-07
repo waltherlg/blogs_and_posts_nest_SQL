@@ -35,7 +35,7 @@ export class AuthService {
       loginOrEmail,
     );
     
-    if (!user || user.isBanned === true) {
+    if (!user || user.isUserBanned === true) {
       return null;
     }
     const userHash = user.passwordHash;

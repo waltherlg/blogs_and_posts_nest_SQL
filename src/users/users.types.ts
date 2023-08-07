@@ -20,7 +20,7 @@ export class UserDBType {
     public passwordHash: string,
     public email: string,
     public createdAt: string,
-    public isBanned: boolean,
+    public isUserBanned: boolean,
     public banDate: string | null,
     public banReason: string | null,
     public confirmationCode: string | null,

@@ -96,12 +96,12 @@ export class CheckService {
   }
 
   async isUserBanned(userId: string): Promise<boolean>{
-    const isBanned = await this.usersRepository.isUserBanned(userId)
-    return isBanned
+    const isUserBanned = await this.usersRepository.isUserBanned(userId)
+    return isUserBanned
   }
 
   async isUserBannedForBlog(blogId, userId){
-    const isBanned = await this.blogsRepository.isUserBannedForBlog(blogId, userId)
-    return isBanned
+    const isUserBanned = await this.blogsRepository.isUserBannedForBlog(blogId, userId)
+    return isUserBanned
   }
 }

@@ -33,7 +33,7 @@ export class UsersQueryRepository {
       return null;
     }
     const query = `
-    SELECT "userId", login, email, "createdAt", "isBanned", "banDate", "banReason"
+    SELECT "userId", login, email, "createdAt", "isUserBanned", "banDate", "banReason"
     FROM public."Users"
     WHERE "userId"=$1
     LIMIT 1
@@ -46,7 +46,7 @@ export class UsersQueryRepository {
     email: user.email,
     createdAt: user.createdAt,
     banInfo: {
-      isBanned: user.isBanned,
+      isBanned: user.isUserBanned,
       banDate: user.banDate,
       banReason: user.banReason,
     }
@@ -75,7 +75,7 @@ const queryParams = [
 ];
 
 let query = `
-SELECT "userId", login, email, "createdAt", "isBanned", "banDate", "banReason"
+SELECT "userId", login, email, "createdAt", "isUserBanned", "banDate", "banReason"
 FROM public."Users"
 `;
 
@@ -110,13 +110,13 @@ if(banStatus !== 'all'){
 }
 
 if (banStatus === 'banned'){
-  query += `"isBanned" = true`
-  countQuery += `"isBanned" = true`
+  query += `"isUserBanned" = true`
+  countQuery += `"isUserBanned" = true`
 }
 
 if (banStatus === 'notBanned'){
-  query += `"isBanned" = false`
-  countQuery += `"isBanned" = false`
+  query += `"isUserBanned" = false`
+  countQuery += `"isUserBanned" = false`
 }
 
 query += ` ORDER BY "${queryParams[2]}" ${queryParams[3]}
@@ -135,7 +135,7 @@ const usersCount = parseInt(usersCountArr[0].count);
         email: user.email,
         createdAt: user.createdAt,
         banInfo: {
-          isBanned: user.isBanned,
+          isBanned: user.isUserBanned,
           banDate: user.banDate,
           banReason: user.banReason,
         },
@@ -200,7 +200,6 @@ const usersCount = parseInt(usersCountArr[0].count);
     const bannedUsersCount = parseInt(bannedUsersCountArr[0].count);
 
     const bannedUsers = await this.dataSource.query(query);
-    console.log("bannedUsers ", bannedUsers);
     
 
     const bannedUsersForOutput = bannedUsers.map(user => {

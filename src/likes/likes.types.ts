@@ -12,7 +12,7 @@ export class PostLikeDbType {
 
 export class CommentLikeDbType {
     constructor(
-        public postId: string,
+        public commentId: string,
         public addedAt: string,
         public userId: string,
         public login: string,

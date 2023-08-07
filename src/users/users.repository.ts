@@ -27,7 +27,7 @@ export class UsersRepository {
       "passwordHash", 
       email, 
       "createdAt", 
-      "isBanned", 
+      "isUserBanned", 
       "banDate", 
       "banReason", 
       "confirmationCode", 
@@ -57,7 +57,7 @@ export class UsersRepository {
       userDTO.passwordHash,
       userDTO.email,
       userDTO.createdAt,
-      userDTO.isBanned,
+      userDTO.isUserBanned,
       userDTO.banDate,
       userDTO.banReason,
       userDTO.confirmationCode,
@@ -73,7 +73,7 @@ export class UsersRepository {
 
   async getUserForLoginByLoginOrEmail(loginOrEmail: string){
     const query = `
-    SELECT "userId" AS id, "isConfirmed", "isBanned", "passwordHash"
+    SELECT "userId" AS id, "isConfirmed", "isUserBanned", "passwordHash"
     FROM public."Users"
     WHERE email = $1 OR login = $1
     LIMIT 1
@@ -264,7 +264,7 @@ export class UsersRepository {
     }
     const query = `
     UPDATE public."Users"
-    SET "isBanned" = $2, "banDate" = $3, "banReason" = $4 
+    SET "isUserBanned" = $2, "banDate" = $3, "banReason" = $4 
     WHERE "userId" = $1;
     `
     try {
@@ -372,7 +372,7 @@ export class UsersRepository {
       return false;
     }
     const query = `
-    SELECT "isBanned"
+    SELECT "isUserBanned"
     FROM public."Users"
     WHERE "userId"=$1
     LIMIT 1

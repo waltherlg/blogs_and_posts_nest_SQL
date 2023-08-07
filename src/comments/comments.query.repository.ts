@@ -36,7 +36,6 @@ export class CommentsQueryRepository {
       return null
     }
     let myStatus = "None"
-    console.log("userId ", userId);
     
     if(userId){
           const myStatusQuery = `

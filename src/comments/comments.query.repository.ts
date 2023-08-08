@@ -25,9 +25,9 @@ export class CommentsQueryRepository {
       return null;
     }
     const query = `
-      SELECT "PostComments".*, "Users"."login", "Users"."isUserBanned"
-      FROM public."PostComments" 
-      INNER JOIN "Users" ON "PostComments"."userId" = "Users"."userId"
+      SELECT "Comments".*, "Users"."login", "Users"."isUserBanned"
+      FROM public."Comments" 
+      INNER JOIN "Users" ON "Comments"."userId" = "Users"."userId"
       WHERE "commentId" = $1 AND "isUserBanned" = false; 
     `;
     const result = await this.dataSource.query(query, [commentId]);
@@ -82,21 +82,21 @@ export class CommentsQueryRepository {
     ];
 
     let query = `
-    SELECT "PostComments".*, "Users".login, "Users"."isUserBanned", "Blogs"."isBlogBanned"
-    FROM public."PostComments"
-    INNER JOIN "Users" ON "PostComments"."userId" = "Users"."userId"
-    INNER JOIN "Posts" ON "PostComments"."postId" = "Posts"."postId"
+    SELECT "Comments".*, "Users".login, "Users"."isUserBanned", "Blogs"."isBlogBanned"
+    FROM public."Comments"
+    INNER JOIN "Users" ON "Comments"."userId" = "Users"."userId"
+    INNER JOIN "Posts" ON "Comments"."postId" = "Posts"."postId"
     INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
-    WHERE "Users"."isUserBanned" = false AND "Blogs"."isBlogBanned" = false AND "PostComments"."postId" = '${queryParams[5]}'
+    WHERE "Users"."isUserBanned" = false AND "Blogs"."isBlogBanned" = false AND "Comments"."postId" = '${queryParams[5]}'
     `
     
     let countQuery = `
     SELECT COUNT(*) as "count"
-    FROM public."PostComments"
-    INNER JOIN "Users" ON "PostComments"."userId" = "Users"."userId"
-    INNER JOIN "Posts" ON "PostComments"."postId" = "Posts"."postId"
+    FROM public."Comments"
+    INNER JOIN "Users" ON "Comments"."userId" = "Users"."userId"
+    INNER JOIN "Posts" ON "Comments"."postId" = "Posts"."postId"
     INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
-    WHERE "Users"."isUserBanned" = false AND "Blogs"."isBlogBanned" = false AND "PostComments"."postId" = '${queryParams[5]}'
+    WHERE "Users"."isUserBanned" = false AND "Blogs"."isBlogBanned" = false AND "Comments"."postId" = '${queryParams[5]}'
     `
     query += ` ORDER BY "${queryParams[0]}" ${queryParams[1]}
     LIMIT ${queryParams[3]} OFFSET ${queryParams[4]};

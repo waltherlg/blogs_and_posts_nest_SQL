@@ -31,7 +31,7 @@ export class TestRepository {
     await this.commentModel.deleteMany({});
     await this.dataSource.query(`
     DELETE FROM public."CommentLikes";
-    DELETE FROM public."PostComments";
+    DELETE FROM public."Comments";
     DELETE FROM public."PostLikes";
     DELETE FROM public."Posts";
     DELETE FROM public."BlogBannedUsers";

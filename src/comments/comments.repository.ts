@@ -19,7 +19,7 @@ export class CommentsRepository {
 
   async createComment(commentDTO: CommentDBType): Promise<string> {
     const query = `
-    INSERT INTO public."PostComments"(
+    INSERT INTO public."Comments"(
       "commentId",
       "postId",
       content,

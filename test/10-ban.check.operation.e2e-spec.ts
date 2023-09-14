@@ -2,9 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
+import { Types } from 'mongoose';
 import { endpoints } from './helpers/routing';
-export function bloggerUsersControllers() {
-  describe('blogger.user.controller (e2e). ', () => {
+import { testUser } from './helpers/inputAndOutputObjects/usersObjects';
+export function banCheckOperation() {
+  describe('Checking User Ban for Get Requests (e2e). ', () => {
     let app: INestApplication;
 
     const basicAuthRight = Buffer.from('admin:qwerty').toString('base64');
@@ -18,7 +20,6 @@ export function bloggerUsersControllers() {
     let accessTokenUser4: any;
     let accessTokenUser5: any;
     
-
     beforeAll(async () => {
       const moduleFixture: TestingModule = await Test.createTestingModule({
         imports: [AppModule],
@@ -206,13 +207,10 @@ export function bloggerUsersControllers() {
         .expect(201);
 
       const createdResponseOfFirstBlog = testsResponse.body;
-      console.log(createdResponseOfFirstBlog);
-      
       BlogId1User1 = createdResponseOfFirstBlog.id;
-      console.log('BlogId1User1 ', BlogId1User1);
 
       expect(createdResponseOfFirstBlog).toEqual({
-        id: expect.any(String),
+        id: BlogId1User1,
         name: 'BlogForPosts',
         description: 'description BlogForPosts',
         websiteUrl: 'https://www.someweb.com',
@@ -221,7 +219,31 @@ export function bloggerUsersControllers() {
       });
     });
 
-    console.log('BlogId1User1 before create post ', BlogId1User1);
+    let BlogId1User2: string
+
+    it('01-02 blogger/blogs POST = 201 user2 create new blog', async () => {
+      const testsResponse = await request(app.getHttpServer())
+        .post(endpoints.bloggerBlogs)
+        .set('Authorization', `Bearer ${accessTokenUser2}`)
+        .send({
+          name: 'Blog1User2',
+          description: 'description BlogForPosts',
+          websiteUrl: 'https://www.someweb.com',
+        })
+        .expect(201);
+
+      const createdResponseOfFirstBlog = testsResponse.body;
+      BlogId1User2 = createdResponseOfFirstBlog.id;
+
+      expect(createdResponseOfFirstBlog).toEqual({
+        id: expect.any(String),
+        name: 'Blog1User2',
+        description: 'description BlogForPosts',
+        websiteUrl: 'https://www.someweb.com',
+        createdAt: expect.any(String),
+        isMembership: false,
+      });
+    });
 
     it('01-02 blogger/blogId/posts POST = 201 user1 create new post', async () => {
       const testsResponse = await request(app.getHttpServer())
@@ -234,7 +256,6 @@ export function bloggerUsersControllers() {
           content: 'some content',
         })
         .expect(201);
-        console.log('BlogId1User1 after create post ', BlogId1User1);
 
       const createdResponse = testsResponse.body;
       PostId1User1 = createdResponse.id;
@@ -256,49 +277,133 @@ export function bloggerUsersControllers() {
       });
     });
 
-    console.log('BlogId1User1 before ban ', BlogId1User1);
+    let PostId1User2: string
 
-    it('01-02 blogger/users/userId/ban PUT = 204 user2 banned for blog1', async () => {
-         let testResp1 = await request(app.getHttpServer())
-        .put(`${endpoints.bloggerUsers}/${userId2}/ban`)
-        .set('Authorization', `Bearer ${accessTokenUser1}`)
-        .send({
-          isBanned: true,
-          banReason: "banReasonbanReasonbanReasonbanReason",
-          blogId: BlogId1User1
-        })
-        .expect(204)            
-    })
-    
-    it('01-02 blogger/users/userId/ban PUT = 204 user3 banned for blog1', async () => {
+    it('01-02 blogger/blogId/posts POST = 201 user2 create new post', async () => {
       const testsResponse = await request(app.getHttpServer())
-        .put(`${endpoints.bloggerUsers}/${userId3}/ban`)
-        .set('Authorization', `Bearer ${accessTokenUser1}`)
-        .send({
-          isBanned: true,
-          banReason: "banReasonbanReasonbanReasonbanReason",
-          blogId: BlogId1User1
-        })
-        .expect(204);
-    })
-
-    it('01-02 posts/postId/comments POST = 403 banned user2 should\,t create comment', async () => {
-      const testsResponse = await request(app.getHttpServer())
-        .post(`${endpoints.posts}/${PostId1User1}/comments`)
+        .post(`${endpoints.bloggerBlogs}/${BlogId1User2}/posts`)
+        //.post(`${endpoints.posts}/${createdPostId}/comments`)
         .set('Authorization', `Bearer ${accessTokenUser2}`)
         .send({
-          content: 'some comment for post1',
+          title: 'BannedPost',
+          shortDescription: 'newPostsShortDescription',
+          content: 'some content',
         })
-        .expect(403);
+        .expect(201);
+
+      const createdResponse = testsResponse.body;
+      PostId1User2 = createdResponse.id;
+
+      expect(createdResponse).toEqual({
+        id: expect.any(String),
+        title: 'BannedPost',
+        shortDescription: 'newPostsShortDescription',
+        content: 'some content',
+        blogId: expect.any(String),
+        blogName: 'Blog1User2',
+        createdAt: expect.any(String),
+        extendedLikesInfo: {
+          likesCount: 0,
+          dislikesCount: 0,
+          myStatus: 'None',
+          newestLikes: [],
+        },
+      });
     });
 
-    it('01-02 blogger/users/blog/blogId GET = 403 user2 create new comment', async () => {
-      const testsResponse = await request(app.getHttpServer())
-        .get(`${endpoints.bloggerUsers}/blog/${BlogId1User1}`)
-        .set('Authorization', `Bearer ${accessTokenUser1}`)
+    it('01-08 sa/users/userId/ban PUT = 204 ban user2', async () => {
+      await request(app.getHttpServer())
+      .put(`${endpoints.saUsers}/${userId2}/ban`)
+      .set('Authorization', `Basic ${basicAuthRight}`)
+      .send(testUser.inputBanUser)
+      .expect(204)
+    })
+
+    it('01-05 /posts GET = 200 return all Posts with pagination', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .get(endpoints.posts)
         .expect(200);
+      const createdResponse = createResponse.body;
+
+      expect(createdResponse).toEqual({
+        pagesCount: 1,
+        page: 1,
+        pageSize: 10,
+        totalCount: 1,
+        items: [
+          {
+            id: expect.any(String),
+            title: 'newCreatedPost',
+            shortDescription: 'newPostsShortDescription',
+            content: 'some content',
+            blogId: BlogId1User1,
+            blogName: 'BlogForPosts',
+            createdAt: expect.any(String),
+            extendedLikesInfo: {
+              likesCount: 0,
+              dislikesCount: 0,
+              myStatus: 'None',
+              newestLikes: [],
+            },
+          },
+        ],
+      });
     });
 
+    it('01-08 sa/users/userId/ban PUT = 204 ban user2', async () => {
+      await request(app.getHttpServer())
+      .put(`${endpoints.saUsers}/${userId2}/ban`)
+      .set('Authorization', `Basic ${basicAuthRight}`)
+      .send(testUser.inputUnbanUser)
+      .expect(204)
+    })
+
+    it('01-05 /posts GET = 200 return all Posts with pagination', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .get(endpoints.posts)
+        .expect(200);
+      const createdResponse = createResponse.body;
+
+      expect(createdResponse).toEqual({
+        pagesCount: 1,
+        page: 1,
+        pageSize: 10,
+        totalCount: 2,
+        items: [
+          {
+            id: expect.any(String),
+            title: 'BannedPost',
+            shortDescription: 'newPostsShortDescription',
+            content: 'some content',
+            blogId: expect.any(String),
+            blogName: 'Blog1User2',
+            createdAt: expect.any(String),
+            extendedLikesInfo: {
+              likesCount: 0,
+              dislikesCount: 0,
+              myStatus: 'None',
+              newestLikes: [],
+            },
+          },
+          {
+            id: expect.any(String),
+            title: 'newCreatedPost',
+            shortDescription: 'newPostsShortDescription',
+            content: 'some content',
+            blogId: BlogId1User1,
+            blogName: 'BlogForPosts',
+            createdAt: expect.any(String),
+            extendedLikesInfo: {
+              likesCount: 0,
+              dislikesCount: 0,
+              myStatus: 'None',
+              newestLikes: [],
+            },        
+          },
+
+        ],
+      });
+    });
 
 
 

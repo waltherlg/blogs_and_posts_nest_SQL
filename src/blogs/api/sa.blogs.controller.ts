@@ -42,11 +42,12 @@ export class SaBlogsController {
     const result: BlogActionResult = await this.commandBus.execute(new BindBlogWithUserCommand(blogId, userId));
     handleBlogOperationResult(result)}
 
-  @Get()
-  async getAllBlogsForSa(@Query() queryParams: RequestBlogsQueryModel) {
-    const mergedQueryParams = { ...DEFAULT_BLOGS_QUERY_PARAMS, ...queryParams };
-    return await this.blogsQueryRepository.getAllBlogsForSa(mergedQueryParams);
-  }
+  // not needed in new homework
+  // @Get()
+  // async getAllBlogsForSa(@Query() queryParams: RequestBlogsQueryModel) {
+  //   const mergedQueryParams = { ...DEFAULT_BLOGS_QUERY_PARAMS, ...queryParams };
+  //   return await this.blogsQueryRepository.getAllBlogsForSa(mergedQueryParams);
+  // }
 
   @Put(':blogId/ban')
   @HttpCode(204)

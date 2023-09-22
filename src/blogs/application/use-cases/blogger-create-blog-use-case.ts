@@ -26,7 +26,7 @@ export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
       command.blogCreateInputModel.name,
       false,
       null,
-      command.userId,    
+      command.userId || 'sa',    
       command.blogCreateInputModel.description,
       command.blogCreateInputModel.websiteUrl,
       new Date().toISOString(),

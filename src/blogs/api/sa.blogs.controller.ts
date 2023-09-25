@@ -36,6 +36,7 @@ import { PostsQueryRepository } from 'src/posts/posts.query.repository';
 import { CheckService } from 'src/other.services/check.service';
 import { UpdatePostByIdFromBloggerControllerCommand } from '../application/use-cases/blogger-upadate-post-by-id-from-blogs-controller-use-case';
 import { DeletePostByIdFromUriCommand } from '../application/use-cases/blogger-delete-post-by-id-use-case';
+import { SaCreateBlogCommand } from '../application/use-cases/sa-create-blog-use-case copy';
 
 export class BanBlogInputModelType {
   @IsBoolean()
@@ -82,14 +83,19 @@ export class SaBlogsController {
 
   // TODO : /hometask_19/api/sa/blogs POST add new blog
   @Post()
-  async createBlog(@Req() request, @Body() blogCreateInputModel: CreateBlogInputModelType) {
-    
-    const newBlogsId = await this.commandBus.execute(new CreateBlogCommand(request.user.userId, blogCreateInputModel));
+  async createBlog(@Body() blogCreateInputModel: CreateBlogInputModelType) {
+    try {
+    const newBlogsId = await this.commandBus.execute(new SaCreateBlogCommand(blogCreateInputModel));
     const newBlog = await this.blogsQueryRepository.getBlogById(newBlogsId);
     if (!newBlog) {
       throw new UnableException('blog creating');
     }
     return newBlog;
+    } catch (error) {
+      console.error('Произошла ошибка:', error.message)
+    }
+
+
   }
 
   // TODO : /hometask_19/api/sa/blogs/{id} PUT update blog by id

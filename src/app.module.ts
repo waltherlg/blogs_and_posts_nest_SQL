@@ -91,6 +91,7 @@ import { UserDevicesQueryRepository } from './usersDevices/user.devices.query.re
 import { SetLikeStatusForPostUseCase } from './posts/use-cases/set-like-status-for-post-use-case';
 import { PostLikesRepository } from './likes/post.likes.repository';
 import { SaCreateBlogUseCase } from './blogs/application/use-cases/sa-create-blog-use-case copy';
+import { SaCreatePostFromBloggerControllerUseCase } from './blogs/application/use-cases/sa-create-post-from-blogs-controller-use-case copy';
 const mongoUri = process.env.MONGO_URL;
 const emailUser = process.env.MAIL_USER;
 const emailPassword = process.env.MAIL_PASSWORD;
@@ -101,7 +102,7 @@ if (!emailUser || !emailPassword) {
 const useCases = [CreateBlogUseCase, 
   UpdateBlogByIdFromUriUseCase,
   BindBlogWithUserUseCase,
-  CreatePostFromBloggerControllerUseCase,
+  SaCreatePostFromBloggerControllerUseCase,
 UpdatePostByIdFromBloggerControllerUseCase,
 DeleteBlogByIdFromUriUseCase,
 DeletePostByIdFromUriUseCase,

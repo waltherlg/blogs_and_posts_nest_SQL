@@ -37,6 +37,7 @@ import { CheckService } from 'src/other.services/check.service';
 import { UpdatePostByIdFromBloggerControllerCommand } from '../application/use-cases/blogger-upadate-post-by-id-from-blogs-controller-use-case';
 import { DeletePostByIdFromUriCommand } from '../application/use-cases/blogger-delete-post-by-id-use-case';
 import { SaCreateBlogCommand } from '../application/use-cases/sa-create-blog-use-case copy';
+import { SaCreatePostFromBloggerControllerCommand } from '../application/use-cases/sa-create-post-from-blogs-controller-use-case copy';
 
 export class BanBlogInputModelType {
   @IsBoolean()
@@ -124,14 +125,17 @@ export class SaBlogsController {
 
   // TODO : /hometask_19/api/sa/blogs/{blogId}/posts POST create post for this blog
   @Post(':id/posts')
-  async createPostByBlogsId(
-    @Req() request,
+  async saCreatePostByBlogsId(
     @Param('id') blogId: string,
     @Body() postCreateDto: CreatePostByBlogsIdInputModelType,
   ) {
-    const result = await this.commandBus.execute(new CreatePostFromBloggerControllerCommand(request.user.userId, blogId, postCreateDto))
+    const result = await this.commandBus.execute(new SaCreatePostFromBloggerControllerCommand(blogId, postCreateDto))
+    console.log('result of post creation', result);
+    
     handleBlogOperationResult(result) 
     const newPost = await this.postsQueryRepository.getPostById(result);
+    console.log('newPost', newPost);
+    
     if (!newPost) {
       throw new UnableException('post creating');
     }

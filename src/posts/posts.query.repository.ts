@@ -17,6 +17,8 @@ export class PostsQueryRepository {
 
   async getPostById(postId, userId?): Promise<PostTypeOutput | null> {
     if (!isValidUUID(postId)) {
+      console.log('postId is not valid');
+      
       return null; 
     }
     const query = `

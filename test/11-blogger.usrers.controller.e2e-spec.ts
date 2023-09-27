@@ -209,7 +209,6 @@ export function bloggerUsersControllers() {
       console.log(createdResponseOfFirstBlog);
       
       BlogId1User1 = createdResponseOfFirstBlog.id;
-      console.log('BlogId1User1 ', BlogId1User1);
 
       expect(createdResponseOfFirstBlog).toEqual({
         id: expect.any(String),
@@ -220,8 +219,6 @@ export function bloggerUsersControllers() {
         isMembership: false,
       });
     });
-
-    console.log('BlogId1User1 before create post ', BlogId1User1);
 
     it('01-02 blogger/blogId/posts POST = 201 user1 create new post', async () => {
       const testsResponse = await request(app.getHttpServer())
@@ -234,7 +231,6 @@ export function bloggerUsersControllers() {
           content: 'some content',
         })
         .expect(201);
-        console.log('BlogId1User1 after create post ', BlogId1User1);
 
       const createdResponse = testsResponse.body;
       PostId1User1 = createdResponse.id;

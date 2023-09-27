@@ -175,10 +175,11 @@ export function testCommentLikesCrud() {
     });
 
 
-    it('01-02 blogger/blogs POST = 201 user1 create new blog', async () => {
+    it('01-02 blogger/blogs POST = 201 SA create new blog', async () => {
       const testsResponse = await request(app.getHttpServer())
         .post(endpoints.bloggerBlogs)
-        .set('Authorization', `Bearer ${accessTokenUser1}`)
+        //.set('Authorization', `Bearer ${accessTokenUser1}`)
+        .set('Authorization', `Basic ${basicAuthRight}`)
         .send({
           name: 'BlogForPosts',
           description: 'description BlogForPosts',
@@ -199,11 +200,12 @@ export function testCommentLikesCrud() {
       });
     });
 
-    it('01-02 blogger/blogId/posts POST = 201 user1 create new post', async () => {
+    it('01-02 blogger/blogId/posts POST = 201 sa create new post', async () => {
       const testsResponse = await request(app.getHttpServer())
         .post(`${endpoints.bloggerBlogs}/${BlogId1User1}/posts`)
         //.post(`${endpoints.posts}/${createdPostId}/comments`)
-        .set('Authorization', `Bearer ${accessTokenUser1}`)
+        .set('Authorization', `Basic ${basicAuthRight}`)
+        //.set('Authorization', `Bearer ${accessTokenUser1}`)
         .send({
           title: 'newCreatedPost',
           shortDescription: 'newPostsShortDescription',

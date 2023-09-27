@@ -28,9 +28,9 @@ describe('End-to-End Tests', () => {
   //postCrudOperations()
   //testPostLikesCrud()
   //commentCrudOperations() // this comment CRUD if blog create blogger
-  saCommentCrudOperations()
+  //saCommentCrudOperations()
   
-  //testCommentLikesCrud()
+  testCommentLikesCrud()
   //banCheckOperation()
 
   //bloggerUsersControllers()

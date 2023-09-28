@@ -44,6 +44,20 @@ export class CommentsRepository {
     return commentId
   }
 
+  async isCommentExist(commentId): Promise<boolean> {
+    if (!isValidUUID(commentId)) {
+      return false;
+    }
+    const query = `
+    SELECT COUNT(*) AS count
+    FROM public."Comments"
+    WHERE "commentId" = $1
+  `;
+  const result = await this.dataSource.query(query, [commentId]);
+  const count = result[0].count;
+  return count > 0;   
+  }
+
   async getCommentDbTypeById(commentId) {
     if (!Types.ObjectId.isValid(commentId)) {
       return null;

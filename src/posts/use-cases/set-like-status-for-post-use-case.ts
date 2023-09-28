@@ -9,7 +9,7 @@ import { CommentsRepository } from "src/comments/comments.repository";
 import { PostActionResult } from "../helpers/post.enum.action.result";
 import { v4 as uuidv4 } from 'uuid';
 import { CheckService } from "src/other.services/check.service";
-import { PostLikesRepository } from "src/likes/post.likes.repository";
+import { LikesRepository } from "src/likes/likes.repository";
 import { PostLikeDbType } from "src/likes/likes.types";
 
 export class SetLikeStatusForPostCommand {
@@ -22,7 +22,7 @@ export class SetLikeStatusForPostUseCase implements ICommandHandler<SetLikeStatu
     constructor(
       private readonly blogRepository: BlogsRepository,
       private readonly postRepository: PostsRepository,
-      private readonly postLikesRepository: PostLikesRepository,
+      private readonly likesRepository: LikesRepository,
       private readonly usersRepository: UsersRepository,
       private readonly commentsRepository: CommentsRepository,
       private readonly checkService: CheckService){}
@@ -48,7 +48,7 @@ async execute(command: SetLikeStatusForPostCommand)
     }
 
     //check is user already liked post
-    const likeObject = await this.postLikesRepository.getPostLikeObject(userId, postId)
+    const likeObject = await this.likesRepository.getPostLikeObject(userId, postId)
 
     //if user never set likestatus, create it
     if(!likeObject){
@@ -60,7 +60,7 @@ async execute(command: SetLikeStatusForPostCommand)
         false,
         status
       )
-      const isLikeAdded = await this.postLikesRepository.addPostLikeStatus(postLikeDto)
+      const isLikeAdded = await this.likesRepository.addPostLikeStatus(postLikeDto)
       if(isLikeAdded){
         return PostActionResult.Success
       } else {
@@ -72,7 +72,7 @@ async execute(command: SetLikeStatusForPostCommand)
       return PostActionResult.NoChangeNeeded
     }
 
-    const islikeUpdated = await this.postLikesRepository.updatePostLike(postId, userId, status)
+    const islikeUpdated = await this.likesRepository.updatePostLike(postId, userId, status)
     if(islikeUpdated){
       return PostActionResult.Success
     } else {

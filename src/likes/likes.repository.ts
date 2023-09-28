@@ -6,7 +6,7 @@ import { CommentLikeDbType, PostLikeDbType } from "./likes.types";
 
 
 @Injectable()
-export class PostLikesRepository {
+export class LikesRepository {
     constructor(@InjectDataSource() protected dataSource: DataSource)
 {}
 

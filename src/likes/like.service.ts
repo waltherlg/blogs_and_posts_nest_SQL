@@ -13,38 +13,39 @@ export class LikeService {
     private readonly postsRepository: PostsRepository,
   ) {}
 
-  async updatePostLike(
-    userId: string,
-    postsId: string,
-    status: string,
-  ): Promise<boolean> {
-    const user = await this.usersRepository.getUserDBTypeById(userId);
-    if (!user) return false;
-    const post: PostDocument = await this.postsRepository.getPostDBTypeById(
-      postsId,
-    );
-    if (!post) return false;
-    const userPostStatus = post.likesCollection.find(
-      (post) => post.userId === userId,
-    );
-    if (!userPostStatus) {
-      const createdAt = new Date();
-      const newLike = {
-        addedAt: createdAt.toISOString(),
-        userId,
-        login: user.login,
-        isUserBanned: false,
-        status: status,
-      };
-      post.likesCollection.push(newLike);
-      const result = await this.postsRepository.savePost(post);
-      return result;
-    }
-    userPostStatus.status = status;
-    post.markModified('likesCollection');
-    const result = await this.postsRepository.savePost(post);
-    return result;
-  }
+  // not used anymore
+  // async updatePostLike( 
+  //   userId: string,
+  //   postsId: string,
+  //   status: string,
+  // ): Promise<boolean> {
+  //   const user = await this.usersRepository.getUserDBTypeById(userId);
+  //   if (!user) return false;
+  //   const post: PostDocument = await this.postsRepository.getPostDBTypeById(
+  //     postsId,
+  //   );
+  //   if (!post) return false;
+  //   const userPostStatus = post.likesCollection.find(
+  //     (post) => post.userId === userId,
+  //   );
+  //   if (!userPostStatus) {
+  //     const createdAt = new Date();
+  //     const newLike = {
+  //       addedAt: createdAt.toISOString(),
+  //       userId,
+  //       login: user.login,
+  //       isUserBanned: false,
+  //       status: status,
+  //     };
+  //     post.likesCollection.push(newLike);
+  //     const result = await this.postsRepository.savePost(post);
+  //     return result;
+  //   }
+  //   userPostStatus.status = status;
+  //   post.markModified('likesCollection');
+  //   const result = await this.postsRepository.savePost(post);
+  //   return result;
+  // }
 
   async updateCommentLike(
     userId: string,

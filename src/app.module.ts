@@ -89,7 +89,7 @@ import { LogoutUseCase } from './auth/application/use-cases/logout-use-case';
 import { CreateUserUseCase } from './users/use-cases/create-user-use-case';
 import { UserDevicesQueryRepository } from './usersDevices/user.devices.query.repository';
 import { SetLikeStatusForPostUseCase } from './posts/use-cases/set-like-status-for-post-use-case';
-import { PostLikesRepository } from './likes/post.likes.repository';
+import { LikesRepository } from './likes/likes.repository';
 import { SaCreateBlogUseCase } from './blogs/application/use-cases/sa-create-blog-use-case copy';
 import { SaCreatePostFromBloggerControllerUseCase } from './blogs/application/use-cases/sa-create-post-from-blogs-controller-use-case copy';
 const mongoUri = process.env.MONGO_URL;
@@ -214,7 +214,7 @@ SetLikeStatusForPostUseCase,]
     UserDevicesQueryRepository,
     CommentsRepository,
     CommentsQueryRepository,
-    PostLikesRepository,
+    LikesRepository,
     LocalStrategy,
     JwtStrategy,
     RefreshTokenStrategy,

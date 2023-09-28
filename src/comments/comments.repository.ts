@@ -81,18 +81,14 @@ export class CommentsRepository {
   }
 
   async updateCommentById(commentId, content): Promise<boolean> {
-    if (!Types.ObjectId.isValid(commentId)) {
-      return false;
-    }
-    const comment: CommentDocument = await this.commentModel.findById(
-      commentId,
-    );
-    if (!comment) {
-      return false;
-    }
-    comment.content = content;
-    const result = await comment.save();
-    return !!result;
+    const query = `
+    UPDATE public."Comments"
+    SET "content" = $2
+    WHERE "commentId" = $1
+    `
+    const result = await this.dataSource.query(query, [commentId, content])
+    const count = result[1];
+    return count === 1
   }
 
 }

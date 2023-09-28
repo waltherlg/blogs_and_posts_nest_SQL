@@ -9,7 +9,7 @@ import { LikesRepository } from "src/likes/likes.repository";
 import { PostLikeDbType } from "src/likes/likes.types";
 
 export class SetLikeStatusForCommentCommand {
-    constructor(public userId: string, public postId: string,
+    constructor(public userId: string, public commentId: string,
       public status: string){}
   }
 
@@ -24,10 +24,10 @@ export class SetLikeStatusForCommentUseCase implements ICommandHandler<SetLikeSt
 async execute(command: SetLikeStatusForCommentCommand)
   : Promise<PostActionResult | string> {
     const userId = command.userId
-    const postId = command.postId
+    const commentId = command.commentId
     const status = command.status
 
-    const post = await this.postRepository.getPostDBTypeById(postId)
+    const comment = await this.postRepository.getPostDBTypeById(commentId)
     if(!post){
       return PostActionResult.PostNotFound
     }
@@ -42,12 +42,12 @@ async execute(command: SetLikeStatusForCommentCommand)
     }
 
     //check is user already liked post
-    const likeObject = await this.likesRepository.getPostLikeObject(userId, postId)
+    const likeObject = await this.likesRepository.getPostLikeObject(userId, commentId)
 
     //if user never set likestatus, create it
     if(!likeObject){
       const postLikeDto = new PostLikeDbType(
-        postId,
+        commentId,
         new Date().toISOString(),
         userId,
         null,
@@ -66,7 +66,7 @@ async execute(command: SetLikeStatusForCommentCommand)
       return PostActionResult.NoChangeNeeded
     }
 
-    const islikeUpdated = await this.likesRepository.updatePostLike(postId, userId, status)
+    const islikeUpdated = await this.likesRepository.updatePostLike(commentId, userId, status)
     if(islikeUpdated){
       return PostActionResult.Success
     } else {

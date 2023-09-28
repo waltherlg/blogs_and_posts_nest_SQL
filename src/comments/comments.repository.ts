@@ -60,14 +60,17 @@ export class CommentsRepository {
   }
 
   async getCommentDbTypeById(commentId) {
-    if (!Types.ObjectId.isValid(commentId)) {
+    if (!isValidUUID(commentId)) {
       return null;
     }
-    const comment: CommentDocument = await this.commentModel.findById(
-      commentId,
-    );
-    if (!comment) {
-      return null;
+    const query = `
+    SELECT * FROM public."Comments"
+    WHERE "commentId" = $1
+    `
+    const result = await this.dataSource.query(query, [commentId])
+    const comment = result[0];
+    if(!comment){
+      return null
     }
     return comment;
   }

@@ -73,11 +73,15 @@ export class CommentsRepository {
   }
   
   async deleteCommentById(commentId): Promise<boolean> {
-    if (!Types.ObjectId.isValid(commentId)) {
+    if (!isValidUUID(commentId)) {
       return false;
     }
-    const isDeleted = await this.commentModel.deleteOne({ _id: commentId });
-    return !!isDeleted;
+    const query = `
+    DELETE FROM  public."Comments"
+    WHERE "commentId" = $1
+    `
+    const result = await this.dataSource.query(query,[commentId]);
+    return result[1] > 0;
   }
 
   async updateCommentById(commentId, content): Promise<boolean> {

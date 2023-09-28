@@ -1,27 +1,27 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { BlogsRepository } from "src/blogs/infrostracture/blogs.repository";
-import { PostsRepository } from "../posts.repository";
+import { PostsRepository } from "src/posts/posts.repository";
 import { UsersRepository } from "src/users/users.repository";
 import { CommentsRepository } from "src/comments/comments.repository";
-import { PostActionResult } from "../helpers/post.enum.action.result";
+import { PostActionResult } from "src/posts/helpers/post.enum.action.result";
 import { CheckService } from "src/other.services/check.service";
 import { LikesRepository } from "src/likes/likes.repository";
 import { PostLikeDbType } from "src/likes/likes.types";
 
-export class SetLikeStatusForPostCommand {
+export class SetLikeStatusForCommentCommand {
     constructor(public userId: string, public postId: string,
       public status: string){}
   }
 
-@CommandHandler(SetLikeStatusForPostCommand)
-export class SetLikeStatusForPostUseCase implements ICommandHandler<SetLikeStatusForPostCommand>{
+@CommandHandler(SetLikeStatusForCommentCommand)
+export class SetLikeStatusForCommentUseCase implements ICommandHandler<SetLikeStatusForCommentCommand>{
     constructor(
       private readonly blogRepository: BlogsRepository,
       private readonly postRepository: PostsRepository,
       private readonly likesRepository: LikesRepository,
       private readonly checkService: CheckService){}
 
-async execute(command: SetLikeStatusForPostCommand)
+async execute(command: SetLikeStatusForCommentCommand)
   : Promise<PostActionResult | string> {
     const userId = command.userId
     const postId = command.postId

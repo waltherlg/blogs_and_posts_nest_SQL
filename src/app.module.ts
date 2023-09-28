@@ -89,6 +89,7 @@ import { LogoutUseCase } from './auth/application/use-cases/logout-use-case';
 import { CreateUserUseCase } from './users/use-cases/create-user-use-case';
 import { UserDevicesQueryRepository } from './usersDevices/user.devices.query.repository';
 import { SetLikeStatusForPostUseCase } from './posts/use-cases/set-like-status-for-post-use-case';
+import { SetLikeStatusForCommentUseCase } from './comments/application/use-cases/set-like-status-for-comment-use-case';
 import { LikesRepository } from './likes/likes.repository';
 import { SaCreateBlogUseCase } from './blogs/application/use-cases/sa-create-blog-use-case copy';
 import { SaCreatePostFromBloggerControllerUseCase } from './blogs/application/use-cases/sa-create-post-from-blogs-controller-use-case copy';
@@ -120,7 +121,8 @@ NewPasswordSetUseCase,
 RefreshTokenUseCase,
 LogoutUseCase,
 CreateUserUseCase,
-SetLikeStatusForPostUseCase,]
+SetLikeStatusForPostUseCase,
+SetLikeStatusForCommentUseCase,]
 
 @Module({
   imports: [

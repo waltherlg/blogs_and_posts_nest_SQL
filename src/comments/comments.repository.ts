@@ -12,10 +12,11 @@ export class CommentsRepository {
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
     @InjectDataSource() protected dataSource: DataSource
   ) {}
-  async saveComment(comment: CommentDocument) {
-    const result = await comment.save();
-    return !!result;
-  }
+
+  // async saveComment(comment: CommentDocument) {
+  //   const result = await comment.save();
+  //   return !!result;
+  // }
 
   async createComment(commentDTO: CommentDBType): Promise<string> {
     const query = `

@@ -6,6 +6,7 @@ export enum CommentActionResult {
     BlogNotFound = 'BLOG_NOT_FOUND',
     UserNotFound = 'USER_NOT_FOUND',
     PostNotFound = 'POST_NOT_FOUND',
+    CommentNotFound = 'COMMENT_NOT_FOUND',
     UserBannedForBlog = 'USER_BANNED_FOR_BLOG',
     NoChangeNeeded = 'NO_CHANGE_NEEDED',
     NotOwner = 'CURRENT_USER_IS_NOT_OWNER',

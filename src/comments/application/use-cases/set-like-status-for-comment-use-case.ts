@@ -6,7 +6,8 @@ import { CommentsRepository } from "src/comments/comments.repository";
 import { PostActionResult } from "src/posts/helpers/post.enum.action.result";
 import { CheckService } from "src/other.services/check.service";
 import { LikesRepository } from "src/likes/likes.repository";
-import { PostLikeDbType } from "src/likes/likes.types";
+import { CommentLikeDbType, PostLikeDbType } from "src/likes/likes.types";
+import { CommentActionResult } from "src/comments/helpers/comment.enum.action.result";
 
 export class SetLikeStatusForCommentCommand {
     constructor(public userId: string, public commentId: string,
@@ -17,7 +18,7 @@ export class SetLikeStatusForCommentCommand {
 export class SetLikeStatusForCommentUseCase implements ICommandHandler<SetLikeStatusForCommentCommand>{
     constructor(
       private readonly blogRepository: BlogsRepository,
-      private readonly postRepository: PostsRepository,
+      private readonly commentRepository: CommentsRepository,
       private readonly likesRepository: LikesRepository,
       private readonly checkService: CheckService){}
 
@@ -27,26 +28,16 @@ async execute(command: SetLikeStatusForCommentCommand)
     const commentId = command.commentId
     const status = command.status
 
-    const comment = await this.postRepository.getPostDBTypeById(commentId)
-    if(!post){
-      return PostActionResult.PostNotFound
-    }
-    const blog = await this.blogRepository.getBlogDBTypeById(post.blogId)
-    if(!blog){
-      return PostActionResult.BlogNotFound
+    const comment = await this.commentRepository.getCommentDbTypeById(commentId)
+    if(!comment){
+      return CommentActionResult.CommentNotFound
     }
 
-    const isUserBannedForBlog = await this.checkService.isUserBannedForBlog(blog.blogId, userId)
-    if (isUserBannedForBlog) {
-      return PostActionResult.UserBannedForBlog
-    }
-
-    //check is user already liked post
-    const likeObject = await this.likesRepository.getPostLikeObject(userId, commentId)
-
+    //check is user already liked this comment
+    const commentLikeObject = await this.likesRepository.getCommentLikeObject(userId, commentId)
     //if user never set likestatus, create it
-    if(!likeObject){
-      const postLikeDto = new PostLikeDbType(
+    if(!commentLikeObject){
+      const commentLikeDto = new CommentLikeDbType(
         commentId,
         new Date().toISOString(),
         userId,
@@ -54,7 +45,7 @@ async execute(command: SetLikeStatusForCommentCommand)
         false,
         status
       )
-      const isLikeAdded = await this.likesRepository.addPostLikeStatus(postLikeDto)
+      const isLikeAdded = await this.likesRepository.addCommentLikeStatus(commentLikeDto)
       if(isLikeAdded){
         return PostActionResult.Success
       } else {

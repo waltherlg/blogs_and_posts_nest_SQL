@@ -11,22 +11,22 @@ import { ICommandHandler } from '@nestjs/cqrs/dist/interfaces';
 import { UsersRepository } from 'src/users/users.repository';
 import { v4 as uuidv4 } from 'uuid';
 
-export class CreateBlogCommand {
-  constructor(public userId, public blogCreateInputModel: CreateBlogInputModelType){}
+export class SaCreateBlogCommand {
+  constructor(public blogCreateInputModel: CreateBlogInputModelType){}
 }
 
-@CommandHandler(CreateBlogCommand)
-export class CreateBlogUseCase implements ICommandHandler<CreateBlogCommand> {
+@CommandHandler(SaCreateBlogCommand)
+export class SaCreateBlogUseCase implements ICommandHandler<SaCreateBlogCommand> {
   constructor(private readonly blogsRepository: BlogsRepository, private readonly usersRepository: UsersRepository) {}
   async execute(
-    command: CreateBlogCommand
+    command: SaCreateBlogCommand
   ): Promise<string> {
     const blogDTO = new BlogDBType(
       uuidv4(),
       command.blogCreateInputModel.name,
       false,
       null,
-      command.userId || 'sa',    
+      '00000000-0000-0000-0000-000000000000',    
       command.blogCreateInputModel.description,
       command.blogCreateInputModel.websiteUrl,
       new Date().toISOString(),

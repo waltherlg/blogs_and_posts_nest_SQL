@@ -14,6 +14,7 @@ import { saBlogsControllerCrudAndBan } from './06-sa.blogs.controller.e2e-spec';
 import { testBanUserForBlogByBlogger } from './05-01-blogger.users.ban.check-e2e-spec';
 import { postCrudOperations } from './07-00-post.CRUD.e2e-spec copy 2';
 import { commentCrudOperations } from './09-00-public.comments.controller.e2e-spec copy';
+import { saCommentCrudOperations } from './09-00-sa-and-public.comments.controller.e2e-spec copy 2';
 
 describe('End-to-End Tests', () => {
   //testSaUsersCrud()
@@ -25,10 +26,11 @@ describe('End-to-End Tests', () => {
   //testBanUserForBlogByBlogger()
   //saBlogsControllerCrudAndBan()
   //postCrudOperations()
-  testPostLikesCrud()
-  commentCrudOperations()
+  //testPostLikesCrud()
+  //commentCrudOperations() // this comment CRUD if blog create blogger
+  //saCommentCrudOperations()
   
-  //testCommentLikesCrud()
+  testCommentLikesCrud()
   //banCheckOperation()
 
   //bloggerUsersControllers()

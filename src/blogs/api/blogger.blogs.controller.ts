@@ -107,6 +107,7 @@ export class BanUserForBlogInputModelType {
   blogId: string;
 }
 @UseGuards(JwtAuthGuard)
+//@Controller('blogger/blogs')
 @Controller('blogger/blogs')
 export class BloggerBlogsController {
   constructor(

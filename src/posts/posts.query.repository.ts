@@ -17,15 +17,25 @@ export class PostsQueryRepository {
 
   async getPostById(postId, userId?): Promise<PostTypeOutput | null> {
     if (!isValidUUID(postId)) {
+      console.log('postId is not valid in post queryrepo');
       return null; 
     }
+    // const query = `
+    //   SELECT "Posts".*, "Blogs".name AS "blogName", "Blogs"."isBlogBanned", "Users"."isUserBanned"
+    //   FROM public."Posts"
+    //   INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
+    //   INNER JOIN "Users" ON "Blogs"."userId" = "Users"."userId"
+    //   WHERE "postId" = $1 AND "Users"."isUserBanned" = false AND "Blogs"."isBlogBanned" = false;
+    // `;
+
+    //query without UsersTable 
+    // this query dont check is user (blogger) banned, because all blogs made by SA
     const query = `
-      SELECT "Posts".*, "Blogs".name AS "blogName", "Blogs"."isBlogBanned", "Users"."isUserBanned"
-      FROM public."Posts"
-      INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
-      INNER JOIN "Users" ON "Blogs"."userId" = "Users"."userId"
-      WHERE "postId" = $1 AND "Users"."isUserBanned" = false AND "Blogs"."isBlogBanned" = false;
-    `;
+    SELECT "Posts".*, "Blogs".name AS "blogName", "Blogs"."isBlogBanned"
+    FROM public."Posts"
+    INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
+    WHERE "postId" = $1 AND "Blogs"."isBlogBanned" = false;
+  `;
 
     const newestLikesQuery = `
     SELECT "addedAt", "login", "userId" 
@@ -45,6 +55,9 @@ export class PostsQueryRepository {
     }
   
     const result = await this.dataSource.query(query, [postId])
+    console.log('postId in query in repo', postId)
+    console.log('result of query in DB, get post by id', result);
+    
     const post = result[0];
     if (!post){
       return null

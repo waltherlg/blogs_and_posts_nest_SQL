@@ -46,6 +46,8 @@ export class PostsRepository {
       postDTO.userId,
     ])
     const postId = result[0].postId;
+    console.log('post id in creation of post repo', postId);
+    
     return postId;
   }
 

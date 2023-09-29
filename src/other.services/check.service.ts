@@ -57,11 +57,12 @@ export class CheckService {
   }
 
   async isCommentExist(commentId): Promise<boolean> {
-    const isExist = await this.commentsRepository.getCommentDbTypeById(
+    const isExist = await this.commentsRepository.isCommentExist(
       commentId,
     );
     return !!isExist;
   }
+  
   async isUserOwnerOfComment(userId, commentId): Promise<boolean> {
     const comment = await this.commentsRepository.getCommentDbTypeById(
       commentId,

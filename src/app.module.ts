@@ -71,6 +71,7 @@ import { CreatePostFromBloggerControllerUseCase } from './blogs/application/use-
 import { DeletePostByIdFromUriUseCase } from './blogs/application/use-cases/blogger-delete-post-by-id-use-case';
 import { UserBanStatusChangeUseCase } from './users/use-cases/ban-status-change-use-case';
 import { BanUserForSpecificBlogUseCase } from './blogs/application/use-cases/blogger-ban-user-for-blog-use-case';
+
 import { BloggerUsersController } from './users/blogger.users.controller';
 import { CreateCommentForSpecificPostUseCase } from './posts/use-cases/create-comment-for-specific-post-use-case';
 import { SaBanBlogUseCase } from './blogs/application/use-cases/sa-ban-blog-use-case';
@@ -88,7 +89,10 @@ import { LogoutUseCase } from './auth/application/use-cases/logout-use-case';
 import { CreateUserUseCase } from './users/use-cases/create-user-use-case';
 import { UserDevicesQueryRepository } from './usersDevices/user.devices.query.repository';
 import { SetLikeStatusForPostUseCase } from './posts/use-cases/set-like-status-for-post-use-case';
-import { PostLikesRepository } from './likes/post.likes.repository';
+import { SetLikeStatusForCommentUseCase } from './comments/application/use-cases/set-like-status-for-comment-use-case';
+import { LikesRepository } from './likes/likes.repository';
+import { SaCreateBlogUseCase } from './blogs/application/use-cases/sa-create-blog-use-case copy';
+import { SaCreatePostFromBloggerControllerUseCase } from './blogs/application/use-cases/sa-create-post-from-blogs-controller-use-case copy';
 const mongoUri = process.env.MONGO_URL;
 const emailUser = process.env.MAIL_USER;
 const emailPassword = process.env.MAIL_PASSWORD;
@@ -99,7 +103,7 @@ if (!emailUser || !emailPassword) {
 const useCases = [CreateBlogUseCase, 
   UpdateBlogByIdFromUriUseCase,
   BindBlogWithUserUseCase,
-  CreatePostFromBloggerControllerUseCase,
+  SaCreatePostFromBloggerControllerUseCase,
 UpdatePostByIdFromBloggerControllerUseCase,
 DeleteBlogByIdFromUriUseCase,
 DeletePostByIdFromUriUseCase,
@@ -107,6 +111,7 @@ CreateCommentForSpecificPostUseCase,
 UserBanStatusChangeUseCase,
 BanUserForSpecificBlogUseCase,
 SaBanBlogUseCase,
+SaCreateBlogUseCase,
 RegisterUserUseCase,
 RegisterationEmailResendingUseCase,
 RegisterationConfirmaitonUseCase,
@@ -116,7 +121,8 @@ NewPasswordSetUseCase,
 RefreshTokenUseCase,
 LogoutUseCase,
 CreateUserUseCase,
-SetLikeStatusForPostUseCase,]
+SetLikeStatusForPostUseCase,
+SetLikeStatusForCommentUseCase,]
 
 @Module({
   imports: [
@@ -210,7 +216,7 @@ SetLikeStatusForPostUseCase,]
     UserDevicesQueryRepository,
     CommentsRepository,
     CommentsQueryRepository,
-    PostLikesRepository,
+    LikesRepository,
     LocalStrategy,
     JwtStrategy,
     RefreshTokenStrategy,

@@ -12,10 +12,11 @@ export class CommentsRepository {
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
     @InjectDataSource() protected dataSource: DataSource
   ) {}
-  async saveComment(comment: CommentDocument) {
-    const result = await comment.save();
-    return !!result;
-  }
+
+  // async saveComment(comment: CommentDocument) {
+  //   const result = await comment.save();
+  //   return !!result;
+  // }
 
   async createComment(commentDTO: CommentDBType): Promise<string> {
     const query = `
@@ -44,40 +45,57 @@ export class CommentsRepository {
     return commentId
   }
 
+  async isCommentExist(commentId): Promise<boolean> {
+    if (!isValidUUID(commentId)) {
+      return false;
+    }
+    const query = `
+    SELECT COUNT(*) AS count
+    FROM public."Comments"
+    WHERE "commentId" = $1
+  `;
+  const result = await this.dataSource.query(query, [commentId]);
+  const count = result[0].count;
+  return count > 0;   
+  }
+
   async getCommentDbTypeById(commentId) {
-    if (!Types.ObjectId.isValid(commentId)) {
+    if (!isValidUUID(commentId)) {
       return null;
     }
-    const comment: CommentDocument = await this.commentModel.findById(
-      commentId,
-    );
-    if (!comment) {
-      return null;
+    const query = `
+    SELECT * FROM public."Comments"
+    WHERE "commentId" = $1
+    `
+    const result = await this.dataSource.query(query, [commentId])
+    const comment = result[0];
+    if(!comment){
+      return null
     }
     return comment;
   }
   
   async deleteCommentById(commentId): Promise<boolean> {
-    if (!Types.ObjectId.isValid(commentId)) {
+    if (!isValidUUID(commentId)) {
       return false;
     }
-    const isDeleted = await this.commentModel.deleteOne({ _id: commentId });
-    return !!isDeleted;
+    const query = `
+    DELETE FROM  public."Comments"
+    WHERE "commentId" = $1
+    `
+    const result = await this.dataSource.query(query,[commentId]);
+    return result[1] > 0;
   }
 
   async updateCommentById(commentId, content): Promise<boolean> {
-    if (!Types.ObjectId.isValid(commentId)) {
-      return false;
-    }
-    const comment: CommentDocument = await this.commentModel.findById(
-      commentId,
-    );
-    if (!comment) {
-      return false;
-    }
-    comment.content = content;
-    const result = await comment.save();
-    return !!result;
+    const query = `
+    UPDATE public."Comments"
+    SET "content" = $2
+    WHERE "commentId" = $1
+    `
+    const result = await this.dataSource.query(query, [commentId, content])
+    const count = result[1];
+    return count === 1
   }
 
 }

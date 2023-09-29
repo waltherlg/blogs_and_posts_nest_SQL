@@ -6,7 +6,7 @@ import { CommentLikeDbType, PostLikeDbType } from "./likes.types";
 
 
 @Injectable()
-export class PostLikesRepository {
+export class LikesRepository {
     constructor(@InjectDataSource() protected dataSource: DataSource)
 {}
 
@@ -41,7 +41,7 @@ async addPostLikeStatus(postLikeDto: PostLikeDbType){
         postLikeDto.postId,
         postLikeDto.addedAt,
         postLikeDto.userId,
- -       postLikeDto.login,
+ -      postLikeDto.login,
         postLikeDto.isUserBanned,
         postLikeDto.status
     ])
@@ -62,6 +62,40 @@ async updatePostLike(postId, userId, status): Promise<boolean>{
     const result = await this.dataSource.query(query, [postId, userId, status])
     const count = result[1]
     return count === 1
+}
+
+async addCommentLikeStatus(commentLikeDto: CommentLikeDbType){
+    const query = `
+    INSERT INTO public."CommentLikes"(
+        "commentId",
+        "addedAt",
+        "userId",
+        "login",
+        "isUserBanned",
+        "status")
+        VALUES (
+            $1,  
+            $2, 
+            $3, 
+            $4, 
+            $5, 
+            $6)
+        RETURNING "commentId";
+    `;
+    const result = await this.dataSource.query(query, [
+        commentLikeDto.commentId,
+        commentLikeDto.addedAt,
+        commentLikeDto.userId,
+ -      commentLikeDto.login,
+        commentLikeDto.isUserBanned,
+        commentLikeDto.status
+    ])
+    const commentId = result[0].commentId
+    if (commentId){
+        return true
+    } else {
+        return false
+    }
 }
 
 async getCommentLikeObject(userId, postId): Promise<CommentLikeDbType | null>{

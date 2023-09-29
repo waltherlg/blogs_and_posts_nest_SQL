@@ -110,8 +110,11 @@ export class CommentsQueryRepository {
     let usersLikeObjectsForThisComments
     if(userId){
       //если пришел userId то нужно узнать его лайкстатус для каждого коммента
+
       //нужен массив из айдишек комментов, которые вернул основной запрос
+
       const arrayOfCommentsId = comments.map(comment => { return comment.commentId })
+      
       // нужно найти все лайки где есть айди пользователя и коммент айди из массива выше
       const usersLikeObjectsQuery = `
       SELECT *

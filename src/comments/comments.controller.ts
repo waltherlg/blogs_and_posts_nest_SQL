@@ -34,6 +34,9 @@ import {
   LikeStatusValidator,
   StringTrimNotEmpty,
 } from '../middlewares/validators';
+import { SetLikeStatusForCommentCommand } from './application/use-cases/set-like-status-for-comment-use-case';
+import { CommandBus } from '@nestjs/cqrs';
+import { handleCommentActionResult } from './helpers/comment.enum.action.result';
 
 export class UpdateCommentInputModelType {
   @StringTrimNotEmpty()
@@ -52,6 +55,7 @@ export class CommentsControllers {
     private readonly commentsService: CommentsService,
     private readonly commentsQueryRepository: CommentsQueryRepository,
     private readonly checkService: CheckService,
+    private readonly commandBus: CommandBus,
     private readonly likeService: LikeService,
   ) {}
   @UseGuards(OptionalJwtAuthGuard)
@@ -128,19 +132,7 @@ export class CommentsControllers {
     @Body(new ValidationPipe({ transform: true }))
     likeStatus: SetLikeStatusForCommentInputModel,
   ) {
-    const isCommentExist = await this.checkService.isCommentExist(commentId);
-    if (!isCommentExist) {
-      throw new CustomNotFoundException('comment');
-    }
-
-    
-    const updateCommentLike = await this.likeService.updateCommentLike(
-      request.user.userId,
-      commentId,
-      likeStatus.likeStatus,
-    );
-    if (!updateCommentLike) {
-      throw new UnableException('set like status');
-    }
+    const result = await this.commandBus.execute(new SetLikeStatusForCommentCommand(request.user.userId, commentId, likeStatus.likeStatus))
+    handleCommentActionResult(result)
   }
 }

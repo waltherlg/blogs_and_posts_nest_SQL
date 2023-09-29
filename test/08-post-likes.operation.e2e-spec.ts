@@ -41,7 +41,7 @@ export function testPostLikesCrud() {
         .expect(204);
     });
 
-    it('00-00 auth/registration = 204 register user1', async () => {
+    it('00-01 auth/registration = 204 register user1', async () => {
       await request(app.getHttpServer())
         .post(`${endpoints.auth}/registration`)
         .send({
@@ -52,7 +52,7 @@ export function testPostLikesCrud() {
         .expect(204);
     });
 
-    it('00-00 login user1 = 204 login user1', async () => {
+    it('00-02 login user1 = 204 login user1', async () => {
       const createResponse = await request(app.getHttpServer())
         .post(`${endpoints.auth}/login`)
         .send({
@@ -67,7 +67,7 @@ export function testPostLikesCrud() {
       });
     });
 
-    it('00-00 auth/registration = 204 register user2', async () => {
+    it('00-03 auth/registration = 204 register user2', async () => {
       await request(app.getHttpServer())
         .post(`${endpoints.auth}/registration`)
         .send({
@@ -78,7 +78,7 @@ export function testPostLikesCrud() {
         .expect(204);
     });
 
-    it('00-00 login user2 = 204 login user2', async () => {
+    it('00-04 login user2 = 204 login user2', async () => {
       const createResponse = await request(app.getHttpServer())
         .post(`${endpoints.auth}/login`)
         .send({
@@ -93,7 +93,7 @@ export function testPostLikesCrud() {
       });
     });
 
-    it('00-00 auth/registration = 204 register user3', async () => {
+    it('00-05 auth/registration = 204 register user3', async () => {
       await request(app.getHttpServer())
         .post(`${endpoints.auth}/registration`)
         .send({
@@ -104,7 +104,7 @@ export function testPostLikesCrud() {
         .expect(204);
     });
 
-    it('00-00 login user3 = 204 login user3', async () => {
+    it('00-06 login user3 = 204 login user3', async () => {
       const createResponse = await request(app.getHttpServer())
         .post(`${endpoints.auth}/login`)
         .send({

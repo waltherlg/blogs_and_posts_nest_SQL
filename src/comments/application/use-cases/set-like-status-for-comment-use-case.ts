@@ -16,10 +16,8 @@ export class SetLikeStatusForCommentCommand {
 @CommandHandler(SetLikeStatusForCommentCommand)
 export class SetLikeStatusForCommentUseCase implements ICommandHandler<SetLikeStatusForCommentCommand>{
     constructor(
-      private readonly blogRepository: BlogsRepository,
       private readonly commentRepository: CommentsRepository,
-      private readonly likesRepository: LikesRepository,
-      private readonly checkService: CheckService){}
+      private readonly likesRepository: LikesRepository,){}
 
 async execute(command: SetLikeStatusForCommentCommand)
   : Promise<CommentActionResult | string> {
@@ -35,6 +33,7 @@ async execute(command: SetLikeStatusForCommentCommand)
     //check is user already liked this comment
     const commentLikeObject = await this.likesRepository.getCommentLikeObject(userId, commentId)
     //if user never set likestatus, create it
+    
     if(!commentLikeObject){
       const commentLikeDto = new CommentLikeDbType(
         commentId,
@@ -56,7 +55,7 @@ async execute(command: SetLikeStatusForCommentCommand)
       return CommentActionResult.NoChangeNeeded
     }
 
-    const islikeUpdated = await this.likesRepository.updatePostLike(commentId, userId, status)
+    const islikeUpdated = await this.likesRepository.updateCommentLike(commentId, userId, status)
     if(islikeUpdated){
       return CommentActionResult.Success
     } else {

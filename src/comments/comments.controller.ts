@@ -13,7 +13,6 @@ import {
 import { CommentsService } from './comments.service';
 import { CommentsQueryRepository } from './comments.query.repository';
 import { CheckService } from '../other.services/check.service';
-import { LikeService } from '../likes/like.service';
 import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
 import {
   BlogNotFoundException,
@@ -56,7 +55,6 @@ export class CommentsControllers {
     private readonly commentsQueryRepository: CommentsQueryRepository,
     private readonly checkService: CheckService,
     private readonly commandBus: CommandBus,
-    private readonly likeService: LikeService,
   ) {}
   @UseGuards(OptionalJwtAuthGuard)
   @Get(':id')

@@ -343,7 +343,7 @@ export function testCommentLikesCrud() {
         .expect(204);
     });
 
-    it('01-07 /comments GET = 200 return post for auth user2 with 4 like and 3 last liked users', async () => {
+    it('01-07 /comments GET = 200 return comment for auth user2 with 4 like', async () => {
       const createResponse = await request(app.getHttpServer())
         .get(`${endpoints.comments}/${createdCommentId}`)
         .set('Authorization', `Bearer ${accessTokenUser2}`)
@@ -386,7 +386,7 @@ export function testCommentLikesCrud() {
         .expect(204);
     });
 
-    it('01-07 /comments GET = 200 return comment for auth user5 with 2 like and 1 dislike, 2 last liked users, and my status Dislike', async () => {
+    it('01-07 /comments GET = 200 return comment for auth user5 with 2 like and 1 dislike, and my status Dislike', async () => {
       const createResponse = await request(app.getHttpServer())
         .get(`${endpoints.comments}/${createdCommentId}`)
         .set('Authorization', `Bearer ${accessTokenUser5}`)

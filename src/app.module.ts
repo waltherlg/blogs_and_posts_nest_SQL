@@ -48,7 +48,6 @@ import { CommentsRepository } from './comments/comments.repository';
 import { CommentsQueryRepository } from './comments/comments.query.repository';
 import { CommentsService } from './comments/comments.service';
 import { CommentsControllers } from './comments/comments.controller';
-import { LikeService } from './likes/like.service';
 import {
   CustomBlogIdValidator,
   CustomUrlValidator,
@@ -201,7 +200,6 @@ SetLikeStatusForCommentUseCase,]
     AuthService,
     TokensService,
     CommentsService,
-    LikeService,
     DTOFactory,
     EmailManager,
     EmailAdapter,

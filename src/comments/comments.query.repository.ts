@@ -46,7 +46,7 @@ export class CommentsQueryRepository {
           const result = await this.dataSource.query(myStatusQuery, [commentId, userId]);
           console.log("SELECT status FROM public.CommentLikes result ", result);
           
-          myStatus = result[0]
+          myStatus = result[0].status
     } 
     return {
       id: comment.commentId,
@@ -116,7 +116,7 @@ export class CommentsQueryRepository {
       const usersLikeObjectsQuery = `
       SELECT *
       FROM public."CommentLikes"
-      WHERE "userId" = "${userId}" AND "commentId" = ANY(:${arrayOfCommentsId})
+      WHERE "userId" = "${userId}" AND "commentId" = ANY(${arrayOfCommentsId})
       `
       usersLikeObjectsForThisComments = await this.dataSource.query(usersLikeObjectsQuery)
     }

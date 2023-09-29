@@ -13,11 +13,6 @@ export class CommentsRepository {
     @InjectDataSource() protected dataSource: DataSource
   ) {}
 
-  // async saveComment(comment: CommentDocument) {
-  //   const result = await comment.save();
-  //   return !!result;
-  // }
-
   async createComment(commentDTO: CommentDBType): Promise<string> {
     const query = `
     INSERT INTO public."Comments"(

@@ -98,6 +98,17 @@ async addCommentLikeStatus(commentLikeDto: CommentLikeDbType){
     }
 }
 
+async updateCommentLike(commentId, userId, status): Promise<boolean>{
+    const query = `
+    UPDATE public."CommentLikes"
+    SET status = $3
+    WHERE "commentId" = $1 AND "userId" = $2
+    `;
+    const result = await this.dataSource.query(query, [commentId, userId, status])
+    const count = result[1]
+    return count === 1
+}
+
 async getCommentLikeObject(userId, postId): Promise<CommentLikeDbType | null>{
     const query = `
     SELECT * FROM public."CommentLikes"

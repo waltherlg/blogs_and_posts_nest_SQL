@@ -15,7 +15,7 @@ export enum CommentActionResult {
     NotDeleted = 'NOT_DELETED', 
   }
 
-  export function handlePostActionResult(result: CommentActionResult) {
+  export function handleCommentActionResult(result: CommentActionResult) {
     if (!Object.values(CommentActionResult).includes(result)) {
       return;
     }

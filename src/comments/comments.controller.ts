@@ -132,6 +132,8 @@ export class CommentsControllers {
     if (!isCommentExist) {
       throw new CustomNotFoundException('comment');
     }
+
+    
     const updateCommentLike = await this.likeService.updateCommentLike(
       request.user.userId,
       commentId,

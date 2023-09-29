@@ -3,7 +3,6 @@ import { BlogsRepository } from "src/blogs/infrostracture/blogs.repository";
 import { PostsRepository } from "src/posts/posts.repository";
 import { UsersRepository } from "src/users/users.repository";
 import { CommentsRepository } from "src/comments/comments.repository";
-import { PostActionResult } from "src/posts/helpers/post.enum.action.result";
 import { CheckService } from "src/other.services/check.service";
 import { LikesRepository } from "src/likes/likes.repository";
 import { CommentLikeDbType, PostLikeDbType } from "src/likes/likes.types";
@@ -23,7 +22,7 @@ export class SetLikeStatusForCommentUseCase implements ICommandHandler<SetLikeSt
       private readonly checkService: CheckService){}
 
 async execute(command: SetLikeStatusForCommentCommand)
-  : Promise<PostActionResult | string> {
+  : Promise<CommentActionResult | string> {
     const userId = command.userId
     const commentId = command.commentId
     const status = command.status
@@ -47,21 +46,21 @@ async execute(command: SetLikeStatusForCommentCommand)
       )
       const isLikeAdded = await this.likesRepository.addCommentLikeStatus(commentLikeDto)
       if(isLikeAdded){
-        return PostActionResult.Success
+        return CommentActionResult.Success
       } else {
-        PostActionResult.NotSaved
+        CommentActionResult.NotSaved
       }
     }
 
     if(commentLikeObject.status === status){
-      return PostActionResult.NoChangeNeeded
+      return CommentActionResult.NoChangeNeeded
     }
 
     const islikeUpdated = await this.likesRepository.updatePostLike(commentId, userId, status)
     if(islikeUpdated){
-      return PostActionResult.Success
+      return CommentActionResult.Success
     } else {
-      return PostActionResult.NotSaved
+      return CommentActionResult.NotSaved
     }
   }
 }

@@ -53,7 +53,7 @@ async execute(command: SetLikeStatusForCommentCommand)
       }
     }
 
-    if(likeObject.status === status){
+    if(commentLikeObject.status === status){
       return PostActionResult.NoChangeNeeded
     }
 
@@ -63,12 +63,5 @@ async execute(command: SetLikeStatusForCommentCommand)
     } else {
       return PostActionResult.NotSaved
     }
-
-
-
-    
-
-
-
   }
 }

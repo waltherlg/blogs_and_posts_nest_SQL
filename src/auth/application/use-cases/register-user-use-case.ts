@@ -30,7 +30,9 @@ export class RegisterUserUseCase implements ICommandHandler<RegisterUserCommand>
           } catch (e) {
             return false;
           }
-        const newUserId = await this.usersRepository.createUser(userDTO)
+        const newUserId = await this.usersRepository.createUser(userDTO)  
+        console.log('newUserId in register user use case', newUserId);
+              
         return newUserId
     }
 }

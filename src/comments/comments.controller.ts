@@ -130,6 +130,8 @@ export class CommentsControllers {
     @Body(new ValidationPipe({ transform: true }))
     likeStatus: SetLikeStatusForCommentInputModel,
   ) {
+    console.log('request.user.userId ', request.user.userId);
+    
     const result = await this.commandBus.execute(new SetLikeStatusForCommentCommand(request.user.userId, commentId, likeStatus.likeStatus))
     handleCommentActionResult(result)
   }

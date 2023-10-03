@@ -103,9 +103,15 @@ export class CommentsQueryRepository {
     `;
 
     const commentCountArr = await this.dataSource.query(countQuery);
+    console.log('commentCountArr' , commentCountArr);
+    
     const commentCount = parseInt(commentCountArr[0].count);
+    console.log("commentCount" , commentCount);
+    
 
     const comments = await this.dataSource.query(query);
+    console.log('comments', comments);
+    
     
     let usersLikeObjectsForThisComments
     if(userId){
@@ -114,14 +120,20 @@ export class CommentsQueryRepository {
       //нужен массив из айдишек комментов, которые вернул основной запрос
 
       const arrayOfCommentsId = comments.map(comment => { return comment.commentId })
+      console.log('arrayOfCommentsId', arrayOfCommentsId)
       
       // нужно найти все лайки где есть айди пользователя и коммент айди из массива выше
       const usersLikeObjectsQuery = `
       SELECT *
       FROM public."CommentLikes"
-      WHERE "userId" = "${userId}" AND "commentId" = ANY(${arrayOfCommentsId})
+      WHERE "userId" = "${userId}" AND "commentId" = ANY(ARRAY[${arrayOfCommentsId.map(id => `'${id}'`).join(',')}])
       `
+
+      console.log("usersLikeObjectsQuery ", usersLikeObjectsQuery);
+      
       usersLikeObjectsForThisComments = await this.dataSource.query(usersLikeObjectsQuery)
+      console.log('usersLikeObjectsForThisComments ', usersLikeObjectsForThisComments);
+      
     }
 
     const commentsForOutput: CommentTypeOutput = comments.map(comment => {

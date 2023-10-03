@@ -15,6 +15,7 @@ import { testBanUserForBlogByBlogger } from './05-01-blogger.users.ban.check-e2e
 import { postCrudOperations } from './07-00-post.CRUD.e2e-spec copy 2';
 import { commentCrudOperations } from './09-00-public.comments.controller.e2e-spec copy';
 import { saCommentCrudOperations } from './09-00-sa-and-public.comments.controller.e2e-spec copy 2';
+import { onlyCommentLikesCrud13 } from './13-only-comments-likes.e2e-spec copy';
 
 describe('End-to-End Tests', () => {
   //testSaUsersCrud()
@@ -31,6 +32,7 @@ describe('End-to-End Tests', () => {
   //saCommentCrudOperations()
   
   testCommentLikesCrud()
+  //conlyCommentLikesCrud13() // только для проверки создания лайка для комментария
   //banCheckOperation()
 
   //bloggerUsersControllers()

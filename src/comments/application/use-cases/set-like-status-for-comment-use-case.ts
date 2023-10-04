@@ -5,7 +5,7 @@ import { UsersRepository } from "src/users/users.repository";
 import { CommentsRepository } from "src/comments/comments.repository";
 import { CheckService } from "src/other.services/check.service";
 import { LikesRepository } from "src/likes/likes.repository";
-import { CommentLikeDbType, PostLikeDbType } from "src/likes/likes.types";
+import { CommentLikeDbType, PostLikeDbType } from "src/likes/db.likes.types";
 import { CommentActionResult } from "src/comments/helpers/comment.enum.action.result";
 
 export class SetLikeStatusForCommentCommand {

@@ -7,7 +7,7 @@ import { BlogDocument, Blog } from 'src/blogs/blogs.types';
 import { validate as isValidUUID } from 'uuid';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { PostLikeDbType } from 'src/likes/likes.types';
+import { PostLikeDbType } from 'src/likes/db.likes.types';
 
 @Injectable()
 export class PostsQueryRepository {

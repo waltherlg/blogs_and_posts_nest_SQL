@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource } from 'typeorm';
 import { validate as isValidUUID } from 'uuid';
-import { CommentLikeDbType, PostLikeDbType } from "./likes.types";
+import { CommentLikeDbType, PostLikeDbType } from "./db.likes.types";
 
 
 @Injectable()

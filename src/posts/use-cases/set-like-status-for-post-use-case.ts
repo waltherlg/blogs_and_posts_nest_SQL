@@ -6,7 +6,7 @@ import { CommentsRepository } from "src/comments/comments.repository";
 import { PostActionResult } from "../helpers/post.enum.action.result";
 import { CheckService } from "src/other.services/check.service";
 import { LikesRepository } from "src/likes/likes.repository";
-import { PostLikeDbType } from "src/likes/likes.types";
+import { PostLikeDbType } from "src/likes/db.likes.types";
 
 export class SetLikeStatusForPostCommand {
     constructor(public userId: string, public postId: string,

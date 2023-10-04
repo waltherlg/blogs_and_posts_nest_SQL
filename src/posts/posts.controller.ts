@@ -24,19 +24,14 @@ import {
   MaxLength,
 } from 'class-validator';
 import { CheckService } from '../other.services/check.service';
-import { PostsService } from './posts.service';
-import { PostsRepository } from './posts.repository';
 import { PostsQueryRepository } from './posts.query.repository';
 
 import {
   CustomNotFoundException,
   PostNotFoundException,
-  UnableException,
 } from '../exceptions/custom.exceptions';
-import { BasicAuthGuard } from '../auth/guards/auth.guards';
 import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CommentsService } from '../comments/comments.service';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import {
   BlogIdCustomValidator,

@@ -126,8 +126,9 @@ export class CommentsQueryRepository {
       const usersLikeObjectsQuery = `
       SELECT *
       FROM public."CommentLikes"
-      WHERE "userId" = "${userId}" AND "commentId" = ANY(ARRAY[${arrayOfCommentsId.map(id => `'${id}'`).join(',')}])
+      WHERE "userId" = '${userId}' AND "commentId" = ANY(ARRAY[${arrayOfCommentsId.map(id => `'${id}'`).join(',')}]::uuid[])
       `
+      // нужно подробно разобраться как эта хрень работает
 
       console.log("usersLikeObjectsQuery ", usersLikeObjectsQuery);
       

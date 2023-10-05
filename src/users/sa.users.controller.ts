@@ -87,7 +87,7 @@ export class UsersController {
     console.log('newUsersId in createUser', newUsersId);
     
    
-    const user = await this.usersQueryRepository.getUserById(newUsersId);
+    const user = await this.usersQueryRepository.getNewCreatedUserById(newUsersId);
     return user;
   }
 

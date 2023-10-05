@@ -43,6 +43,13 @@ export type UserTypeOutput = {
   };
 };
 
+export type NewCreatedUserTypeOutput = {
+  id: string;
+  login: string;
+  email: string;
+  createdAt: string;
+};
+
 export type UserDocument = HydratedDocument<User>;
 @Schema()
 export class User {

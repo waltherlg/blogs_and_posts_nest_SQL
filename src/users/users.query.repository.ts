@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDBType, UserDocument, UserTypeOutput } from './users.types';
+import { NewCreatedUserTypeOutput, User, UserDBType, UserDocument, UserTypeOutput } from './users.types';
 import { HydratedDocument, Model, Types } from 'mongoose';
 import { PaginationOutputModel, RequestBannedUsersQueryModel } from '../models/types';
 import { BlogDocument, Blog } from 'src/blogs/blogs.types';
@@ -50,6 +50,26 @@ export class UsersQueryRepository {
       banDate: user.banDate,
       banReason: user.banReason,
     }
+  }
+  }
+
+  async getNewCreatedUserById(userId): Promise<NewCreatedUserTypeOutput | null> {
+    if (!isValidUUID(userId)) {
+      return null;
+    }
+    const query = `
+    SELECT "userId", login, email, "createdAt"
+    FROM public."Users"
+    WHERE "userId"=$1
+    LIMIT 1
+    `
+  const userArr = await this.dataSource.query(query, [userId])
+  const user = userArr[0]  
+  return {
+    id: user.userId,
+    login: user.login,
+    email: user.email,
+    createdAt: user.createdAt
   }
   }
 

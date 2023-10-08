@@ -16,6 +16,7 @@ import { postCrudOperations } from './07-00-post.CRUD.e2e-spec copy 2';
 import { commentCrudOperations } from './09-00-public.comments.controller.e2e-spec copy';
 import { saCommentCrudOperations } from './09-00-sa-and-public.comments.controller.e2e-spec copy 2';
 import { onlyCommentLikesCrud13 } from './13-only-comments-likes.e2e-spec copy';
+import { commentPaginationTest } from './14-00-comments.pagination.e2e-spec';
 
 describe('End-to-End Tests', () => {
   //testSaUsersCrud()
@@ -31,7 +32,10 @@ describe('End-to-End Tests', () => {
   //commentCrudOperations() // this comment CRUD if blog create blogger
   //saCommentCrudOperations()
   
-  testCommentLikesCrud()
+  //testCommentLikesCrud()
+
+  commentPaginationTest()
+
   //conlyCommentLikesCrud13() // только для проверки создания лайка для комментария
   //banCheckOperation()
 

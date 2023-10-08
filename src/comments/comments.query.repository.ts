@@ -65,6 +65,8 @@ export class CommentsQueryRepository {
   }
 
   async getAllCommentsByPostId(postId: string, mergedQueryParams, userId?) {// TODO: refactor tu SQL
+    console.log('mergedQueryParams ', mergedQueryParams);
+    
 
     const sortBy = mergedQueryParams.sortBy;
     const sortDirection = mergedQueryParams.sortDirection;
@@ -110,8 +112,7 @@ export class CommentsQueryRepository {
     
 
     const comments = await this.dataSource.query(query);
-    console.log('comments', comments);
-    
+ 
     
     let usersLikeObjectsForThisComments
     if(userId){

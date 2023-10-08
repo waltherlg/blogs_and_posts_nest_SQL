@@ -7,7 +7,7 @@ import { endpoints } from './helpers/routing';
 import { testUser } from './helpers/inputAndOutputObjects/usersObjects';
 import { testInputBlogBody, testOutputBlogBody } from './helpers/inputAndOutputObjects/blogsObjects';
 import { testComments } from './helpers/inputAndOutputObjects/commentObjects';
-export function commentPaginationTest() {
+export function commentPaginationTest14() {
   describe('comment CRUD operation if blog create SA (e2e)', () => {
     let accessTokenUser1
     let accessTokenUser2
@@ -61,7 +61,7 @@ export function commentPaginationTest() {
         const createdResponseBody = createResponse.body;
         userId1 = createdResponseBody.id
 
-        expect(createdResponseBody).toEqual(testComments.outputUser1);
+        expect(createdResponseBody).toEqual(testComments.outputUser1Sa);
     });
 
     it('00-00 login = 204 login user1', async () => {
@@ -87,7 +87,7 @@ export function commentPaginationTest() {
         const createdResponseBody = createResponse.body;
         userId2 = createdResponseBody.id
 
-        expect(createdResponseBody).toEqual(testComments.outputUser2);
+        expect(createdResponseBody).toEqual(testComments.outputUser2Sa);
     });
 
     it('00-00 login = 204 login user2', async () => {
@@ -113,7 +113,7 @@ export function commentPaginationTest() {
         const createdResponseBody = createResponse.body;
         userId2 = createdResponseBody.id
 
-        expect(createdResponseBody).toEqual(testComments.outputUser3);
+        expect(createdResponseBody).toEqual(testComments.outputUser3Sa);
     });
 
     it('00-00 login = 204 login user3', async () => {

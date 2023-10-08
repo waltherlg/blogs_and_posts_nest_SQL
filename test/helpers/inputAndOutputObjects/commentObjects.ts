@@ -15,6 +15,12 @@ export let testComments = {
           banReason: null
         }
     },
+    outputUser1Sa:{
+        id: expect.any(String),
+        login: 'user1',
+        email: 'ruslan@gmail-1.com',
+        createdAt: expect.any(String),
+    },
     loginUser1: {
         loginOrEmail: 'user1',
         password: 'qwerty',  
@@ -36,6 +42,12 @@ export let testComments = {
           banReason: null
         }
     },
+    outputUser2Sa:{
+        id: expect.any(String),
+        login: 'user2',
+        email: 'ruslan@gmail-2.com',
+        createdAt: expect.any(String),
+    },
     loginUser2: {
         loginOrEmail: 'user2',
         password: 'qwerty',  
@@ -56,6 +68,12 @@ export let testComments = {
           banDate: null,
           banReason: null
         }
+    },
+    outputUser3Sa:{
+        id: expect.any(String),
+        login: 'user3',
+        email: 'ruslan@gmail-3.com',
+        createdAt: expect.any(String),
     },
     loginUser3: {
         loginOrEmail: 'user3',

@@ -77,6 +77,8 @@ export class UsersController {
     //add all, banned, not banned in query params
   @Get()
   async getAllUsers(@Query() queryParams: RequestUsersQueryModel) {
+    console.log('queryParams in getAllUsers in controller', queryParams);
+    
     const mergedQueryParams = { ...DEFAULT_USERS_QUERY_PARAMS, ...queryParams };
     return await this.usersQueryRepository.getAllUsers(mergedQueryParams);
   }

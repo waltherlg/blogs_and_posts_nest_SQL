@@ -142,7 +142,9 @@ export class PostController {
     if (!(await this.checkService.isPostExist(postId))) {
       throw new CustomNotFoundException('post');
     }
+    console.log('getAllCommentsByPostId in controller queryParams ', queryParams);
     const mergedQueryParams = { ...DEFAULT_QUERY_PARAMS, ...queryParams };
+    console.log('getAllCommentsByPostId in controller mergedQueryParams ', mergedQueryParams);
     console.log('getAllCommentsByPostId request.user.userId ', request.user.userId);
     return await this.commentsQueryRepository.getAllCommentsByPostId(
       postId,

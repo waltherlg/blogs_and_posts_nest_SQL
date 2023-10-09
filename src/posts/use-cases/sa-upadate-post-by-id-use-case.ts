@@ -6,26 +6,26 @@ import {
 } from '../../api/public.blogs.controller';
 import { CommandHandler } from '@nestjs/cqrs/dist/decorators';
 import { ICommandHandler } from '@nestjs/cqrs/dist/interfaces';
-import { BlogActionResult } from '../../helpers/blogs.enum.action.result';
+import { BlogActionResult as PostActionResult } from '../../helpers/blogs.enum.action.result';
 import { UpdatePostByBlogsIdInputModelType } from 'src/blogs/api/blogger.blogs.controller';
 import { PostsRepository } from 'src/posts/posts.repository';
 
-export class UpdatePostByIdFromBloggerControllerCommand {
+export class SaUpdatePostByIdCommand {
   constructor(public userId: string, public blogsId: string, public postId: string, 
     public postUpdateDto: UpdatePostByBlogsIdInputModelType){}
 }
 
-@CommandHandler(UpdatePostByIdFromBloggerControllerCommand)
-export class UpdatePostByIdFromBloggerControllerUseCase implements ICommandHandler<UpdatePostByIdFromBloggerControllerCommand> {
+@CommandHandler(SaUpdatePostByIdCommand)
+export class SaUpdatePostByIdUseCase implements ICommandHandler<SaUpdatePostByIdCommand> {
   constructor(private readonly postsRepository: PostsRepository) {}
 
   async execute(
-    command: UpdatePostByIdFromBloggerControllerCommand,
-  ): Promise<BlogActionResult> {
+    command: SaUpdatePostByIdCommand,
+  ): Promise<PostActionResult> {
     const postId = command.postId
     const post = await this.postsRepository.getPostDBTypeById(postId)
-    if(!post) return BlogActionResult.PostNotFound
-    if(post.userId !== command.userId) return BlogActionResult.NotOwner
+    if(!post) return PostActionResult.PostNotFound
+    if(post.userId !== command.userId) return PostActionResult.NotOwner
 
     const title = command.postUpdateDto.title
     const shortDescription = command.postUpdateDto.shortDescription
@@ -33,9 +33,9 @@ export class UpdatePostByIdFromBloggerControllerUseCase implements ICommandHandl
 
     const result = await this.postsRepository.updatePostById(postId, title, shortDescription, content)
     if(result) {
-      return BlogActionResult.Success
+      return PostActionResult.Success
     } else { 
-      return BlogActionResult.NotSaved
+      return PostActionResult.NotSaved
     }
   }
 }

@@ -12,11 +12,12 @@ import { testCommentLikesCrud } from './09-comments-likes.operation.e2e-spec';
 import { bloggerUsersControllers } from './11-blogger.usrers.controller.e2e-spec';
 import { saBlogsControllerCrudAndBan } from './06-sa.blogs.controller.e2e-spec';
 import { testBanUserForBlogByBlogger } from './05-01-blogger.users.ban.check-e2e-spec';
-import { postCrudOperations } from './07-00-post.CRUD.e2e-spec copy 2';
+import { postCrudOperationsByBlogger07 } from './07-00-post.CRUD.e2e-spec copy 2';
 import { commentCrudOperations } from './09-00-public.comments.controller.e2e-spec copy';
 import { saCommentCrudOperations } from './09-00-sa-and-public.comments.controller.e2e-spec copy 2';
 import { onlyCommentLikesCrud13 } from './13-only-comments-likes.e2e-spec copy';
 import { commentPaginationTest14 } from './14-00-comments.pagination.e2e-spec';
+import { postCrudOperationsBySa07 } from './07-01-post.CRUDBySa.e2e-spec';
 
 describe('End-to-End Tests', () => {
   //testSaUsersCrud()
@@ -27,14 +28,15 @@ describe('End-to-End Tests', () => {
   //testBloggerCrudOnlyBlogs()
   //testBanUserForBlogByBlogger()
   //saBlogsControllerCrudAndBan()
-  //postCrudOperations()
+  //postCrudOperationsByBlogger07()
+  postCrudOperationsBySa07()
   //testPostLikesCrud()
   //commentCrudOperations() // this comment CRUD if blog create blogger
   //saCommentCrudOperations()
   
   //testCommentLikesCrud()
 
-  commentPaginationTest14()
+  //commentPaginationTest14()
 
   //conlyCommentLikesCrud13() // только для проверки создания лайка для комментария
   //banCheckOperation()

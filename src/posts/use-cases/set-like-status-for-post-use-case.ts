@@ -56,7 +56,7 @@ async execute(command: SetLikeStatusForPostCommand)
       if(isLikeAdded){
         return PostActionResult.Success
       } else {
-        PostActionResult.NotSaved
+        return PostActionResult.NotSaved
       }
     }
 

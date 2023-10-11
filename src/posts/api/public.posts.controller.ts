@@ -13,8 +13,8 @@ import {
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { AppService } from '../app.service';
-import { RequestQueryParamsModel, DEFAULT_QUERY_PARAMS } from '../models/types';
+import { AppService } from '../../app.service';
+import { RequestQueryParamsModel, DEFAULT_QUERY_PARAMS } from '../../models/types';
 import {
   Length,
   IsString,
@@ -23,25 +23,25 @@ import {
   IsNotEmpty,
   MaxLength,
 } from 'class-validator';
-import { CheckService } from '../other.services/check.service';
-import { PostsQueryRepository } from './posts.query.repository';
+import { CheckService } from '../../other.services/check.service';
+import { PostsQueryRepository } from '../posts.query.repository';
 
 import {
   CustomNotFoundException,
   PostNotFoundException,
-} from '../exceptions/custom.exceptions';
-import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CommentsQueryRepository } from '../comments/comments.query.repository';
+} from '../../exceptions/custom.exceptions';
+import { OptionalJwtAuthGuard } from '../../auth/guards/optional-jwt-auth.guard';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { CommentsQueryRepository } from '../../comments/comments.query.repository';
 import {
   BlogIdCustomValidator,
   LikeStatusValidator,
   StringTrimNotEmpty,
-} from '../middlewares/validators';
+} from '../../middlewares/validators';
 import { CommandBus } from '@nestjs/cqrs';
-import { CreateCommentForSpecificPostCommand } from './use-cases/create-comment-for-specific-post-use-case';
-import { SetLikeStatusForPostCommand } from './use-cases/set-like-status-for-post-use-case'; 
-import { handlePostActionResult } from './helpers/post.enum.action.result';
+import { CreateCommentForSpecificPostCommand } from '../use-cases/create-comment-for-specific-post-use-case';
+import { SetLikeStatusForPostCommand } from '../use-cases/set-like-status-for-post-use-case'; 
+import { handlePostActionResult } from '../helpers/post.enum.action.result';
 
 export class CreatePostInputModelType {
   @StringTrimNotEmpty()

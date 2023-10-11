@@ -1,7 +1,7 @@
 import { PostsRepository } from './posts.repository';
 import { PostDBType } from './posts.types';
 import { Types } from 'mongoose';
-import { CreatePostInputModelType } from './posts.controller';
+import { CreatePostInputModelType } from './api/public.posts.controller';
 import { BlogsRepository } from '../blogs/infrostracture/blogs.repository';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { BlogNotFoundException } from '../exceptions/custom.exceptions';

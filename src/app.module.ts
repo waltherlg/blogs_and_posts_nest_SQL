@@ -13,7 +13,7 @@ import { CheckService } from './other.services/check.service';
 import { PostsRepository } from './posts/posts.repository';
 import { Post, PostSchema } from './posts/posts.types';
 import { PostsQueryRepository } from './posts/posts.query.repository';
-import { PostController } from './posts/posts.controller';
+import { PostController } from './posts/api/public.posts.controller';
 import { TestingService } from './all.data/test.service';
 import { PostsService } from './posts/posts.service';
 import { TestingController } from './all.data/testing.controller';

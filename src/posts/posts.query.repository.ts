@@ -208,27 +208,31 @@ export class PostsQueryRepository {
     `;
 
     const postLikesObjectQuery = `
-    SELECT * FROM public."PostLikes"
+    SELECT "PostLikes".*, "Posts"."postId", "Blogs"."isBlogBanned"
+    FROM public."PostLikes"
     INNER JOIN "Posts" ON "PostLikes"."postId" = "Posts"."postId"
     INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
-    WHERE "Blogs"."blogId" = '${queryParams[5]}'
-    ORDER BY "addedAt" DESC;
-    `
+    WHERE "Blogs"."blogId" = '${queryParams[5]}' AND "PostLikes"."isUserBanned" = false
+    ORDER BY "PostLikes"."addedAt" DESC;
+`;
     const postLikesObjectArray = await this.dataSource.query(postLikesObjectQuery)
-    
+  
     const onlyLikeObjects = postLikesObjectArray.filter(likeObject => likeObject.status === "Like" && likeObject.isUserBanned === false)
 
     const postCountArr = await this.dataSource.query(countQuery);
     const postCount = parseInt(postCountArr[0].count);
 
     const posts = await this.dataSource.query(query);
+
     const postsForOutput = posts.map(post => {
       const thisPostLikes = onlyLikeObjects.filter(likeObj => likeObj.postId === post.postId)
+
       const newestLikes = thisPostLikes.slice(-3).map(like => {return{
         addedAt: like.addedAt,
         userId: like.userId,
         login: like.login
       }})
+
       let myStatus = "None"
       if(userId){
         const foundLike = postLikesObjectArray.find(postLikeObject => postLikeObject.postId === post.postId && postLikeObject.postId && userId)

@@ -4,7 +4,7 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { Types } from 'mongoose';
 import { delayFunction, endpoints } from './helpers/routing';
-export function testPostLikesCrud() {
+export function testPostLikesCrud08() {
   describe('Post Likes Crud CRUD operation \"if all is ok\" (e2e). ', () => {
     let app: INestApplication;
 
@@ -177,7 +177,8 @@ export function testPostLikesCrud() {
     it('01-02 blogger/blogs POST = 201 user1 create new blog', async () => {
       const testsResponse = await request(app.getHttpServer())
         .post(endpoints.bloggerBlogs)
-        .set('Authorization', `Bearer ${accessTokenUser1}`)
+        .set('Authorization', `Basic ${basicAuthRight}`)
+        //.set('Authorization', `Bearer ${accessTokenUser1}`)
         .send({
           name: 'BlogForPosts',
           description: 'description BlogForPosts',
@@ -202,7 +203,8 @@ export function testPostLikesCrud() {
       const testsResponse = await request(app.getHttpServer())
         .post(`${endpoints.bloggerBlogs}/${BlogId1User1}/posts`)
         //.post(`${endpoints.posts}/${createdPostId}/comments`)
-        .set('Authorization', `Bearer ${accessTokenUser1}`)
+        //        .set('Authorization', `Bearer ${accessTokenUser1}`)
+        .set('Authorization', `Basic ${basicAuthRight}`)
         .send({
           title: 'newCreatedPost',
           shortDescription: 'newPostsShortDescription',

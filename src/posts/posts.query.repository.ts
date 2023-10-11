@@ -209,6 +209,7 @@ export class PostsQueryRepository {
 
     const postLikesObjectQuery = `
     SELECT * FROM public."PostLikes"
+    INNER JOIN "Posts" ON "PostLikes"."postId" = "Posts"."postId"
     INNER JOIN "Blogs" ON "Posts"."blogId" = "Blogs"."blogId"
     WHERE "Blogs"."blogId" = '${queryParams[5]}'
     ORDER BY "addedAt" DESC;

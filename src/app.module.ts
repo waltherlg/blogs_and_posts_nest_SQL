@@ -92,6 +92,7 @@ import { SetLikeStatusForCommentUseCase } from './comments/application/use-cases
 import { LikesRepository } from './likes/likes.repository';
 import { SaCreateBlogUseCase } from './blogs/application/use-cases/sa-create-blog-use-case copy';
 import { SaCreatePostFromBloggerControllerUseCase } from './blogs/application/use-cases/sa-create-post-from-blogs-controller-use-case copy';
+import { SaUpdatePostByIdUseCase } from './posts/use-cases/sa-upadate-post-by-id-use-case';
 const mongoUri = process.env.MONGO_URL;
 const emailUser = process.env.MAIL_USER;
 const emailPassword = process.env.MAIL_PASSWORD;
@@ -104,6 +105,7 @@ const useCases = [CreateBlogUseCase,
   BindBlogWithUserUseCase,
   SaCreatePostFromBloggerControllerUseCase,
 UpdatePostByIdFromBloggerControllerUseCase,
+SaUpdatePostByIdUseCase,
 DeleteBlogByIdFromUriUseCase,
 DeletePostByIdFromUriUseCase,
 CreateCommentForSpecificPostUseCase,

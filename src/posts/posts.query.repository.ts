@@ -120,12 +120,14 @@ export class PostsQueryRepository {
     const postLikesObjectArray = await this.dataSource.query(postLikesObjectQuery)
     
     const onlyLikeObjects = postLikesObjectArray.filter(likeObject => likeObject.status === "Like" && likeObject.isUserBanned === false)
+    console.log('onlyLikeObjects ', onlyLikeObjects);
+    
   
     const postsForOutput = posts.map(post => {
 
       const thisPostLikes = onlyLikeObjects.filter(likeObj => likeObj.postId === post.postId)
 
-      const newestLikes = thisPostLikes.slice(-3).map(like => {return{
+      const newestLikes = thisPostLikes.slice(0, 3).map(like => {return{
         addedAt: like.addedAt,
         userId: like.userId,
         login: like.login
@@ -133,7 +135,7 @@ export class PostsQueryRepository {
     
       let myStatus = "None"
       if(userId){
-        const foundLike = postLikesObjectArray.find(postLikeObject => postLikeObject.postId === post.postId && postLikeObject.postId && userId)
+        const foundLike = postLikesObjectArray.find(postLikeObject => postLikeObject.postId === post.postId && postLikeObject.userId === userId)
         if(foundLike){
           myStatus = foundLike.status
         }
@@ -224,7 +226,7 @@ export class PostsQueryRepository {
     const postsForOutput = posts.map(post => {
       const thisPostLikes = onlyLikeObjects.filter(likeObj => likeObj.postId === post.postId)
     
-      const newestLikes = thisPostLikes.slice(-3).map(like => {return{
+      const newestLikes = thisPostLikes.slice(0, 3).map(like => {return{
         addedAt: like.addedAt,
         userId: like.userId,
         login: like.login
@@ -232,7 +234,7 @@ export class PostsQueryRepository {
 
       let myStatus = "None"
       if(userId){
-        const foundLike = postLikesObjectArray.find(postLikeObject => postLikeObject.postId === post.postId && postLikeObject.postId && userId)
+        const foundLike = postLikesObjectArray.find(postLikeObject => postLikeObject.postId === post.postId && postLikeObject.userId === userId)
         if(foundLike){
           myStatus = foundLike.status
         }

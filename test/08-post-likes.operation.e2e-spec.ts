@@ -512,6 +512,26 @@ export function testPostLikesCrud08() {
       });
     });
 
+    it('01-06 /posts/postId/like-status UPDATE = 204 Dislike from user5', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .put(`${endpoints.posts}/${createdPostId}/like-status`)
+        .set('Authorization', `Bearer ${accessTokenUser5}`)
+        .send({
+          likeStatus: 'Like',
+        })
+        .expect(204);
+    });
+
+    it('01-06 /posts/postId/like-status UPDATE = 204 None from user2', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .put(`${endpoints.posts}/${createdPostId}/like-status`)
+        .set('Authorization', `Bearer ${accessTokenUser2}`)
+        .send({
+          likeStatus: 'Like',
+        })
+        .expect(204);
+    });
+
 
   });
 }

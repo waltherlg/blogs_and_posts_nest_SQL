@@ -58,7 +58,7 @@ export class CommentsControllers {
   ) {}
   @UseGuards(OptionalJwtAuthGuard)
   @Get(':id')
-  async getCommentById(@Req() request, @Param('id') commentId: string) { // TODO: GETcomment by id
+  async getCommentById(@Req() request, @Param('id') commentId: string) {
     const comment = await this.commentsQueryRepository.getCommentById(
       commentId,
       request.user.userId, //user = userId
@@ -72,7 +72,7 @@ export class CommentsControllers {
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @HttpCode(204)
-  async deleteCommentById(@Req() request, @Param('id') commentId: string) { // TODO: deleteCommentById
+  async deleteCommentById(@Req() request, @Param('id') commentId: string) {
     if (!(await this.checkService.isCommentExist(commentId))) {
       throw new CustomNotFoundException('comment');
     }
@@ -95,7 +95,7 @@ export class CommentsControllers {
   @UseGuards(JwtAuthGuard)
   @Put(':id')
   @HttpCode(204)
-  async updateCommentById( // TODO: updateCommentById
+  async updateCommentById(
     @Req() request,
     @Param('id') commentId: string,
     @Body() updateDTO: UpdateCommentInputModelType,
@@ -124,7 +124,7 @@ export class CommentsControllers {
   @UseGuards(JwtAuthGuard)
   @Put(':id/like-status')
   @HttpCode(204)
-  async setLikeStatusForComment( // TODO: setLikeStatusForComment
+  async setLikeStatusForComment(
     @Req() request,
     @Param('id') commentId: string,
     @Body(new ValidationPipe({ transform: true }))

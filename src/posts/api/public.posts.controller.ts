@@ -122,7 +122,7 @@ export class PostController {
   
   @UseGuards(JwtAuthGuard)
   @Post(':id/comments')
-  async createCommentByPostId( // TODO: createCommentByPostId
+  async createCommentByPostId(
     @Req() request,
     @Param('id') postId: string,
     @Body() content: CreateCommentInputModelType,
@@ -135,7 +135,7 @@ export class PostController {
   
   @UseGuards(OptionalJwtAuthGuard)
   @Get(':id/comments')
-  async getAllCommentsByPostId( // TODO: getAllCommentsByPostId
+  async getAllCommentsByPostId(
     @Req() request,
     @Param('id') postId: string,
     @Query() queryParams: RequestQueryParamsModel,

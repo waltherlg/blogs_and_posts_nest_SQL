@@ -63,7 +63,7 @@ export class CommentsQueryRepository {
     }
   }
 
-  async getAllCommentsByPostId(postId: string, mergedQueryParams, userId?) {// TODO: refactor tu SQL    
+  async getAllCommentsByPostId(postId: string, mergedQueryParams, userId?) {  
 
     const sortBy = mergedQueryParams.sortBy;
     const sortDirection = mergedQueryParams.sortDirection;

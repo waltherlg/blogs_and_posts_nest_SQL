@@ -74,15 +74,12 @@ export class SaBlogsController {
     handleBlogOperationResult(result)
   }
 
-  // TODO : /hometask_19/api/sa/blogs GET return all blogs with pagging 
   @Get()
   async getAllBlogs(@Query() queryParams: RequestBlogsQueryModel) {
     const mergedQueryParams = { ...DEFAULT_BLOGS_QUERY_PARAMS, ...queryParams };
     return await this.blogsQueryRepository.getAllBlogs(mergedQueryParams);
   }
   
-
-  // TODO : /hometask_19/api/sa/blogs POST add new blog
   @Post()
   async createBlog(@Body() blogCreateInputModel: CreateBlogInputModelType) {
     try {
@@ -99,7 +96,6 @@ export class SaBlogsController {
 
   }
 
-  // TODO : /hometask_19/api/sa/blogs/{id} PUT update blog by id
   @Put(':id')
   @HttpCode(204)
   async updateBlogById(
@@ -115,7 +111,6 @@ export class SaBlogsController {
     handleBlogOperationResult(result)
   }
 
-  // TODO : /hometask_19/api/sa/blogs/{id} DELETE blog by id
   @Delete(':id')
   @HttpCode(204)
   async deleteBlogById(@Req() request, @Param('id') blogId: string) {
@@ -123,7 +118,6 @@ export class SaBlogsController {
     handleBlogOperationResult(result)
   }
 
-  // TODO : /hometask_19/api/sa/blogs/{blogId}/posts POST create post for this blog
   @Post(':id/posts')
   async saCreatePostByBlogsId(
     @Param('id') blogId: string,
@@ -140,7 +134,6 @@ export class SaBlogsController {
     return newPost;
   }
 
-  // TODO : /hometask_19/api/sa/blogs/{blogId}/posts GET all posts for this blog
   @Get(':id/posts')
   async getAllPostsByBlogsId(
     @Req() request,
@@ -158,7 +151,6 @@ export class SaBlogsController {
     );
   }
 
-  // TODO : /hometask_19/api/sa/blogs/{blogId}/posts/{postId} PUT update this post for this blog 
   @Put(':blogId/posts/:postId')
   @HttpCode(204)
   async updatePost(@Req() request, 
@@ -172,7 +164,6 @@ export class SaBlogsController {
     handleBlogOperationResult(result)
   }
 
-  // TODO : /hometask_19/api/sa/blogs/{blogId}/posts/{postId} DELETE this post for this blog
   @Delete(':blogId/posts/:postId') 
   @HttpCode(204)
   async deletePost(@Req() request,

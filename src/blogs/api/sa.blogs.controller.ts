@@ -75,7 +75,7 @@ export class SaBlogsController {
   }
 
   @Get()
-  async getAllBlogs(@Query() queryParams: RequestBlogsQueryModel) {
+  async getAllBlogs(@Query() queryParams: RequestBlogsQueryModel) { // TODO: check why getting empty array
     const mergedQueryParams = { ...DEFAULT_BLOGS_QUERY_PARAMS, ...queryParams };
     return await this.blogsQueryRepository.getAllBlogs(mergedQueryParams);
   }
@@ -98,7 +98,7 @@ export class SaBlogsController {
 
   @Put(':id')
   @HttpCode(204)
-  async updateBlogById(
+  async updateBlogById( // TODO: fix status 500
     @Req() request,
     @Param('id') blogId: string,
     @Body() blogUpdateInputModel: UpdateBlogInputModelType,
@@ -113,7 +113,7 @@ export class SaBlogsController {
 
   @Delete(':id')
   @HttpCode(204)
-  async deleteBlogById(@Req() request, @Param('id') blogId: string) {
+  async deleteBlogById(@Req() request, @Param('id') blogId: string) { // TODO: fix status 500 if all is ok, and why 500 if nit found
     const result = await this.commandBus.execute(new DeleteBlogByIdFromUriCommand(blogId, request.user.userId));
     handleBlogOperationResult(result)
   }
@@ -153,7 +153,7 @@ export class SaBlogsController {
 
   @Put(':blogId/posts/:postId')
   @HttpCode(204)
-  async updatePost(@Req() request, 
+  async updatePost(@Req() request, // TODO: fix status 500
   @Param('blogId') blogId: string, 
   @Param('postId') postId: string,
   @Body() postUpdateDto: UpdatePostByBlogsIdInputModelType){
@@ -166,7 +166,7 @@ export class SaBlogsController {
 
   @Delete(':blogId/posts/:postId') 
   @HttpCode(204)
-  async deletePost(@Req() request,
+  async deletePost(@Req() request, // TODO: fix status 500
   @Param('blogId') blogId: string,
   @Param('postId') postId: string,){
     if(!await this.checkService.isBlogExist(blogId)){

@@ -25,7 +25,6 @@ export class UserBanStatusChangeUseCase implements ICommandHandler<UserBanStatus
             const banReason = command.banDto.banReason
 
             const isUserAlreadyBanned = await this.usersRepository.isUserBanned(command.userId)
-            console.log(isUserAlreadyBanned);
             
             if(isUserAlreadyBanned === newBanStatus){
                 return

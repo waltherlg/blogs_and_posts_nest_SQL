@@ -148,7 +148,6 @@ export function testBlogCrud() {
     });
 
     it('01-06 /blogs UPDATE = 204', async () => {
-      console.log(createdBlogId);
       const createResponse = await request(app.getHttpServer())
         .put(`${endpoints.blogs}/${createdBlogId}`)
         .set('Authorization', `Basic ${basicAuthRight}`)

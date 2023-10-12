@@ -29,6 +29,7 @@ async execute(command: SetLikeStatusForPostCommand)
     if(!post){
       return PostActionResult.PostNotFound
     }
+
     const blog = await this.blogRepository.getBlogDBTypeById(post.blogId)
     if(!blog){
       return PostActionResult.BlogNotFound
@@ -41,7 +42,7 @@ async execute(command: SetLikeStatusForPostCommand)
 
     //check is user already liked post
     const likeObject = await this.likesRepository.getPostLikeObject(userId, postId)
-
+  
     //if user never set likestatus, create it
     if(!likeObject){
       const postLikeDto = new PostLikeDbType(

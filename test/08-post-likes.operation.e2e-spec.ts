@@ -272,7 +272,7 @@ export function testPostLikesCrud08() {
         .expect(204);
     });
 
-    it('01-07 /posts GET = 200 return post for unauth user with 2 like and 2 dislike', async () => {
+    it('01-07 /posts/:postId GET = 200 return post for unauth user with 2 like and 2 dislike', async () => {
       const createResponse = await request(app.getHttpServer())
         .get(`${endpoints.posts}/${createdPostId}`)
         .expect(200);
@@ -363,6 +363,54 @@ export function testPostLikesCrud08() {
             },
           ],
         },
+      });
+    });
+
+    it('00-10 /posts GET = 200 return post1 with pagination', async () => {
+      const createResponse = await request(app.getHttpServer())
+        .get(endpoints.posts)
+        .set('Authorization', `Bearer ${accessTokenUser2}`)
+        .expect(200);
+      const createdResponse = createResponse.body;
+
+      expect(createdResponse).toEqual({
+        pagesCount: 1,
+        page: 1,
+        pageSize: 10,
+        totalCount: 1,
+        items: [
+          {
+            id: createdPostId,
+          title: 'newCreatedPost',
+          shortDescription: 'newPostsShortDescription',
+          content: 'some content',
+          blogId: expect.any(String),
+          blogName: 'BlogForPosts',
+          createdAt: expect.any(String),
+          extendedLikesInfo: {
+          likesCount: 4,
+          dislikesCount: 0,
+          myStatus: 'Like',
+          newestLikes: [
+            {
+              addedAt: expect.any(String),
+              login: 'user5',
+              userId: expect.any(String),
+            },
+            {
+              addedAt: expect.any(String),
+              login: 'user4',
+              userId: expect.any(String),
+            },
+            {
+              addedAt: expect.any(String),
+              login: 'user3',
+              userId: expect.any(String),
+            },
+          ],
+        },
+          }
+        ],
       });
     });
 

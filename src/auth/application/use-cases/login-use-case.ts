@@ -15,7 +15,6 @@ export class LoginUseCase implements ICommandHandler<LoginCommand>{
         private readonly usersDeviceRepository: UsersDevicesRepository,
         ){}
         async execute(command: LoginCommand): Promise<any> {
-          //console.log('command.userId ', command.userId);
           
             const deviceId = uuidv4();
             const { accessToken, refreshToken } = await this.tokensService.createTokens(

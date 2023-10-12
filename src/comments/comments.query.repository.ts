@@ -44,7 +44,6 @@ export class CommentsQueryRepository {
           WHERE "commentId" = $1 AND "userId" = $2
           `;
           const result = await this.dataSource.query(myStatusQuery, [commentId, userId]);
-          console.log("SELECT status FROM public.CommentLikes result ", result);
           
           myStatus = result[0].status
     } 
@@ -64,9 +63,7 @@ export class CommentsQueryRepository {
     }
   }
 
-  async getAllCommentsByPostId(postId: string, mergedQueryParams, userId?) {// TODO: refactor tu SQL
-    console.log('mergedQueryParams ', mergedQueryParams);
-    
+  async getAllCommentsByPostId(postId: string, mergedQueryParams, userId?) {// TODO: refactor tu SQL    
 
     const sortBy = mergedQueryParams.sortBy;
     const sortDirection = mergedQueryParams.sortDirection;
@@ -105,12 +102,9 @@ export class CommentsQueryRepository {
     `;
 
     const commentCountArr = await this.dataSource.query(countQuery);
-    console.log('commentCountArr' , commentCountArr);
     
     const commentCount = parseInt(commentCountArr[0].count);
-    console.log("commentCount" , commentCount);
-    
-
+  
     const comments = await this.dataSource.query(query);
  
     
@@ -121,7 +115,6 @@ export class CommentsQueryRepository {
       //нужен массив из айдишек комментов, которые вернул основной запрос
 
       const arrayOfCommentsId = comments.map(comment => { return comment.commentId })
-      console.log('arrayOfCommentsId', arrayOfCommentsId)
       
       // нужно найти все лайки где есть айди пользователя и коммент айди из массива выше
       const usersLikeObjectsQuery = `
@@ -130,11 +123,8 @@ export class CommentsQueryRepository {
       WHERE "userId" = '${userId}' AND "commentId" = ANY(ARRAY[${arrayOfCommentsId.map(id => `'${id}'`).join(',')}]::uuid[])
       `
       // нужно подробно разобраться как эта хрень работает
-
-      console.log("usersLikeObjectsQuery ", usersLikeObjectsQuery);
       
       usersLikeObjectsForThisComments = await this.dataSource.query(usersLikeObjectsQuery)
-      console.log('usersLikeObjectsForThisComments ', usersLikeObjectsForThisComments);
       
     }
 

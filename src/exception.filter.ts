@@ -30,7 +30,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
 
     const errors: any = exception.getResponse();
-    console.log(errors);
     let errorsMessages;
 
     if (Array.isArray(errors.message)) {

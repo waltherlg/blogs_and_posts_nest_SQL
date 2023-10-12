@@ -200,12 +200,10 @@ export function testAuthOperations() {
         expect(refreshTokenCookie).toBeDefined();
         expect(refreshTokenCookie).toContain('HttpOnly');
         expect(refreshTokenCookie).toContain('Secure');
-        console.log('refreshTokenCookie ', refreshTokenCookie);
       });
       
       it('00-00 refresh-token = 200 should get new access and refresh token', async () => {
       await delay(1000)
-        console.log('refreshTokenCookie ', refreshTokenCookie);
         const createResponse = await request(app.getHttpServer())
           .post(`${endpoints.auth}/refresh-token`)
           .set('Cookie', refreshTokenCookie)
@@ -217,13 +215,10 @@ export function testAuthOperations() {
           accessToken: expect.any(String),
         });
         expect(createResponse.headers['set-cookie']).toBeDefined();
-        
-        //console.log('after upd', createResponse.headers['set-cookie'])
   
        refreshTokenCookie2 = createResponse.headers['set-cookie'] 
         .find((cookie) => cookie.startsWith('refreshToken='));
   
-        console.log('refreshTokenCookie2 ', refreshTokenCookie2);
         expect(refreshTokenCookie2).toBeDefined();
         expect(refreshTokenCookie2).toContain('HttpOnly');
         expect(refreshTokenCookie2).toContain('Secure');
@@ -243,7 +238,6 @@ export function testAuthOperations() {
          refreshTokenNotValidCookie = createResponse.headers['set-cookie'] 
           .find((cookie) => cookie.startsWith('refreshToken='));
     
-          console.log('refreshTokenNotValidCookie ', refreshTokenNotValidCookie);
           expect(refreshTokenCookie2).toBeDefined();
           expect(refreshTokenNotValidCookie).not.toBe(refreshTokenCookie2);     
         }); 

@@ -31,7 +31,6 @@ export class RegisterUserUseCase implements ICommandHandler<RegisterUserCommand>
             return false;
           }
         const newUserId = await this.usersRepository.createUser(userDTO)  
-        console.log('newUserId in register user use case', newUserId);
               
         return newUserId
     }

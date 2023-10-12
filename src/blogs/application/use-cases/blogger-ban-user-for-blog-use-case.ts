@@ -35,7 +35,6 @@ export class BanUserForSpecificBlogUseCase implements ICommandHandler<BanUserFor
     const blogId = command.banUserDto.blogId
 
     const blog = await this.blogsRepository.getBlogDBTypeById(blogId);
-    console.log("blog in usecase ", blog);
     
     if(!blog) return BlogActionResult.BlogNotFound
 

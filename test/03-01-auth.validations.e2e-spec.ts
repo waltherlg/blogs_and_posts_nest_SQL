@@ -61,7 +61,6 @@ export function testAuthValidations() {
       const user:UserDBType = await usersRepository.getLastCreatedUserDbType();
       confirmationCode1User1 = user.confirmationCode
       expect(confirmationCode1User1).not.toBeUndefined();
-      console.log(confirmationCode1User1);
     });
 
     it('00-00 registration = 400 if login exist register new user', async () => {
@@ -203,14 +202,12 @@ export function testAuthValidations() {
         expect(refreshTokenCookie).toBeDefined();
         expect(refreshTokenCookie).toContain('HttpOnly');
         expect(refreshTokenCookie).toContain('Secure');
-        console.log('refreshTokenCookie ', refreshTokenCookie);
       });
       
       
   
       it('00-00 refresh-token = 200 should get new access and refresh token', async () => {
       await delay(1500)
-        console.log('refreshTokenCookie ', refreshTokenCookie);
         const createResponse = await request(app.getHttpServer())
           .post(`${endpoints.auth}/refresh-token`)
           .set('Cookie', refreshTokenCookie)
@@ -222,13 +219,10 @@ export function testAuthValidations() {
           accessToken: expect.any(String),
         });
         expect(createResponse.headers['set-cookie']).toBeDefined();
-        
-        console.log('after upd', createResponse.headers['set-cookie'])
   
        refreshTokenCookie2 = createResponse.headers['set-cookie'] 
         .find((cookie) => cookie.startsWith('refreshToken='));
   
-        console.log('refreshTokenCookie2 ', refreshTokenCookie2);
         expect(refreshTokenCookie2).toBeDefined();
         expect(refreshTokenCookie2).toContain('HttpOnly');
         expect(refreshTokenCookie2).toContain('Secure');

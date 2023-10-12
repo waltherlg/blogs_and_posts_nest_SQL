@@ -146,10 +146,8 @@ export function testSecurityDevices() {
         .set('Cookie', refreshTokenCookie)
         .expect(200);
       const responseBody = response.body;
-      console.log(responseBody);
 
       userDeviceId1 = responseBody[0].deviceId
-      console.log(userDeviceId1);
 
       expect(responseBody).toEqual([
         testUserDevice.anyOutputDevice,
@@ -172,10 +170,8 @@ export function testSecurityDevices() {
         .set('Cookie', refreshTokenCookie)
         .expect(200);
       const responseBody = response.body;
-      console.log(responseBody);
 
       userDeviceId1 = responseBody[0].deviceId
-      console.log(userDeviceId1);
 
       expect(responseBody).toEqual([
         testUserDevice.anyOutputDevice,

@@ -77,7 +77,6 @@ export class UsersController {
     //add all, banned, not banned in query params
   @Get()
   async getAllUsers(@Query() queryParams: RequestUsersQueryModel) {
-    console.log('queryParams in getAllUsers in controller', queryParams);
     
     const mergedQueryParams = { ...DEFAULT_USERS_QUERY_PARAMS, ...queryParams };
     return await this.usersQueryRepository.getAllUsers(mergedQueryParams);
@@ -86,8 +85,7 @@ export class UsersController {
   @Post()
   async createUser(@Body() userCreateInputDto: CreateUserInputModelType) {
     const newUsersId = await this.commandBus.execute(new CreateUserCommand(userCreateInputDto)) 
-    console.log('newUsersId in createUser', newUsersId);
-    
+   
    
     const user = await this.usersQueryRepository.getNewCreatedUserById(newUsersId);
     return user;

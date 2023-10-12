@@ -206,7 +206,6 @@ export function bloggerUsersControllers() {
         .expect(201);
 
       const createdResponseOfFirstBlog = testsResponse.body;
-      console.log(createdResponseOfFirstBlog);
       
       BlogId1User1 = createdResponseOfFirstBlog.id;
 
@@ -251,8 +250,6 @@ export function bloggerUsersControllers() {
         },
       });
     });
-
-    console.log('BlogId1User1 before ban ', BlogId1User1);
 
     it('01-02 blogger/users/userId/ban PUT = 204 user2 banned for blog1', async () => {
          let testResp1 = await request(app.getHttpServer())

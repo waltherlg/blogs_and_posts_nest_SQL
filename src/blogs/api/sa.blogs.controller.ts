@@ -130,11 +130,9 @@ export class SaBlogsController {
     @Body() postCreateDto: CreatePostByBlogsIdInputModelType,
   ) {
     const result = await this.commandBus.execute(new SaCreatePostFromBloggerControllerCommand(blogId, postCreateDto))
-    console.log('result of post creation', result);
     
     handleBlogOperationResult(result) 
     const newPost = await this.postsQueryRepository.getPostById(result);
-    console.log('newPost', newPost);
     
     if (!newPost) {
       throw new UnableException('post creating');

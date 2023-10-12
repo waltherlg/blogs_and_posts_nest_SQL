@@ -86,14 +86,12 @@ export class UsersRepository {
     if (!isValidUUID(userId)) {
       return false;
     }
-    console.log(userId);
     
     const query = `
     DELETE FROM public."Users"
     WHERE "userId" = $1
     `
     const result = await this.dataSource.query(query, [userId]);
-    //console.log('resu;t deleteUserById ', result[1]);
     return result[1] > 0;   
   }
 
@@ -299,7 +297,6 @@ export class UsersRepository {
       WHERE email = $1
     `;
     const result = await this.dataSource.query(query, [email]);
-    console.log('result isEmailConfirmed ', result);
     return result;
   }
 

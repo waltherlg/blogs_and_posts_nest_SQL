@@ -17,7 +17,6 @@ export class PostsQueryRepository {
 
   async getPostById(postId, userId?): Promise<PostTypeOutput | null> {
     if (!isValidUUID(postId)) {
-      console.log('postId is not valid in post queryrepo');
       return null; 
     }
     // const query = `
@@ -55,8 +54,6 @@ export class PostsQueryRepository {
     }
   
     const result = await this.dataSource.query(query, [postId])
-    console.log('postId in query in repo', postId)
-    console.log('result of query in DB, get post by id', result);
     
     const post = result[0];
     if (!post){
@@ -226,7 +223,7 @@ export class PostsQueryRepository {
 
     const postsForOutput = posts.map(post => {
       const thisPostLikes = onlyLikeObjects.filter(likeObj => likeObj.postId === post.postId)
-
+    
       const newestLikes = thisPostLikes.slice(-3).map(like => {return{
         addedAt: like.addedAt,
         userId: like.userId,

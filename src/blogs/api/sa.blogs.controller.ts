@@ -113,7 +113,7 @@ export class SaBlogsController {
 
   @Delete(':id')
   @HttpCode(204)
-  async deleteBlogById(@Req() request, @Param('id') blogId: string) { // TODO: fix status 500 if all is ok, and why 500 if nit found
+  async deleteBlogById(@Req() request, @Param('id') blogId: string) { // TODO: fix status 500 if all is ok, and why 500 if nit found... need check
     const result = await this.commandBus.execute(new DeleteBlogByIdFromUriCommand(blogId, request.user.userId));
     handleBlogOperationResult(result)
   }

@@ -6,7 +6,6 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { BlogsRepository } from '../infrostracture/blogs.repository';
 import { BlogsQueryRepository } from '../infrostracture/blogs.query.repository';
 import {
   DEFAULT_BLOGS_QUERY_PARAMS,
@@ -24,7 +23,6 @@ import {
 } from '../../exceptions/custom.exceptions';
 import { IsCustomUrl, StringTrimNotEmpty } from '../../middlewares/validators';
 import { OptionalJwtAuthGuard } from '../../auth/guards/optional-jwt-auth.guard';
-import { UpdateBlogByIdFromUriUseCase } from '../application/use-cases/blogger-upadate-blog-using-id-from-uri-use-case';
 
 export class CreateBlogInputModelType {
   @StringTrimNotEmpty()

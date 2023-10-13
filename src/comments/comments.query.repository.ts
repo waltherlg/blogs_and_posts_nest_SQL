@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { validate as isValidUUID } from 'uuid';
-import { CommentLikeDbType } from 'src/likes/db.likes.types';
+import { CommentLikeDbType } from '../likes/db.likes.types';
 @Injectable()
 export class CommentsQueryRepository {
   constructor(

@@ -5,7 +5,7 @@ import {
 } from '../../api/public.blogs.controller';
 import { CommandHandler } from '@nestjs/cqrs/dist';
 import { ICommandHandler } from '@nestjs/cqrs/dist/interfaces';
-import { UsersRepository } from 'src/users/users.repository';
+import { UsersRepository } from '../../../users/users.repository';
 import { v4 as uuidv4 } from 'uuid';
 
 export class CreateBlogCommand {

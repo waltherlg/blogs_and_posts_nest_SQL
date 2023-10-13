@@ -1,12 +1,8 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { BlogsRepository } from "src/blogs/infrostracture/blogs.repository";
-import { PostsRepository } from "src/posts/posts.repository";
-import { UsersRepository } from "src/users/users.repository";
-import { CommentsRepository } from "src/comments/comments.repository";
-import { CheckService } from "src/other.services/check.service";
-import { LikesRepository } from "src/likes/likes.repository";
-import { CommentLikeDbType, PostLikeDbType } from "src/likes/db.likes.types";
-import { CommentActionResult } from "src/comments/helpers/comment.enum.action.result";
+import { CommentsRepository } from "../../../comments/comments.repository";
+import { LikesRepository } from "../../../likes/likes.repository";
+import { CommentLikeDbType } from "../../../likes/db.likes.types";
+import { CommentActionResult } from "../../../comments/helpers/comment.enum.action.result";
 
 export class SetLikeStatusForCommentCommand {
     constructor(public userId: string, public commentId: string,

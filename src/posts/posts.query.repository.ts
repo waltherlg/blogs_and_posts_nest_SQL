@@ -4,7 +4,7 @@ import { PostTypeOutput } from './posts.types';
 import { validate as isValidUUID } from 'uuid';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { PostLikeDbType } from 'src/likes/db.likes.types';
+import { PostLikeDbType } from '../likes/db.likes.types';
 
 @Injectable()
 export class PostsQueryRepository {

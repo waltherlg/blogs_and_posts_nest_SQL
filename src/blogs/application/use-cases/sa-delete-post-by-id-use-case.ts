@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { BlogActionResult } from "src/blogs/helpers/blogs.enum.action.result";
-import { PostsRepository } from "src/posts/posts.repository";
+import { BlogActionResult } from "../../../blogs/helpers/blogs.enum.action.result";
+import { PostsRepository } from "../../../posts/posts.repository";
 
 export class SaDeletePostByIdFromUriCommand {
     constructor(public blogId: string, public postId: string){}

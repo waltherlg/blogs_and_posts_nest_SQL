@@ -1,13 +1,13 @@
 import { Body, Controller, HttpCode, Param, Put, Query, Req, UseGuards, Get, } from "@nestjs/common"
 import { CommandBus } from "@nestjs/cqrs"
-import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard"
-import { BanUserForBlogInputModelType } from "src/blogs/api/blogger.blogs.controller"
-import { BanUserForSpecificBlogCommand } from "src/blogs/application/use-cases/blogger-ban-user-for-blog-use-case"
-import { handleBlogOperationResult } from "src/blogs/helpers/blogs.enum.action.result"
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard"
+import { BanUserForBlogInputModelType } from "../blogs/api/blogger.blogs.controller"
+import { BanUserForSpecificBlogCommand } from "../blogs/application/use-cases/blogger-ban-user-for-blog-use-case"
+import { handleBlogOperationResult } from "../blogs/helpers/blogs.enum.action.result"
 import { RequestBannedUsersQueryModel, DEFAULT_BANNED_USERS_QUERY_PARAMS } from "src/models/types"
 import { UsersQueryRepository } from "./users.query.repository"
-import { CheckService } from "src/other.services/check.service"
-import { CustomNotFoundException, CustomisableException } from "src/exceptions/custom.exceptions"
+import { CheckService } from "../other.services/check.service"
+import { CustomNotFoundException, CustomisableException } from "../exceptions/custom.exceptions"
 
 
 @UseGuards(JwtAuthGuard)

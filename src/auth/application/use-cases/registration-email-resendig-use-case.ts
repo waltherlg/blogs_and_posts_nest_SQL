@@ -1,10 +1,10 @@
 import { DTOFactory } from './../../../helpers/DTO.factory';
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { UsersRepository } from "src/users/users.repository";
+import { UsersRepository } from "../../../users/users.repository";
 import { add } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
-import { EmailManager } from 'src/managers/email-manager';
-import { CustomisableException } from 'src/exceptions/custom.exceptions';
+import { EmailManager } from '../../../managers/email-manager';
+import { CustomisableException } from '../../../exceptions/custom.exceptions';
 
 export class RegisterationEmailResendingCommand {
     constructor(public email){}

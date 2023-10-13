@@ -1,9 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PasswordRecoveryEmailInput } from './../../auth.controller';
-import { UsersRepository } from 'src/users/users.repository';
+import { UsersRepository } from '../../../users/users.repository';
 import { v4 as uuidv4 } from 'uuid';
 import { add } from 'date-fns';
-import { EmailManager } from 'src/managers/email-manager';
+import { EmailManager } from '../../../managers/email-manager';
 
 
 export class PasswordRecoveryViaEmailCommand{

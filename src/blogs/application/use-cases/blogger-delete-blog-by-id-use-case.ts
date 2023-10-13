@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { BlogsRepository } from "src/blogs/infrostracture/blogs.repository";
-import { BlogActionResult } from "src/blogs/helpers/blogs.enum.action.result";
+import { BlogsRepository } from "../../../blogs/infrostracture/blogs.repository";
+import { BlogActionResult } from "../../../blogs/helpers/blogs.enum.action.result";
 
 export class DeleteBlogByIdFromUriCommand {
     constructor(public blogId: string, public userId: string){}

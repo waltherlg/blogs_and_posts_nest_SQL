@@ -1,10 +1,10 @@
 import { BlogsRepository } from '../../infrostracture/blogs.repository';
 import { CommandHandler } from '@nestjs/cqrs/dist/decorators';
 import { ICommandHandler } from '@nestjs/cqrs/dist/interfaces';
-import { BlogActionResult } from 'src/blogs/helpers/blogs.enum.action.result';
-import { CreatePostByBlogsIdInputModelType } from 'src/blogs/api/blogger.blogs.controller';
-import { PostsRepository } from 'src/posts/posts.repository';
-import { PostDBType } from 'src/posts/posts.types';
+import { BlogActionResult } from '../../../blogs/helpers/blogs.enum.action.result';
+import { CreatePostByBlogsIdInputModelType } from '../../../blogs/api/blogger.blogs.controller';
+import { PostsRepository } from '../../../posts/posts.repository';
+import { PostDBType } from '../../../posts/posts.types';
 import { v4 as uuidv4 } from 'uuid';
 
 export class CreatePostFromBloggerControllerCommand {

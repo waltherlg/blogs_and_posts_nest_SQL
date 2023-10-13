@@ -2,7 +2,7 @@ import { BlogsRepository } from '../../infrostracture/blogs.repository';
 import { CommandHandler } from '@nestjs/cqrs/dist/decorators';
 import { ICommandHandler } from '@nestjs/cqrs/dist/interfaces';
 import { BlogActionResult } from '../../helpers/blogs.enum.action.result';
-import { BanBlogInputModelType } from 'src/blogs/api/sa.blogs.controller';
+import { BanBlogInputModelType } from '../../../blogs/api/sa.blogs.controller';
 
 export class SaBanBlogCommand {
   constructor(public blogId: string, public banBlogDto: BanBlogInputModelType){}

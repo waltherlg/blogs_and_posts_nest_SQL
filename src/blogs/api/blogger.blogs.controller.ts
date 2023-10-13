@@ -34,7 +34,7 @@ import { UpdatePostByIdFromBloggerControllerCommand } from '../application/use-c
 import { DeleteBlogByIdFromUriCommand } from '../application/use-cases/blogger-delete-blog-by-id-use-case';
 import { CreatePostFromBloggerControllerCommand } from '../application/use-cases/blogger-create-post-from-blogs-controller-use-case';
 import { DeletePostByIdFromUriCommand } from '../application/use-cases/blogger-delete-post-by-id-use-case';
-import { CommentsQueryRepository } from 'src/comments/comments.query.repository';
+import { CommentsQueryRepository } from '../../comments/comments.query.repository';
 
 export class CreateBlogInputModelType {
   @StringTrimNotEmpty()

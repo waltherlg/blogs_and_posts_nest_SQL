@@ -19,7 +19,6 @@ import {
   RequestQueryParamsModel,
 } from '../../models/types';
 
-
 import { BasicAuthGuard } from '../../auth/guards/auth.guards';
 import { CommandBus } from '@nestjs/cqrs';
 import { BindBlogWithUserCommand } from '../application/use-cases/sa-bind-blog-with-user-use-case';
@@ -27,15 +26,9 @@ import { BlogActionResult, handleBlogOperationResult } from '../helpers/blogs.en
 import { IsBoolean } from 'class-validator';
 import { SaBanBlogCommand } from '../application/use-cases/sa-ban-blog-use-case';
 import { CreateBlogInputModelType, CreatePostByBlogsIdInputModelType, UpdateBlogInputModelType, UpdatePostByBlogsIdInputModelType } from './blogger.blogs.controller';
-import { CreateBlogCommand } from '../application/use-cases/blogger-create-blog-use-case';
-import { BlogNotFoundException, CustomNotFoundException, UnableException } from 'src/exceptions/custom.exceptions';
-import { UpdateBlogByIdFromUriCommand } from '../application/use-cases/blogger-upadate-blog-using-id-from-uri-use-case';
-import { DeleteBlogByIdFromUriCommand } from '../application/use-cases/blogger-delete-blog-by-id-use-case';
-import { CreatePostFromBloggerControllerCommand } from '../application/use-cases/blogger-create-post-from-blogs-controller-use-case';
-import { PostsQueryRepository } from 'src/posts/posts.query.repository';
-import { CheckService } from 'src/other.services/check.service';
-import { UpdatePostByIdFromBloggerControllerCommand } from '../application/use-cases/blogger-upadate-post-by-id-from-blogs-controller-use-case';
-import { DeletePostByIdFromUriCommand } from '../application/use-cases/blogger-delete-post-by-id-use-case';
+import { BlogNotFoundException, CustomNotFoundException, UnableException } from '../../exceptions/custom.exceptions';
+import { PostsQueryRepository } from '../../posts/posts.query.repository';
+import { CheckService } from '../../other.services/check.service';
 import { SaCreateBlogCommand } from '../application/use-cases/sa-create-blog-use-case copy';
 import { SaCreatePostFromBloggerControllerCommand } from '../application/use-cases/sa-create-post-from-blogs-controller-use-case copy';
 import { SaUpdateBlogByIdFromUriCommand } from '../application/use-cases/sa-upadate-blog-using-id-from-uri-use-case';

@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { newPasswordSetInput } from "src/auth/auth.controller";
-import { BcryptService } from "src/other.services/bcrypt.service";
-import { UsersRepository } from "src/users/users.repository";
+import { newPasswordSetInput } from "../../../auth/auth.controller";
+import { BcryptService } from "../../../other.services/bcrypt.service";
+import { UsersRepository } from "../../../users/users.repository";
 
 export class NewPasswordSetCommand {
     constructor(public newPasswordSetDto: newPasswordSetInput){}

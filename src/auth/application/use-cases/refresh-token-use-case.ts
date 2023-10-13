@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { TokensService } from "src/other.services/tokens.service";
-import { UsersDevicesRepository } from "src/usersDevices/user.devices.repository";
+import { TokensService } from "../../../other.services/tokens.service";
+import { UsersDevicesRepository } from "../../../usersDevices/user.devices.repository";
 
 export class RefreshTokenCommand {
     constructor(public userId: string, public deviceId: string ){}

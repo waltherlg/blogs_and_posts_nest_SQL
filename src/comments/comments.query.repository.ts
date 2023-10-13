@@ -43,12 +43,13 @@ export class CommentsQueryRepository {
           FROM public."CommentLikes"
           WHERE "commentId" = $1 AND "userId" = $2
           `;
-          const result = await this.dataSource.query(myStatusQuery, [commentId, userId])[0];
-
-          if(result){
-            myStatus = result.status
+          const result = await this.dataSource.query(myStatusQuery, [commentId, userId]);
+          
+          if(result[0]){
+            myStatus = result[0].status
           }
     } 
+
     return {
       id: comment.commentId,
       content: comment.content,

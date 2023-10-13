@@ -44,10 +44,8 @@ export class BlogsQueryRepository {
     ];
 
     let query = `
-    SELECT "Blogs".*, "Users".login
+    SELECT "Blogs".*
     FROM public."Blogs"
-    INNER JOIN "Users"
-    ON "Blogs"."userId" = "Users"."userId"
     `;
     let countQuery = `
     SELECT COUNT(*)

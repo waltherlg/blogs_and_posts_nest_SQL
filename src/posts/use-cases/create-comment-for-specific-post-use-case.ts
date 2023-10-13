@@ -1,13 +1,12 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { execute } from "auto";
-import { BlogsRepository } from "src/blogs/infrostracture/blogs.repository";
+import { BlogsRepository } from "../../blogs/infrostracture/blogs.repository";
 import { PostsRepository } from "../posts.repository";
-import { UsersRepository } from "src/users/users.repository";
-import { CommentDBType } from "src/comments/comments.types";
-import { CommentsRepository } from "src/comments/comments.repository";
+import { UsersRepository } from "../../users/users.repository";
+import { CommentDBType } from "../../comments/comments.types";
+import { CommentsRepository } from "../../comments/comments.repository";
 import { PostActionResult } from "../helpers/post.enum.action.result";
 import { v4 as uuidv4 } from 'uuid';
-import { CheckService } from "src/other.services/check.service";
+import { CheckService } from "../../other.services/check.service";
 
 export class CreateCommentForSpecificPostCommand {
     constructor(public userId: string, public postId: string,

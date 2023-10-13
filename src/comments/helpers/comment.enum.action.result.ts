@@ -30,6 +30,8 @@ export enum CommentActionResult {
         throw new CustomNotFoundException('post') 
       case CommentActionResult.UserNotFound:
         throw new CustomNotFoundException('user')  
+      case CommentActionResult.CommentNotFound:
+        throw new CustomNotFoundException('comment') 
 
       case CommentActionResult.NotOwner:
         throw new CustomisableException('not owner', 'users cannot change data unless they are the owner', 403)

@@ -12,7 +12,6 @@ export class SaUpdateBlogByIdFromUriCommand {
   constructor(public blogId: string, public blogUpdateInputModel: UpdateBlogInputModelType){}
 }
 
-// TODO: edit it for SA
 @CommandHandler(SaUpdateBlogByIdFromUriCommand)
 export class SaUpdateBlogByIdFromUriUseCase implements ICommandHandler<SaUpdateBlogByIdFromUriCommand> {
   constructor(private readonly blogsRepository: BlogsRepository) {}

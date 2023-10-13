@@ -98,7 +98,7 @@ export class SaBlogsController {
 
   @Put(':id')
   @HttpCode(204)
-  async updateBlogById( // TODO: fix status 500
+  async updateBlogById( // TODO: fix status 500... need check
     @Req() request,
     @Param('id') blogId: string,
     @Body() blogUpdateInputModel: UpdateBlogInputModelType,

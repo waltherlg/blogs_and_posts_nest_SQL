@@ -1,6 +1,5 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { UsersRepository } from "src/users/users.repository";
-import { UsersDevicesRepository } from "src/usersDevices/user.devices.repository";
+import { UsersDevicesRepository } from "../../../usersDevices/user.devices.repository";
 
 
 export class LogoutCommand {

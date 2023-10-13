@@ -1,8 +1,7 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { TokensService } from "src/other.services/tokens.service";
-import { UsersRepository } from "src/users/users.repository";
-import { UserDeviceDBType } from "src/usersDevices/users-devices.types";
-import { UsersDevicesRepository } from "src/usersDevices/user.devices.repository";
+import { TokensService } from "../../../other.services/tokens.service";
+import { UserDeviceDBType } from "../../../usersDevices/users-devices.types";
+import { UsersDevicesRepository } from "../../../usersDevices/user.devices.repository";
 import { v4 as uuidv4 } from 'uuid';
 
 export class LoginCommand {

@@ -2,9 +2,11 @@
 import { CommandHandler } from '@nestjs/cqrs/dist/decorators';
 import { ICommandHandler } from '@nestjs/cqrs/dist/interfaces';
 
-import { UpdatePostByBlogsIdInputModelType } from 'src/blogs/api/blogger.blogs.controller';
-import { PostsRepository } from 'src/posts/posts.repository';
+
+
 import { PostActionResult } from '../helpers/post.enum.action.result';
+import { PostsRepository } from '../posts.repository';
+import { UpdatePostByBlogsIdInputModelType } from '../../blogs/api/blogger.blogs.controller';
 
 export class SaUpdatePostByIdCommand {
   constructor(public blogsId: string, public postId: string, 

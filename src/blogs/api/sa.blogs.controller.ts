@@ -41,6 +41,7 @@ import { SaCreatePostFromBloggerControllerCommand } from '../application/use-cas
 import { SaUpdateBlogByIdFromUriCommand } from '../application/use-cases/sa-upadate-blog-using-id-from-uri-use-case';
 import { SaDeleteBlogByIdFromUriCommand } from '../application/use-cases/sa-delete-blog-by-id-use-case';
 import { SaUpdatePostByIdFromBloggerControllerCommand } from '../application/use-cases/sa-upadate-post-by-id-from-blogs-controller-use-case';
+import { SaDeletePostByIdFromUriCommand } from '../application/use-cases/sa-delete-post-by-id-use-case';
 
 export class BanBlogInputModelType {
   @IsBoolean()
@@ -155,7 +156,7 @@ export class SaBlogsController {
 
   @Put(':blogId/posts/:postId')
   @HttpCode(204)
-  async updatePost(@Req() request, // TODO: fix status 500... need check
+  async updatePost(// TODO: fix status 500... need check
   @Param('blogId') blogId: string, 
   @Param('postId') postId: string,
   @Body() postUpdateDto: UpdatePostByBlogsIdInputModelType){
@@ -168,13 +169,13 @@ export class SaBlogsController {
 
   @Delete(':blogId/posts/:postId') 
   @HttpCode(204)
-  async deletePost(@Req() request, // TODO: fix status 500
+  async deletePost(// TODO: fix status 500... need check
   @Param('blogId') blogId: string,
   @Param('postId') postId: string,){
     if(!await this.checkService.isBlogExist(blogId)){
       throw new CustomNotFoundException('blog')
     }
-    const result: BlogActionResult = await this.commandBus.execute(new DeletePostByIdFromUriCommand(request.user.userId, blogId, postId))
+    const result: BlogActionResult = await this.commandBus.execute(new SaDeletePostByIdFromUriCommand(blogId, postId))
     handleBlogOperationResult(result)
   }
 }

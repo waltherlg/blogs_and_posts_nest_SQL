@@ -96,6 +96,7 @@ import { SaUpdatePostByIdUseCase } from './posts/use-cases/sa-upadate-post-by-id
 import { SaUpdateBlogByIdFromUriUseCase } from './blogs/application/use-cases/sa-upadate-blog-using-id-from-uri-use-case';
 import { SaDeleteBlogByIdFromUriUseCase } from './blogs/application/use-cases/sa-delete-blog-by-id-use-case';
 import { SaUpdatePostByIdFromBloggerControllerUseCase } from './blogs/application/use-cases/sa-upadate-post-by-id-from-blogs-controller-use-case';
+import { SaDeletePostByIdFromUriUseCase } from './blogs/application/use-cases/sa-delete-post-by-id-use-case';
 const mongoUri = process.env.MONGO_URL;
 const emailUser = process.env.MAIL_USER;
 const emailPassword = process.env.MAIL_PASSWORD;
@@ -113,6 +114,7 @@ SaUpdatePostByIdUseCase,
 SaUpdateBlogByIdFromUriUseCase,
 DeleteBlogByIdFromUriUseCase,
 SaDeleteBlogByIdFromUriUseCase,
+SaDeletePostByIdFromUriUseCase,
 DeletePostByIdFromUriUseCase,
 CreateCommentForSpecificPostUseCase,
 UserBanStatusChangeUseCase,

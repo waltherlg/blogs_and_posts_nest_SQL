@@ -4,7 +4,6 @@ dotenv.config();
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BlogsController } from './blogs/api/public.blogs.controller';
-import { MongooseModule } from '@nestjs/mongoose';
 import { Blog, BlogSchema } from './blogs/blogs.types';
 import { BlogsService } from './blogs/domain/blogs.service';
 import { BlogsRepository } from './blogs/infrostracture/blogs.repository';
@@ -161,29 +160,6 @@ SetLikeStatusForCommentUseCase,]
       },
     }),
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(mongoUri, { dbName: 'blogsAndPosts' }),
-    MongooseModule.forFeature([
-      {
-        name: Blog.name,
-        schema: BlogSchema,
-      },
-      {
-        name: Post.name,
-        schema: PostSchema,
-      },
-      {
-        name: User.name,
-        schema: UserSchema,
-      },
-      {
-        name: UsersDevice.name,
-        schema: UsersDeviceSchema,
-      },
-      {
-        name: Comment.name,
-        schema: CommentSchema,
-      },
-    ]),
   ],
   controllers: [
     AppController,

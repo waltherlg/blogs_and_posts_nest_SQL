@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CommentsRepository } from './comments.repository';
 import { UsersRepository } from '../users/users.repository';
-import { Types } from 'mongoose';
-import { CommentDBType } from './comments.types';
 
 @Injectable()
 export class CommentsService {

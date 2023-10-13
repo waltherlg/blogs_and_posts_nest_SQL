@@ -53,10 +53,6 @@ export const DEFAULT_USERS_QUERY_PARAMS: RequestUsersQueryModel = {
   banStatus: 'all'
 };
 
-
-
-
-
 export type PaginationOutputModel<T> = {
   pagesCount: number;
   page: number;

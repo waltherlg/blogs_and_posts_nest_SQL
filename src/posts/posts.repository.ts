@@ -1,20 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { HydratedDocument, Model, Types } from 'mongoose';
-import { Post, PostDBType, PostDocument } from './posts.types';
+import { PostDBType } from './posts.types';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { validate as isValidUUID } from 'uuid';
 
 @Injectable()
 export class PostsRepository {
-  constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>,
+  constructor(
   @InjectDataSource() protected dataSource: DataSource) {}
-
-  async savePost(post: PostDocument) {
-    const result = await post.save();
-    return !!result;
-  }
 
   async createPost(postDTO: PostDBType): Promise<string> {
     const query = `
@@ -62,7 +55,7 @@ export class PostsRepository {
     return result[1] > 0;
   }
 
-  async getPostDBTypeById(postId): Promise<PostDocument | null> {
+  async getPostDBTypeById(postId): Promise<PostDBType | null> {
     if (!isValidUUID(postId)) {
       return null;
     }
@@ -88,21 +81,6 @@ export class PostsRepository {
     return count === 1
   }
 
- async getAllPostsByUserId(userId): Promise<Array<PostDBType>>{
-  return await this.postModel.find({userId: userId})
- }
-
-
- async setBanStatusForPosts(userId: string, isBanned: boolean): Promise<boolean>{
-  const banPostsResult = await this.postModel.updateMany({userId: userId}, {$set: {isBanned: isBanned}})
-  const banLikesPostResult = await this.postModel.updateMany(
-    { "likesCollection.userId": userId },
-    { $set: { "likesCollection.$[elem].isBanned": isBanned } },
-    { arrayFilters: [{ "elem.userId": userId }] }
-  );
-  return !!banLikesPostResult
- }
-
  async isPostExist(postId: string): Promise<boolean> {
   if (!isValidUUID(postId)) {
     return false;
@@ -115,9 +93,5 @@ export class PostsRepository {
   const result = await this.dataSource.query(query, [postId]);
   const count = result[0].count;
   return count > 0;
-  }
-
-  async deleteAllPosts() {
-    await this.postModel.deleteMany({});
   }
 }

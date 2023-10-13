@@ -1,17 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { NewCreatedUserTypeOutput, User, UserDBType, UserDocument, UserTypeOutput } from './users.types';
-import { HydratedDocument, Model, Types } from 'mongoose';
+import { NewCreatedUserTypeOutput, UserTypeOutput } from './users.types';
 import { PaginationOutputModel, RequestBannedUsersQueryModel } from '../models/types';
-import { BlogDocument, Blog } from 'src/blogs/blogs.types';
-import { PipelineStage } from 'mongoose';
 import { DataSource } from 'typeorm';
 import { validate as isValidUUID } from 'uuid';
 
 @Injectable()
 export class UsersQueryRepository {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>,
-  @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
+  constructor(
   private dataSource: DataSource) {}
 
   async getCurrentUserInfo(userId: string) {

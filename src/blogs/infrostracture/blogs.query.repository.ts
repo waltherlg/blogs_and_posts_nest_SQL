@@ -1,16 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Blog, BlogDBType, BlogDocument, BlogTypeOutput, blogSaTypeOutput } from '../blogs.types';
-import { HydratedDocument, Model, Types } from 'mongoose';
-import { PaginationOutputModel, RequestBannedUsersQueryModel } from '../../models/types';
+import { BlogTypeOutput, blogSaTypeOutput } from '../blogs.types';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { validate as isValidUUID } from 'uuid';
 
 @Injectable()
 export class BlogsQueryRepository {
-  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>, 
-  @InjectDataSource() protected dataSource: DataSource) {}
+  constructor(@InjectDataSource() protected dataSource: DataSource) {}
 
   async getBlogById(blogId): Promise<BlogTypeOutput | null> {
     if (!isValidUUID(blogId)) {
@@ -221,13 +217,5 @@ export class BlogsQueryRepository {
       items: blogs
     };
     return outputBlogs;
-  }
-  
-  private sortByDesc(sortDirection: string) {
-    return sortDirection === 'desc' ? -1 : 1;
-  }
-  
-  private skipPage(pageNumber: string, pageSize: string): number {
-    return (+pageNumber - 1) * +pageSize;
   }
 }

@@ -1,24 +1,14 @@
-import { Query } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { User, UserDBType, UserDocument } from './users.types';
+import { UserDBType } from './users.types';
 import { PasswordRecoveryModel } from '../auth/auth.types';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { log } from 'console';
-import { newPasswordSetInput } from 'src/auth/auth.controller';
 import { validate as isValidUUID } from 'uuid';
 
 @Injectable()
 export class UsersRepository {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>, 
+  constructor(
   @InjectDataSource() protected dataSource: DataSource) {}
-
-  async saveUser(user: UserDocument): Promise<boolean> {
-    const result = await user.save();
-    return !!result;
-  }
 
   async createUser(userDTO): Promise<string> {
     const query = `INSERT INTO public."Users"(
@@ -157,67 +147,6 @@ export class UsersRepository {
   } catch (error) {
     return false;
   }
-  }
-
-  async createCommentsLikeObject(
-    userId: string,
-    commentsId: string,
-    createdAt: Date,
-    status: string,
-  ): Promise<boolean> {
-    if (!Types.ObjectId.isValid(userId)) {
-      return false;
-    }
-    const _id = new Types.ObjectId(userId);
-    const user = await this.userModel.findOne({ _id: _id });
-    if (!user) {
-      return false;
-    }
-    const newLikedComment = { commentsId, createdAt, status };
-    user.likedComments.push(newLikedComment);
-    const result = await user.save();
-    return !!result;
-  }
-
-  async isUserAlreadyLikeComment(
-    userId: string,
-    commentsId: string,
-  ): Promise<boolean> {
-    if (!Types.ObjectId.isValid(userId)) {
-      return false;
-    }
-    const _id = new Types.ObjectId(userId);
-    const isExist = await this.userModel.findOne({
-      _id: _id,
-      likedComments: { $elemMatch: { commentsId: commentsId } },
-    });
-    return !!isExist;
-  }
-
-  async updateCommentsLikeObject(
-    userId: string,
-    commentsId: string,
-    status: string,
-  ) {
-    if (!Types.ObjectId.isValid(userId)) {
-      return false;
-    }
-    const _id = new Types.ObjectId(userId);
-    const updateStatus = await this.userModel.findOneAndUpdate(
-      { _id: _id, 'likedComments.commentsId': commentsId },
-      { $set: { 'likedComments.$.status': status } },
-    );
-    return true;
-  }
-
-  async getUsersLikedComments(userId: string) {
-    if (!Types.ObjectId.isValid(userId)) {
-      return null;
-    }
-    const _id = new Types.ObjectId(userId);
-    const user = await this.userModel.findOne({ _id: _id });
-    if (!user) return null;
-    return user.likedComments;
   }
 
   async confirmUser(confirmationCode: string): Promise<boolean>{

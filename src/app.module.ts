@@ -4,23 +4,19 @@ dotenv.config();
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BlogsController } from './blogs/api/public.blogs.controller';
-import { Blog, BlogSchema } from './blogs/blogs.types';
 import { BlogsService } from './blogs/domain/blogs.service';
 import { BlogsRepository } from './blogs/infrostracture/blogs.repository';
 import { BlogsQueryRepository } from './blogs/infrostracture/blogs.query.repository';
 import { CheckService } from './other.services/check.service';
 import { PostsRepository } from './posts/posts.repository';
-import { Post, PostSchema } from './posts/posts.types';
 import { PostsQueryRepository } from './posts/posts.query.repository';
 import { PostController } from './posts/api/public.posts.controller';
 import { TestingService } from './all.data/test.service';
-import { PostsService } from './posts/posts.service';
 import { TestingController } from './all.data/testing.controller';
 import { UsersService } from './users/users.service';
 import { BcryptService } from './other.services/bcrypt.service';
 import { UsersRepository } from './users/users.repository';
 import { UsersController } from './users/sa.users.controller';
-import { User, UserSchema } from './users/users.types';
 import { UsersQueryRepository } from './users/users.query.repository';
 import { AuthService } from './auth/auth.service';
 import { DTOFactory } from './helpers/DTO.factory';
@@ -33,16 +29,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from './auth/strategies/local.strategy';
 import { settings } from './settings';
 import { UsersDevicesRepository } from './usersDevices/user.devices.repository';
-import {
-  UsersDevice,
-  UsersDeviceSchema,
-} from './usersDevices/users-devices.types';
 import { JwtStrategy } from './auth/strategies/jwt.strategy';
 import { RefreshTokenStrategy } from './auth/strategies/refreshToken.strategy';
 import { UsersDeviceService } from './usersDevices/users-devices.service';
 import { SecurityController } from './usersDevices/security.controller';
 import { AnonymousStrategy } from './auth/strategies/anonymus.strategy';
-import { Comment, CommentSchema } from './comments/comments.types';
 import { CommentsRepository } from './comments/comments.repository';
 import { CommentsQueryRepository } from './comments/comments.query.repository';
 import { CommentsService } from './comments/comments.service';
@@ -177,7 +168,6 @@ SetLikeStatusForCommentUseCase,]
   providers: [
     AppService,
     BlogsService,
-    PostsService,
     UsersService,
     UsersDeviceService,
     BcryptService,

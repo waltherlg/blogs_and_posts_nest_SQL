@@ -1,13 +1,11 @@
 import {
   Controller,
   Get,
-  HttpCode,
   Param,
   Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { BlogsService } from '../domain/blogs.service';
 import { BlogsRepository } from '../infrostracture/blogs.repository';
 import { BlogsQueryRepository } from '../infrostracture/blogs.query.repository';
 import {
@@ -18,7 +16,6 @@ import {
 } from '../../models/types';
 import { MaxLength } from 'class-validator';
 import { CheckService } from '../../other.services/check.service';
-import { PostsService } from '../../posts/posts.service';
 import { PostsQueryRepository } from '../../posts/posts.query.repository';
 
 import {
@@ -28,7 +25,6 @@ import {
 import { IsCustomUrl, StringTrimNotEmpty } from '../../middlewares/validators';
 import { OptionalJwtAuthGuard } from '../../auth/guards/optional-jwt-auth.guard';
 import { UpdateBlogByIdFromUriUseCase } from '../application/use-cases/blogger-upadate-blog-using-id-from-uri-use-case';
-import { CommandBus } from '@nestjs/cqrs';
 
 export class CreateBlogInputModelType {
   @StringTrimNotEmpty()
@@ -68,15 +64,9 @@ export class CreatePostByBlogsIdInputModelType {
 @Controller('blogs')
 export class BlogsController {
   constructor(
-    private commandBus: CommandBus,
-    private readonly blogsService: BlogsService,
-    private readonly postsService: PostsService,
     private readonly checkService: CheckService,
-    private readonly blogsRepository: BlogsRepository,
     private readonly blogsQueryRepository: BlogsQueryRepository,
     private readonly postsQueryRepository: PostsQueryRepository,
-    //private createBlogUseCase: CreateBlogUseCase,
-    private updateBlogByIdFromUriUseCase: UpdateBlogByIdFromUriUseCase,
   ) {}
   @Get()
   async getAllBlogs(@Query() queryParams: RequestBlogsQueryModel) {

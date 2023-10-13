@@ -1,5 +1,3 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument, Types } from 'mongoose';
 
 export class BlogDBType {
   constructor(
@@ -51,67 +49,4 @@ type blogBanInfoType = {
   banDate: string,
 }
 
-export type BlogDocument = HydratedDocument<Blog>;
 
-
-@Schema()
-export class Blog {
-  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId })
-  _id: Types.ObjectId;
-  @Prop()
-  name: string;
-  @Prop()
-  isBlogBanned: boolean;
-  @Prop()
-  blogBanDate: string | null;
-  @Prop()
-  userId: string | null;
-  @Prop()
-  userName: string | null;
-  @Prop()
-  description: string;
-  @Prop()
-  websiteUrl: string;
-  @Prop()
-  createdAt: string;
-  @Prop()
-  isMembership: boolean;
-  @Prop()
-  bannedUsers: Array<BannedBlogUsersType>;
-  prepareBlogForOutput() {
-    return {
-      id: this._id.toString(),
-      name: this.name,
-      description: this.description,
-      websiteUrl: this.websiteUrl,
-      createdAt: this.createdAt,
-      isMembership: this.isMembership,
-    };
-    
-}
-prepareBlogForSaOutput() {
-  return {
-    id: this._id.toString(),
-    name: this.name,
-    description: this.description,
-    websiteUrl: this.websiteUrl,
-    createdAt: this.createdAt,
-    isMembership: this.isMembership,
-    blogOwnerInfo: {
-      userId: this.userId,
-      userLogin: this.userName,
-    },
-    banInfo: {
-      isBanned: this.isBlogBanned,
-      banDate: this.blogBanDate,
-    }
-  };
-  
-}
-}
-
-export const BlogSchema = SchemaFactory.createForClass(Blog);
-BlogSchema.methods = {
-  prepareBlogForOutput: Blog.prototype.prepareBlogForOutput,
-  prepareBlogForSaOutput: Blog.prototype.prepareBlogForSaOutput,
-};

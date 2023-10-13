@@ -1,18 +1,8 @@
-import { Injectable } from '@nestjs/common';
-
 import { BlogsRepository } from '../../infrostracture/blogs.repository';
-import {
-  UpdateBlogInputModelType,
-} from '../../api/public.blogs.controller';
 import { CommandHandler } from '@nestjs/cqrs/dist/decorators';
 import { ICommandHandler } from '@nestjs/cqrs/dist/interfaces';
 import { BlogActionResult } from '../../helpers/blogs.enum.action.result';
-import { BanUserForBlogInputModelType } from 'src/blogs/api/blogger.blogs.controller';
-import { BannedBlogUsersType, Blog } from 'src/blogs/blogs.types';
-import { th } from 'date-fns/locale';
-import { UsersRepository } from 'src/users/users.repository';
 import { BanBlogInputModelType } from 'src/blogs/api/sa.blogs.controller';
-import { PostsRepository } from 'src/posts/posts.repository';
 
 export class SaBanBlogCommand {
   constructor(public blogId: string, public banBlogDto: BanBlogInputModelType){}

@@ -13,11 +13,8 @@ import {
 } from '@nestjs/common';
 import {
   IsEmail,
-  IsString,
   Length,
   Matches,
-  IsNotEmpty,
-  MaxLength,
   IsBoolean,
 } from 'class-validator';
 import { UsersQueryRepository } from './users.query.repository';

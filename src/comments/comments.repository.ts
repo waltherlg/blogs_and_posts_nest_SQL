@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { CommentDocument, Comment, CommentDBType } from './comments.types';
+import { CommentDBType } from './comments.types';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { validate as isValidUUID } from 'uuid';
@@ -9,7 +7,6 @@ import { validate as isValidUUID } from 'uuid';
 @Injectable()
 export class CommentsRepository {
   constructor(
-    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
     @InjectDataSource() protected dataSource: DataSource
   ) {}
 

@@ -1,5 +1,4 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { log } from "console";
 import { BlogActionResult } from "src/blogs/helpers/blogs.enum.action.result";
 import { PostsRepository } from "src/posts/posts.repository";
 

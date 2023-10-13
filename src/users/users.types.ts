@@ -1,5 +1,3 @@
-import mongoose, { HydratedDocument, Types } from 'mongoose';
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 export type CommentsLikeType = {
   commentsId: string;
@@ -48,58 +46,6 @@ export type NewCreatedUserTypeOutput = {
   login: string;
   email: string;
   createdAt: string;
-};
-
-export type UserDocument = HydratedDocument<User>;
-@Schema()
-export class User {
-  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId })
-  _id: Types.ObjectId;
-  @Prop()
-  login: string;
-  @Prop()
-  passwordHash: string;
-  @Prop()
-  email: string;
-  @Prop()
-  createdAt: string;
-  @Prop()
-  isBanned: boolean;
-  @Prop()
-  banDate: string | null;
-  @Prop()
-  banReason: string | null;
-  @Prop()
-  confirmationCode: string | null;
-  @Prop()
-  expirationDateOfConfirmationCode: Date | null;
-  @Prop()
-  isConfirmed: boolean;
-  @Prop()
-  passwordRecoveryCode: string | null;
-  @Prop()
-  expirationDateOfRecoveryCode: Date | null;
-  @Prop()
-  likedComments: Array<CommentsLikeType>;
-  @Prop()
-  likedPosts: Array<PostsLikeType>;
-  prepareUserForOutput() {
-    return {
-      id: this._id.toString(),
-      login: this.login,
-      email: this.email,
-      createdAt: this.createdAt,
-      banInfo: {
-        isBanned: this.isBanned,
-        banDate: this.banDate,
-        banReason: this.banReason,
-      }
-    };
-  }
-}
-export const UserSchema = SchemaFactory.createForClass(User);
-UserSchema.methods = {
-  prepareUserForOutput: User.prototype.prepareUserForOutput,
 };
 
 export type PasswordRecoveryModel = {

@@ -1,8 +1,5 @@
-import { Injectable } from '@nestjs/common';
 import { BlogDBType } from '../../blogs.types';
-
 import { BlogsRepository } from '../../infrostracture/blogs.repository';
-import { Types } from 'mongoose';
 import {
   CreateBlogInputModelType,
 } from '../../api/public.blogs.controller';

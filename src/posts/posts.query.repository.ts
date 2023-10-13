@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { HydratedDocument, Model, Types } from 'mongoose';
 import { PaginationOutputModel } from '../models/types';
-import { PostDocument, PostTypeOutput, Post } from './posts.types';
-import { BlogDocument, Blog } from 'src/blogs/blogs.types';
+import { PostTypeOutput } from './posts.types';
 import { validate as isValidUUID } from 'uuid';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
@@ -11,8 +8,7 @@ import { PostLikeDbType } from 'src/likes/db.likes.types';
 
 @Injectable()
 export class PostsQueryRepository {
-  constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>,
-  @InjectModel(Blog.name) private blogModel: Model<BlogDocument>, 
+  constructor(
   @InjectDataSource() protected dataSource: DataSource) {}
 
   async getPostById(postId, userId?): Promise<PostTypeOutput | null> {

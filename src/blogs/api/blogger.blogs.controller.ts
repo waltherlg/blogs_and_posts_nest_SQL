@@ -11,31 +11,20 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { AppService } from '../../app.service';
-import { BlogsService } from '../domain/blogs.service';
-import { BlogsRepository } from '../infrostracture/blogs.repository';
 import { BlogsQueryRepository } from '../infrostracture/blogs.query.repository';
 import {
   DEFAULT_BLOGS_QUERY_PARAMS,
-  RequestQueryParamsModel,
   RequestBlogsQueryModel,
-  DEFAULT_QUERY_PARAMS,
 } from '../../models/types';
 import { IsBoolean, MaxLength, MinLength } from 'class-validator';
 import { CheckService } from '../../other.services/check.service';
-import { PostsService } from '../../posts/posts.service';
 import { PostsQueryRepository } from '../../posts/posts.query.repository';
 
 import {
-  BlogNotFoundException,
   CustomNotFoundException,
-  CustomisableException,
   UnableException,
 } from '../../exceptions/custom.exceptions';
-import { BasicAuthGuard } from '../../auth/guards/auth.guards';
 import { IsCustomUrl, StringTrimNotEmpty } from '../../middlewares/validators';
-import { OptionalJwtAuthGuard } from '../../auth/guards/optional-jwt-auth.guard';
-import { request } from 'express';
 import { CreateBlogCommand, CreateBlogUseCase } from '../application/use-cases/blogger-create-blog-use-case';
 import { UpdateBlogByIdFromUriCommand, UpdateBlogByIdFromUriUseCase } from '../application/use-cases/blogger-upadate-blog-using-id-from-uri-use-case';
 import { CommandBus } from '@nestjs/cqrs';
@@ -45,8 +34,6 @@ import { UpdatePostByIdFromBloggerControllerCommand } from '../application/use-c
 import { DeleteBlogByIdFromUriCommand } from '../application/use-cases/blogger-delete-blog-by-id-use-case';
 import { CreatePostFromBloggerControllerCommand } from '../application/use-cases/blogger-create-post-from-blogs-controller-use-case';
 import { DeletePostByIdFromUriCommand } from '../application/use-cases/blogger-delete-post-by-id-use-case';
-import { BanUserForSpecificBlogCommand } from '../application/use-cases/blogger-ban-user-for-blog-use-case';
-import { CommentsRepository } from 'src/comments/comments.repository';
 import { CommentsQueryRepository } from 'src/comments/comments.query.repository';
 
 export class CreateBlogInputModelType {
@@ -200,11 +187,11 @@ export class BloggerBlogsController {
     handleBlogOperationResult(result)
   }
 
-  @Get('/comments')
-  @HttpCode(200)
-  async getAllCommentsForBlogger(@Req() request, @Query() queryParams: RequestQueryParamsModel){
-    const mergedQueryParams = { ...DEFAULT_QUERY_PARAMS, ...queryParams };
+  // @Get('/comments') it for mongoose
+  // @HttpCode(200)
+  // async getAllCommentsForBlogger(@Req() request, @Query() queryParams: RequestQueryParamsModel){
+  //   const mergedQueryParams = { ...DEFAULT_QUERY_PARAMS, ...queryParams };
 
-    return await this.commentsQueryRepository.getAllCommentsForBlogger(mergedQueryParams, request.user.userId);
-  }
+  //   return await this.commentsQueryRepository.getAllCommentsForBlogger(mergedQueryParams, request.user.userId);
+  // }
 }

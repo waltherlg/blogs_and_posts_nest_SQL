@@ -4,7 +4,6 @@ import { BlogsRepository } from "src/blogs/infrostracture/blogs.repository";
 import { PostsRepository } from "../posts.repository";
 import { UsersRepository } from "src/users/users.repository";
 import { CommentDBType } from "src/comments/comments.types";
-import { Types } from "mongoose";
 import { CommentsRepository } from "src/comments/comments.repository";
 import { PostActionResult } from "../helpers/post.enum.action.result";
 import { v4 as uuidv4 } from 'uuid';

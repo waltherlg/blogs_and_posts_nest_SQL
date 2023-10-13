@@ -1,8 +1,6 @@
 import { UserDBType } from '../users/users.types';
-import { Types } from 'mongoose';
 import { BcryptService } from '../other.services/bcrypt.service';
 import { Injectable } from '@nestjs/common';
-import { UserDeviceDBType } from '../usersDevices/users-devices.types';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()

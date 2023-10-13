@@ -8,7 +8,7 @@ import { CommandHandler } from '@nestjs/cqrs/dist/decorators';
 import { ICommandHandler } from '@nestjs/cqrs/dist/interfaces';
 import { BlogActionResult } from '../../helpers/blogs.enum.action.result';
 import { BanUserForBlogInputModelType } from 'src/blogs/api/blogger.blogs.controller';
-import { BannedBlogUsersType, Blog } from 'src/blogs/blogs.types';
+import { BannedBlogUsersType } from 'src/blogs/blogs.types';
 import { th } from 'date-fns/locale';
 import { UsersRepository } from 'src/users/users.repository';
 import { CheckService } from 'src/other.services/check.service';

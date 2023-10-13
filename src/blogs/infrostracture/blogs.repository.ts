@@ -1,21 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { BannedBlogUsersType, Blog, BlogDBType, BlogDocument, BlogTypeOutput } from '../blogs.types';
-import { HydratedDocument, Model, Types } from 'mongoose';
-import { log } from 'console';
+import { BannedBlogUsersType, BlogDBType, BlogTypeOutput } from '../blogs.types';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { validate as isValidUUID } from 'uuid';
 
 @Injectable()
 export class BlogsRepository {
-  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
-  @InjectDataSource() protected dataSource: DataSource) {}
-
-  async saveBlog(blog: HydratedDocument<BlogDBType>) {
-    const result = await blog.save();
-    return !!result;
-  }
+  constructor(@InjectDataSource() protected dataSource: DataSource) {}
 
   async deleteBlogById(blogId: string): Promise<boolean> {
     if (!isValidUUID(blogId)) {
@@ -212,9 +203,5 @@ export class BlogsRepository {
     `
     const result = await this.dataSource.query(query,[blogId, userId]);
     return result[1] > 0;
-  }
-
-  async deleteAllBlogs() {
-    await this.blogModel.deleteMany({});
   }
 }

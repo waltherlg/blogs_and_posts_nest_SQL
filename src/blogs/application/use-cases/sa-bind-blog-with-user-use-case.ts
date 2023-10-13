@@ -1,11 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { BlogDBType } from '../../blogs.types';
-
 import { BlogsRepository } from '../../infrostracture/blogs.repository';
-import { Types } from 'mongoose';
-import {
-  CreateBlogInputModelType,
-} from '../../api/public.blogs.controller';
 import { CommandHandler } from '@nestjs/cqrs/dist';
 import { ICommandHandler } from '@nestjs/cqrs/dist/interfaces';
 import { BlogActionResult } from '../../helpers/blogs.enum.action.result';

@@ -1,26 +1,20 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
-  NotFoundException,
   Param,
   Post,
   Put,
   Query,
   Req,
   UseGuards,
-  ValidationPipe,
 } from '@nestjs/common';
-import { AppService } from '../../app.service';
+
 import { RequestQueryParamsModel, DEFAULT_QUERY_PARAMS } from '../../models/types';
 import {
   Length,
-  IsString,
-  IsUrl,
   Validate,
-  IsNotEmpty,
   MaxLength,
 } from 'class-validator';
 import { CheckService } from '../../other.services/check.service';

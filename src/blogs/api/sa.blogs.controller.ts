@@ -75,7 +75,7 @@ export class SaBlogsController {
   }
 
   @Get()
-  async getAllBlogs(@Query() queryParams: RequestBlogsQueryModel) { // TODO: check why getting empty array
+  async getAllBlogs(@Query() queryParams: RequestBlogsQueryModel) { // TODO: check why getting empty array... need check
     const mergedQueryParams = { ...DEFAULT_BLOGS_QUERY_PARAMS, ...queryParams };
     return await this.blogsQueryRepository.getAllBlogs(mergedQueryParams);
   }

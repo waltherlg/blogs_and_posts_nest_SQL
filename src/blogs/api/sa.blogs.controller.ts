@@ -38,6 +38,9 @@ import { UpdatePostByIdFromBloggerControllerCommand } from '../application/use-c
 import { DeletePostByIdFromUriCommand } from '../application/use-cases/blogger-delete-post-by-id-use-case';
 import { SaCreateBlogCommand } from '../application/use-cases/sa-create-blog-use-case copy';
 import { SaCreatePostFromBloggerControllerCommand } from '../application/use-cases/sa-create-post-from-blogs-controller-use-case copy';
+import { SaUpdateBlogByIdFromUriCommand } from '../application/use-cases/sa-upadate-blog-using-id-from-uri-use-case';
+import { SaDeleteBlogByIdFromUriCommand } from '../application/use-cases/sa-delete-blog-by-id-use-case';
+import { SaUpdatePostByIdFromBloggerControllerCommand } from '../application/use-cases/sa-upadate-post-by-id-from-blogs-controller-use-case';
 
 export class BanBlogInputModelType {
   @IsBoolean()
@@ -103,9 +106,8 @@ export class SaBlogsController {
     @Param('id') blogId: string,
     @Body() blogUpdateInputModel: UpdateBlogInputModelType,
   ) {  
-    const result: BlogActionResult = await this.commandBus.execute(new UpdateBlogByIdFromUriCommand(
+    const result: BlogActionResult = await this.commandBus.execute(new SaUpdateBlogByIdFromUriCommand(
       blogId,
-      request.user.userId,
       blogUpdateInputModel,
     ));
     handleBlogOperationResult(result)
@@ -114,7 +116,7 @@ export class SaBlogsController {
   @Delete(':id')
   @HttpCode(204)
   async deleteBlogById(@Req() request, @Param('id') blogId: string) { // TODO: fix status 500 if all is ok, and why 500 if nit found... need check
-    const result = await this.commandBus.execute(new DeleteBlogByIdFromUriCommand(blogId, request.user.userId));
+    const result = await this.commandBus.execute(new SaDeleteBlogByIdFromUriCommand(blogId));
     handleBlogOperationResult(result)
   }
 
@@ -153,14 +155,14 @@ export class SaBlogsController {
 
   @Put(':blogId/posts/:postId')
   @HttpCode(204)
-  async updatePost(@Req() request, // TODO: fix status 500
+  async updatePost(@Req() request, // TODO: fix status 500... need check
   @Param('blogId') blogId: string, 
   @Param('postId') postId: string,
   @Body() postUpdateDto: UpdatePostByBlogsIdInputModelType){
     if(!await this.checkService.isBlogExist(blogId)){
       throw new CustomNotFoundException('blog')
     }
-    const result: BlogActionResult = await this.commandBus.execute(new UpdatePostByIdFromBloggerControllerCommand(request.user.userId, blogId, postId, postUpdateDto))
+    const result: BlogActionResult = await this.commandBus.execute(new SaUpdatePostByIdFromBloggerControllerCommand(blogId, postId, postUpdateDto))
     handleBlogOperationResult(result)
   }
 

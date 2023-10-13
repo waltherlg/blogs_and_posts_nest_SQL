@@ -124,7 +124,7 @@ export class CommentsControllers {
   @UseGuards(JwtAuthGuard)
   @Put(':id/like-status')
   @HttpCode(204)
-  async setLikeStatusForComment( // TODO: if :id from uri param not found need status 404, not 400
+  async setLikeStatusForComment( // TODO: if :id from uri param not found need status 404, not 400... need check
     @Req() request,
     @Param('id') commentId: string,
     @Body(new ValidationPipe({ transform: true }))

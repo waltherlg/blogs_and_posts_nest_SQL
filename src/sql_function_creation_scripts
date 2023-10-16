@@ -1,0 +1,245 @@
+
+here are the FUNCTION creation scripts for the correct operation of the API
+
+// при создании лайка к комментарию, логин будет вызван из таблицы пользователей с соответсвующим айди
+// when creating a like to a comment, the login will be called from the user table with the corresponding ID
+-- FUNCTION: public.fill_commentlikes_login()
+-- DROP FUNCTION IF EXISTS public.fill_commentlikes_login();
+CREATE OR REPLACE FUNCTION public.fill_commentlikes_login()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+BEGIN
+    INSERT INTO "CommentLikes" ("userId", "login")
+    VALUES (NEW."userId", NEW."login");
+    RETURN NEW;
+END;
+$BODY$;
+ALTER FUNCTION public.fill_commentlikes_login()
+    OWNER TO postgres;
+-------------------------------------------------------------
+
+// При создании лйка к посту логин будет вызван из таблицы пользователей с соответсвующим айди
+// // when creating a like to a зщые, the login will be called from the user table with the corresponding ID
+-- FUNCTION: public.fill_postlikes_login()
+-- DROP FUNCTION IF EXISTS public.fill_postlikes_login();
+CREATE OR REPLACE FUNCTION public.fill_postlikes_login()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+BEGIN
+    INSERT INTO "PostLikes" ("userId", "login")
+    VALUES (NEW."userId", NEW."login");
+    RETURN NEW;
+END;
+$BODY$;
+ALTER FUNCTION public.fill_postlikes_login()
+    OWNER TO postgres;
+
+    --------------
+
+//подсчет количества лайков к комменту
+//counting the number of likes to a comment
+-- FUNCTION: public.update_comment_likes_count()
+-- DROP FUNCTION IF EXISTS public.update_comment_likes_count();
+CREATE OR REPLACE FUNCTION public.update_comment_likes_count()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+DECLARE
+    new_likes_count INTEGER;
+BEGIN
+    SELECT COUNT(*) INTO new_likes_count
+    FROM "CommentLikes"
+    WHERE "commentId" = NEW."commentId" AND status = 'Like' AND "isUserBanned" = false;
+
+    UPDATE "Comments"
+    SET "likesCount" = new_likes_count
+    WHERE "commentId" = NEW."commentId";
+
+    RETURN NEW;
+END;
+$BODY$;
+ALTER FUNCTION public.update_comment_likes_count()
+    OWNER TO postgres;
+
+    ---------------------
+
+//подсчет количества дизлайков к комменту
+//counting the number of dislikes to a comment
+-- FUNCTION: public.update_comment_dislikes_count()
+-- DROP FUNCTION IF EXISTS public.update_comment_dislikes_count();
+CREATE OR REPLACE FUNCTION public.update_comment_dislikes_count()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+DECLARE
+    new_dislikes_count INTEGER;
+BEGIN
+    SELECT COUNT(*) INTO new_dislikes_count
+    FROM "CommentLikes"
+    WHERE "commentId" = NEW."commentId" AND status = 'Dislike';
+
+    UPDATE "Comments"
+    SET "dislikesCount" = new_dislikes_count
+    WHERE "commentId" = NEW."commentId";
+
+    RETURN NEW;
+END;
+$BODY$;
+ALTER FUNCTION public.update_comment_dislikes_count()
+    OWNER TO postgres;
+
+--------------------------------        
+
+
+--// в случае бана пользователя в "Users", бан включается и в объекте лайка комментария
+--// if a user is banned in "Users", the ban is also included in the comment's like object
+-- FUNCTION: public.update_commentlikes_is_user_banned()
+-- DROP FUNCTION IF EXISTS public.update_commentlikes_is_user_banned();
+CREATE OR REPLACE FUNCTION public.update_commentlikes_is_user_banned()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+BEGIN
+    UPDATE "CommentLikes"
+    SET "isUserBanned" = NEW."isUserBanned"
+    WHERE "userId" = NEW."userId";
+    RETURN NEW;
+END;
+$BODY$;
+ALTER FUNCTION public.update_commentlikes_is_user_banned()
+    OWNER TO postgres;    
+
+    ---------------------
+
+// в случае изменения логина в "Users" логин сменится и в объекте лайка
+// if the login in "Users" is changed, the login will also be changed in the like object
+-- FUNCTION: public.update_commentlikes_login()
+-- DROP FUNCTION IF EXISTS public.update_commentlikes_login();
+CREATE OR REPLACE FUNCTION public.update_commentlikes_login()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+BEGIN
+    UPDATE "CommentLikes"
+    SET "login" = NEW."login"
+    WHERE "userId" = NEW."userId";
+    RETURN NEW;
+END;
+$BODY$;
+ALTER FUNCTION public.update_commentlikes_login()
+    OWNER TO postgres;    
+
+    ---------------------------
+
+// в случае изменения логина в "Users" логин сменится и в объекте лайка
+// if the login in "Users" is changed, the login will also be changed in the like object
+-- FUNCTION: public.update_login_on_postlike()
+-- DROP FUNCTION IF EXISTS public.update_login_on_postlike();
+CREATE OR REPLACE FUNCTION public.update_login_on_postlike()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+BEGIN
+    UPDATE "PostLikes"
+    SET "login" = NEW."login"
+    WHERE "userId" = NEW."userId";
+    RETURN NEW;
+END;
+$BODY$;
+ALTER FUNCTION public.update_login_on_postlike()
+    OWNER TO postgres;
+
+--------------------        
+
+-- FUNCTION: public.update_post_dislikes_count()
+-- DROP FUNCTION IF EXISTS public.update_post_dislikes_count();
+CREATE OR REPLACE FUNCTION public.update_post_dislikes_count()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+DECLARE
+    new_post_dislikes_count INTEGER;
+BEGIN
+    SELECT COUNT(*) INTO new_post_dislikes_count
+    FROM "PostLikes"
+    WHERE "postId" = NEW."postId" AND status = 'Dislike' AND "isUserBanned" = false;
+
+    UPDATE "Posts"
+    SET "dislikesCount" = new_post_dislikes_count
+    WHERE "postId" = NEW."postId";
+
+    RETURN NEW;
+END;
+$BODY$;
+ALTER FUNCTION public.update_post_dislikes_count()
+    OWNER TO postgres;
+
+----------------------
+
+-- FUNCTION: public.update_post_likes_count()
+-- DROP FUNCTION IF EXISTS public.update_post_likes_count();
+CREATE OR REPLACE FUNCTION public.update_post_likes_count()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+DECLARE
+    new_post_likes_count INTEGER;
+BEGIN
+    SELECT COUNT(*) INTO new_post_likes_count
+    FROM "PostLikes"
+    WHERE "postId" = NEW."postId" AND status = 'Like' AND "isUserBanned" = false;
+
+    UPDATE "Posts"
+    SET "likesCount" = new_post_likes_count
+    WHERE "postId" = NEW."postId";
+
+    RETURN NEW;
+END;
+$BODY$;
+
+ALTER FUNCTION public.update_post_likes_count()
+    OWNER TO postgres;
+
+----------------------
+
+-- FUNCTION: public.update_postlikes_is_user_banned()
+-- DROP FUNCTION IF EXISTS public.update_postlikes_is_user_banned();
+CREATE OR REPLACE FUNCTION public.update_postlikes_is_user_banned()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+BEGIN
+    UPDATE "PostLikes"
+    SET "isUserBanned" = NEW."isUserBanned"
+    WHERE "userId" = NEW."userId";
+    RETURN NEW;
+END;
+$BODY$;
+
+ALTER FUNCTION public.update_postlikes_is_user_banned()
+    OWNER TO postgres;
+
+    -------------------------
+

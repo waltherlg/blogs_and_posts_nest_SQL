@@ -1,0 +1,325 @@
+here are scripts for creating SQL tables for the correct operation of the API
+
+--tables creation
+-- Table: public.Users
+-- DROP TABLE IF EXISTS public."Users";
+CREATE TABLE IF NOT EXISTS public."Users"
+(
+    "userId" uuid NOT NULL,
+    login character varying COLLATE pg_catalog."default" NOT NULL,
+    "passwordHash" character varying COLLATE pg_catalog."default" NOT NULL,
+    email character varying COLLATE pg_catalog."default" NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "isUserBanned" boolean NOT NULL,
+    "banDate" timestamp with time zone,
+    "banReason" character varying COLLATE pg_catalog."default",
+    "confirmationCode" character varying COLLATE pg_catalog."default",
+    "expirationDateOfConfirmationCode" timestamp with time zone,
+    "isConfirmed" boolean NOT NULL,
+    "passwordRecoveryCode" character varying COLLATE pg_catalog."default",
+    "expirationDateOfRecoveryCode" timestamp with time zone,
+    CONSTRAINT "Users_pkey" PRIMARY KEY ("userId")
+)
+TABLESPACE pg_default;
+ALTER TABLE IF EXISTS public."Users"
+    OWNER to postgres;
+GRANT ALL ON TABLE public."Users" TO nest;
+GRANT ALL ON TABLE public."Users" TO postgres;
+
+---------------------------------------------------------------
+
+-- Table: public.UserDevices
+-- DROP TABLE IF EXISTS public."UserDevices";
+CREATE TABLE IF NOT EXISTS public."UserDevices"
+(
+    "deviceId" uuid NOT NULL,
+    "userId" uuid NOT NULL,
+    ip character varying COLLATE pg_catalog."default" NOT NULL,
+    title character varying COLLATE pg_catalog."default" NOT NULL,
+    "lastActiveDate" timestamp with time zone NOT NULL,
+    "expirationDate" timestamp with time zone NOT NULL,
+    CONSTRAINT "UserDevices_pkey" PRIMARY KEY ("deviceId"),
+    CONSTRAINT "userId" FOREIGN KEY ("userId")
+        REFERENCES public."Users" ("userId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+)
+TABLESPACE pg_default;
+ALTER TABLE IF EXISTS public."UserDevices"
+    OWNER to postgres;
+GRANT ALL ON TABLE public."UserDevices" TO nest;
+GRANT ALL ON TABLE public."UserDevices" TO postgres;
+
+----------------------------------------------------------
+
+-- Table: public.Blogs
+-- DROP TABLE IF EXISTS public."Blogs";
+CREATE TABLE IF NOT EXISTS public."Blogs"
+(
+    "blogId" uuid NOT NULL,
+    name character varying COLLATE pg_catalog."default" NOT NULL,
+    "isBlogBanned" boolean NOT NULL,
+    "blogBanDate" timestamp with time zone,
+    "userId" uuid,
+    description character varying COLLATE pg_catalog."default" NOT NULL,
+    "websiteUrl" character varying COLLATE pg_catalog."default" NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "isMembership" boolean NOT NULL,
+    CONSTRAINT "Blogs_pkey" PRIMARY KEY ("blogId")
+)
+TABLESPACE pg_default;
+ALTER TABLE IF EXISTS public."Blogs"
+    OWNER to postgres;
+GRANT ALL ON TABLE public."Blogs" TO nest;
+GRANT ALL ON TABLE public."Blogs" TO postgres;
+
+-------------------------------------------------
+
+-- Table: public.BlogBannedUsers
+-- DROP TABLE IF EXISTS public."BlogBannedUsers";
+CREATE TABLE IF NOT EXISTS public."BlogBannedUsers"
+(
+    "blogId" uuid NOT NULL,
+    "bannedUserId" uuid NOT NULL,
+    "banDate" timestamp with time zone,
+    "banReason" character varying COLLATE pg_catalog."default",
+    CONSTRAINT "bannedUserId" FOREIGN KEY ("bannedUserId")
+        REFERENCES public."Users" ("userId") MATCH FULL
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "blogId" FOREIGN KEY ("blogId")
+        REFERENCES public."Blogs" ("blogId") MATCH FULL
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+)
+TABLESPACE pg_default;
+ALTER TABLE IF EXISTS public."BlogBannedUsers"
+    OWNER to postgres;
+GRANT ALL ON TABLE public."BlogBannedUsers" TO nest;
+GRANT ALL ON TABLE public."BlogBannedUsers" TO postgres;
+
+----------------------------------------------------------
+
+-- Table: public.Posts
+-- DROP TABLE IF EXISTS public."Posts";
+CREATE TABLE IF NOT EXISTS public."Posts"
+(
+    "postId" uuid NOT NULL,
+    title character varying COLLATE pg_catalog."default" NOT NULL,
+    "shortDescription" character varying COLLATE pg_catalog."default" NOT NULL,
+    content character varying COLLATE pg_catalog."default" NOT NULL,
+    "blogId" uuid NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "userId" uuid,
+    "likesCount" numeric DEFAULT 0,
+    "dislikesCount" numeric DEFAULT 0,
+    CONSTRAINT "Posts_pkey" PRIMARY KEY ("postId"),
+    CONSTRAINT "Posts_blogId_fkey" FOREIGN KEY ("blogId")
+        REFERENCES public."Blogs" ("blogId") MATCH FULL
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+)
+TABLESPACE pg_default;
+ALTER TABLE IF EXISTS public."Posts"
+    OWNER to postgres;
+GRANT ALL ON TABLE public."Posts" TO nest;
+GRANT ALL ON TABLE public."Posts" TO postgres;
+
+-------------------------------------------------------
+
+-- Table: public.Comments
+-- DROP TABLE IF EXISTS public."Comments";
+CREATE TABLE IF NOT EXISTS public."Comments"
+(
+    "commentId" uuid NOT NULL,
+    "postId" uuid NOT NULL,
+    content character varying COLLATE pg_catalog."default" NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "userId" uuid NOT NULL,
+    "likesCount" numeric DEFAULT 0,
+    "dislikesCount" numeric DEFAULT 0,
+    CONSTRAINT "Comments_pkey" PRIMARY KEY ("commentId"),
+    CONSTRAINT "Comments_postId_fkey" FOREIGN KEY ("postId")
+        REFERENCES public."Posts" ("postId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "Comments_userId_fkey" FOREIGN KEY ("userId")
+        REFERENCES public."Users" ("userId") MATCH FULL
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+TABLESPACE pg_default;
+ALTER TABLE IF EXISTS public."Comments"
+    OWNER to postgres;
+GRANT ALL ON TABLE public."Comments" TO nest;
+GRANT ALL ON TABLE public."Comments" TO postgres;
+
+---------------------------------------------------------
+
+-- Table: public.PostLikes
+-- DROP TABLE IF EXISTS public."PostLikes";
+CREATE TABLE IF NOT EXISTS public."PostLikes"
+(
+    "postId" uuid NOT NULL,
+    "addedAt" timestamp with time zone NOT NULL,
+    "userId" uuid NOT NULL,
+    login character varying COLLATE pg_catalog."default",
+    "isUserBanned" boolean NOT NULL,
+    status character varying COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "PostLikes_postId_fkey" FOREIGN KEY ("postId")
+        REFERENCES public."Posts" ("postId") MATCH FULL
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "PostLikes_userId_fkey" FOREIGN KEY ("userId")
+        REFERENCES public."Users" ("userId") MATCH FULL
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+TABLESPACE pg_default;
+ALTER TABLE IF EXISTS public."PostLikes"
+    OWNER to postgres;
+GRANT ALL ON TABLE public."PostLikes" TO nest;
+GRANT ALL ON TABLE public."PostLikes" TO postgres;
+
+--------------------------------------------------
+
+-- Table: public.CommentLikes
+-- DROP TABLE IF EXISTS public."CommentLikes";
+CREATE TABLE IF NOT EXISTS public."CommentLikes"
+(
+    "commentId" uuid NOT NULL,
+    "addedAt" timestamp with time zone NOT NULL,
+    "userId" uuid NOT NULL,
+    "isUserBanned" boolean NOT NULL,
+    status character varying COLLATE pg_catalog."default" NOT NULL,
+    login character varying COLLATE pg_catalog."default",
+    CONSTRAINT "CommentLikes_commentId_fkey" FOREIGN KEY ("commentId")
+        REFERENCES public."Comments" ("commentId") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "CommentLikes_userId_fkey" FOREIGN KEY ("userId")
+        REFERENCES public."Users" ("userId") MATCH FULL
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+TABLESPACE pg_default;
+ALTER TABLE IF EXISTS public."CommentLikes"
+    OWNER to postgres;
+GRANT ALL ON TABLE public."CommentLikes" TO nest;
+GRANT ALL ON TABLE public."CommentLikes" TO postgres;
+
+
+
+
+
+
+here are the TRIGGER creation scripts for the correct operation of the API
+
+--------------------
+-- Trigger: update_commentlikes_is_user_banned_trigger
+-- DROP TRIGGER IF EXISTS update_commentlikes_is_user_banned_trigger ON public."Users";
+CREATE OR REPLACE TRIGGER update_commentlikes_is_user_banned_trigger
+    AFTER UPDATE OF "isUserBanned"
+    ON public."Users"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_commentlikes_is_user_banned();
+-- Trigger: update_commentlikes_login_trigger
+-- DROP TRIGGER IF EXISTS update_commentlikes_login_trigger ON public."Users";
+CREATE OR REPLACE TRIGGER update_commentlikes_login_trigger
+    AFTER UPDATE OF login
+    ON public."Users"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_commentlikes_login();
+-- Trigger: update_postlikes_is_user_banned_trigger
+-- DROP TRIGGER IF EXISTS update_postlikes_is_user_banned_trigger ON public."Users";
+CREATE OR REPLACE TRIGGER update_postlikes_is_user_banned_trigger
+    AFTER UPDATE OF "isUserBanned"
+    ON public."Users"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_postlikes_is_user_banned();
+
+-- Trigger: update_postlikes_login_trigger
+
+-- DROP TRIGGER IF EXISTS update_postlikes_login_trigger ON public."Users";
+
+CREATE OR REPLACE TRIGGER update_postlikes_login_trigger
+    AFTER UPDATE OF login
+    ON public."Users"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_login_on_postlike();
+ 
+ -------------------------
+
+
+
+ -- Trigger: fill_postlikes_login_trigger
+
+-- DROP TRIGGER IF EXISTS fill_postlikes_login_trigger ON public."PostLikes";
+
+CREATE OR REPLACE TRIGGER fill_postlikes_login_trigger
+    BEFORE INSERT
+    ON public."PostLikes"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.fill_commentlikes_login();
+
+-- Trigger: trigger_update_post_dislikes_count
+
+-- DROP TRIGGER IF EXISTS trigger_update_post_dislikes_count ON public."PostLikes";
+
+CREATE OR REPLACE TRIGGER trigger_update_post_dislikes_count
+    AFTER INSERT OR DELETE OR UPDATE 
+    ON public."PostLikes"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_post_dislikes_count();
+
+-- Trigger: trigger_update_post_likes_count
+
+-- DROP TRIGGER IF EXISTS trigger_update_post_likes_count ON public."PostLikes";
+
+CREATE OR REPLACE TRIGGER trigger_update_post_likes_count
+    AFTER INSERT OR DELETE OR UPDATE 
+    ON public."PostLikes"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_post_likes_count();
+
+-- Trigger: update_login_trigger
+
+-- DROP TRIGGER IF EXISTS update_login_trigger ON public."PostLikes";
+
+CREATE OR REPLACE TRIGGER update_login_trigger
+    BEFORE INSERT
+    ON public."PostLikes"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_login_on_postlike();
+
+    ------------------------
+
+-- Trigger: fill_commentlikes_login_trigger
+
+-- DROP TRIGGER IF EXISTS fill_commentlikes_login_trigger ON public."CommentLikes";
+
+CREATE OR REPLACE TRIGGER fill_commentlikes_login_trigger
+    BEFORE INSERT
+    ON public."CommentLikes"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.fill_commentlikes_login();
+
+-- Trigger: update_comment_dislikes_count_trigger
+
+-- DROP TRIGGER IF EXISTS update_comment_dislikes_count_trigger ON public."CommentLikes";
+
+CREATE OR REPLACE TRIGGER update_comment_dislikes_count_trigger
+    AFTER INSERT OR DELETE OR UPDATE 
+    ON public."CommentLikes"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_comment_dislikes_count();
+
+-- Trigger: update_comment_likes_count_trigger
+
+-- DROP TRIGGER IF EXISTS update_comment_likes_count_trigger ON public."CommentLikes";
+
+CREATE OR REPLACE TRIGGER update_comment_likes_count_trigger
+    AFTER INSERT OR DELETE OR UPDATE 
+    ON public."CommentLikes"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_comment_likes_count();

@@ -89,5 +89,4 @@ export class CommentsRepository {
     const count = result[1];
     return count === 1
   }
-
 }

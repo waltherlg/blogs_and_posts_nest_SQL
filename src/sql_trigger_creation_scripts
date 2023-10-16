@@ -1,0 +1,121 @@
+
+here are the TRIGGER creation scripts for the correct operation of the API
+
+--------------------
+--// в случае бана пользователя в "Users", бан включается и в объекте лайка комментария
+--// if a user is banned in "Users", the ban is also included in the comment's like object
+-- Trigger: update_commentlikes_is_user_banned_trigger
+-- DROP TRIGGER IF EXISTS update_commentlikes_is_user_banned_trigger ON public."Users";
+CREATE OR REPLACE TRIGGER update_commentlikes_is_user_banned_trigger
+    AFTER UPDATE OF "isUserBanned"
+    ON public."Users"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_commentlikes_is_user_banned();
+
+-----------------------
+
+// в случае изменения логина в "Users" логин сменится и в объекте лайка
+// if the login in "Users" is changed, the login will also be changed in the like object
+-- Trigger: update_commentlikes_login_trigger
+-- DROP TRIGGER IF EXISTS update_commentlikes_login_trigger ON public."Users";
+CREATE OR REPLACE TRIGGER update_commentlikes_login_trigger
+    AFTER UPDATE OF login
+    ON public."Users"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_commentlikes_login();
+
+-------------------------
+
+--// в случае бана пользователя в "Users", бан включается и в объекте лайка поста
+--// if a user is banned in "Users", the ban is also included in the posts's like object
+-- Trigger: update_postlikes_is_user_banned_trigger
+-- DROP TRIGGER IF EXISTS update_postlikes_is_user_banned_trigger ON public."Users";
+CREATE OR REPLACE TRIGGER update_postlikes_is_user_banned_trigger
+    AFTER UPDATE OF "isUserBanned"
+    ON public."Users"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_postlikes_is_user_banned();
+
+// в случае изменения логина в "Users" логин сменится и в объекте лайка
+// if the login in "Users" is changed, the login will also be changed in the like object
+-- Trigger: update_postlikes_login_trigger
+-- DROP TRIGGER IF EXISTS update_postlikes_login_trigger ON public."Users";
+CREATE OR REPLACE TRIGGER update_postlikes_login_trigger
+    AFTER UPDATE OF login
+    ON public."Users"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_login_on_postlike();
+ 
+ -------------------------
+
+// при создании лайка к посту, логин будет вызван из таблицы пользователей с соответсвующим айди
+// when creating a like to a post, the login will be called from the user table with the corresponding ID
+ -- Trigger: fill_postlikes_login_trigger
+-- DROP TRIGGER IF EXISTS fill_postlikes_login_trigger ON public."PostLikes";
+CREATE OR REPLACE TRIGGER fill_postlikes_login_trigger
+    BEFORE INSERT
+    ON public."PostLikes"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.fill_commentlikes_login();
+
+
+
+-- Trigger: trigger_update_post_dislikes_count
+-- DROP TRIGGER IF EXISTS trigger_update_post_dislikes_count ON public."PostLikes";
+CREATE OR REPLACE TRIGGER trigger_update_post_dislikes_count
+    AFTER INSERT OR DELETE OR UPDATE 
+    ON public."PostLikes"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_post_dislikes_count();
+
+
+-- Trigger: trigger_update_post_likes_count
+-- DROP TRIGGER IF EXISTS trigger_update_post_likes_count ON public."PostLikes";
+CREATE OR REPLACE TRIGGER trigger_update_post_likes_count
+    AFTER INSERT OR DELETE OR UPDATE 
+    ON public."PostLikes"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_post_likes_count();
+
+// в случае изменения логина в "Users" логин сменится и в объекте лайка
+// if the login in "Users" is changed, the login will also be changed in the like object
+-- Trigger: update_login_trigger
+-- DROP TRIGGER IF EXISTS update_login_trigger ON public."PostLikes";
+CREATE OR REPLACE TRIGGER update_login_trigger
+    BEFORE INSERT
+    ON public."PostLikes"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_login_on_postlike();
+
+    ------------------------
+
+// при создании лайка к комменту, логин будет вызван из таблицы пользователей с соответсвующим айди
+// when creating a like to a comment, the login will be called from the user table with the corresponding ID
+-- Trigger: fill_commentlikes_login_trigger
+-- DROP TRIGGER IF EXISTS fill_commentlikes_login_trigger ON public."CommentLikes";
+CREATE OR REPLACE TRIGGER fill_commentlikes_login_trigger
+    BEFORE INSERT
+    ON public."CommentLikes"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.fill_commentlikes_login();
+
+
+//после добавления или изменения дизлайка идет подсчет количества дизлайков к комменту
+//after adding or changing a dislike, the number of dislikes to the comment is counted, the number of likes to the comment is counted
+-- Trigger: update_comment_dislikes_count_trigger
+-- DROP TRIGGER IF EXISTS update_comment_dislikes_count_trigger ON public."CommentLikes";
+CREATE OR REPLACE TRIGGER update_comment_dislikes_count_trigger
+    AFTER INSERT OR DELETE OR UPDATE 
+    ON public."CommentLikes"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_comment_dislikes_count();
+
+//после добавления или изменения лайка идет подсчет количества лайков к комменту
+//after adding or changing a like, the number of ikes to the comment is counted, the number of likes to the comment is counted
+-- Trigger: update_comment_likes_count_trigger
+-- DROP TRIGGER IF EXISTS update_comment_likes_count_trigger ON public."CommentLikes";
+CREATE OR REPLACE TRIGGER update_comment_likes_count_trigger
+    AFTER INSERT OR DELETE OR UPDATE 
+    ON public."CommentLikes"
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_comment_likes_count();

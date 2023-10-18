@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { Types } from 'mongoose';
 import { endpoints } from './helpers/routing';
 import { testUser } from './helpers/inputAndOutputObjects/usersObjects';
 import { testInputBlogBody, testOutputBlogBody } from './helpers/inputAndOutputObjects/blogsObjects';
@@ -22,8 +21,6 @@ export function postCrudOperationsByBlogger07() {
     const basicAuthWrongPassword =
       Buffer.from('admin:12345').toString('base64');
     const basicAuthWrongLogin = Buffer.from('12345:qwerty').toString('base64');
-
-    const notExistingId = new Types.ObjectId();
 
     beforeAll(async () => {
       const moduleFixture: TestingModule = await Test.createTestingModule({

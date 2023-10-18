@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { Types } from 'mongoose';
 import { delayFunction, endpoints } from './helpers/routing';
 export function testPostLikesCrud08() {
   describe('Post Likes Crud CRUD operation \"if all is ok\" (e2e). ', () => {

@@ -3,7 +3,6 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 //import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { Types } from 'mongoose';
 import { endpoints } from './helpers/routing';
 import { testUser, testUserPag } from './helpers/inputAndOutputObjects/usersObjects';
 import { log } from 'console';
@@ -25,8 +24,6 @@ export function testBanUserForBlogByBlogger() {
     const basicAuthWrongPassword =
       Buffer.from('admin:12345').toString('base64');
     const basicAuthWrongLogin = Buffer.from('12345:qwerty').toString('base64');
-
-    const notExistingId = new Types.ObjectId();
 
     beforeAll(async () => {
       const moduleFixture: TestingModule = await Test.createTestingModule({

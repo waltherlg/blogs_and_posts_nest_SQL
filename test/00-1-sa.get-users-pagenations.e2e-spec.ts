@@ -3,7 +3,6 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 //import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { Types } from 'mongoose';
 import { endpoints } from './helpers/routing';
 import { testUser, testUserPag } from './helpers/inputAndOutputObjects/usersObjects';
 import { log } from 'console';
@@ -17,7 +16,6 @@ export function testSaUsersGetWithPagination() {
       Buffer.from('admin:12345').toString('base64');
     const basicAuthWrongLogin = Buffer.from('12345:qwerty').toString('base64');
 
-    const notExistingId = new Types.ObjectId();
     let userId1: string
 
     beforeAll(async () => {
